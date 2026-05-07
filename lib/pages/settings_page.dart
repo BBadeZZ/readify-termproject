@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/theme_controller.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../services/auth_service.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({super.key});
@@ -29,21 +30,21 @@ class _SettingsPageState extends State<SettingsPage> {
               color: const Color(0xFFFFE29A),
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Column(
+            child: Column(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 42,
                   backgroundColor: Colors.white,
                   child: Icon(Icons.person, size: 45, color: Colors.brown),
                 ),
                 SizedBox(height: 12),
                 Text(
-                  'Readify User',
-                  style: TextStyle(color: Colors.brown, fontSize: 22),
+                  authService.currentUser?.displayName ?? 'Readify User',
+                  style: const TextStyle(color: Colors.brown, fontSize: 22),
                 ),
                 Text(
-                  'Cute Reader Profile',
-                  style: TextStyle(color: Colors.brown),
+                  authService.currentUser?.email ?? '',
+                  style: const TextStyle(color: Colors.brown),
                 ),
               ],
             ),
