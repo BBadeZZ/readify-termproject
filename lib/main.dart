@@ -10,6 +10,8 @@ import 'pages/library_page.dart';
 import 'pages/analytics_page.dart';
 import 'pages/recommendations_page.dart';
 import 'pages/settings_page.dart';
+import 'pages/login_page.dart';
+import 'pages/register_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +44,8 @@ class ReadifyApp extends StatelessWidget {
             '/analytics': (context) => AnalyticsPage(),
             '/recommendations': (context) => const RecommendationsPage(),
             '/settings': (context) => SettingsPage(),
+            '/login': (context) => const LoginPage(),
+            '/register': (context) => const RegisterPage(),
           },
         );
       },
