@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510264891289",
+    "project_id": "readify-term-project",
+    "storage_bucket": "readify-term-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510264891289:android:494b2b5ea6cde04e056508",
+        "android_client_info": {
+          "package_name": "com.example.termproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFd6AL1s3ePROLw_G1LLlCRIb3DVUCB50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
