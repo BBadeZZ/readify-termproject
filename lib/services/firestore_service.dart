@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/book.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  final String userId = 'demoUser';
+  String get userId => FirebaseAuth.instance.currentUser?.uid ?? '';
 
   CollectionReference get _booksRef {
     return _db.collection('users').doc(userId).collection('books');

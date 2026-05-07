@@ -13,6 +13,7 @@ class AuthService {
       password: password,
     );
     await credential.user?.updateDisplayName(name);
+    await credential.user?.reload();
   }
 
   Future<void> login(String email, String password) async {
