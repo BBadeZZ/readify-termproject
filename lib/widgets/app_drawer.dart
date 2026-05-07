@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 
 class AppDrawer extends StatelessWidget {
   final String currentPage;
@@ -42,13 +43,13 @@ class AppDrawer extends StatelessWidget {
             decoration: const BoxDecoration(
               color: Color(0xFFF7D774),
             ),
-            accountName: const Text(
-              'Readify User',
-              style: TextStyle(color: Colors.brown),
+            accountName: Text(
+              authService.currentUser?.displayName ?? 'Readify User',
+              style: const TextStyle(color: Colors.brown),
             ),
-            accountEmail: const Text(
-              'smart.reading@app.com',
-              style: TextStyle(color: Colors.brown),
+            accountEmail: Text(
+              authService.currentUser?.email ?? '',
+              style: const TextStyle(color: Colors.brown),
             ),
             currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.white,
@@ -65,6 +66,18 @@ class AppDrawer extends StatelessWidget {
           drawerItem(context, Icons.analytics, 'Analytics', '/analytics'),
           drawerItem(context, Icons.star, 'Recommendations', '/recommendations'),
           drawerItem(context, Icons.settings, 'Settings', '/settings'),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.brown),
+            title: const Text('Logout', style: TextStyle(color: Colors.brown, fontSize: 17)),
+            onTap: () async {
+              Navigator.pop(context);
+              await authService.logout();
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+              }
+            },
+          ),
         ],
       ),
     );
