@@ -26,7 +26,8 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF6D8),
-      body: Center(
+      body: SingleChildScrollView(
+        child: Center(
         child: Container(
           margin: const EdgeInsets.all(24),
           padding: const EdgeInsets.all(28),
@@ -137,6 +138,7 @@ class _WelcomePageState extends State<WelcomePage> {
               ),
             ],
           ),
+        ),
         ),
       ),
     );
