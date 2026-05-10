@@ -57,6 +57,18 @@ class SettingsService {
     await _prefs.remove(_keyActiveStartTime);
     await _prefs.remove(_keyActiveStartPage);
   }
+
+  // Reminder time
+  static const _keyReminderHour = 'reminder_hour';
+  static const _keyReminderMinute = 'reminder_minute';
+
+  int get reminderHour => _prefs.getInt(_keyReminderHour) ?? 20;
+  int get reminderMinute => _prefs.getInt(_keyReminderMinute) ?? 0;
+
+  Future<void> saveReminderTime(int hour, int minute) async {
+    await _prefs.setInt(_keyReminderHour, hour);
+    await _prefs.setInt(_keyReminderMinute, minute);
+  }
 }
 
 late SettingsService settingsService;
