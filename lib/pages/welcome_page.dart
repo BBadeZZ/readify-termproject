@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../services/settings_service.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -15,6 +16,8 @@ class _WelcomePageState extends State<WelcomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authService.currentUser != null) {
         Navigator.pushReplacementNamed(context, '/home');
+      } else if (!settingsService.onboardingDone) {
+        Navigator.pushReplacementNamed(context, '/onboarding');
       }
     });
   }

@@ -58,6 +58,11 @@ class SettingsService {
     await _prefs.remove(_keyActiveStartPage);
   }
 
+  // Onboarding
+  bool get onboardingDone => _prefs.getBool('onboarding_done') ?? false;
+  Future<void> completeOnboarding() =>
+      _prefs.setBool('onboarding_done', true);
+
   // Reminder time
   static const _keyReminderHour = 'reminder_hour';
   static const _keyReminderMinute = 'reminder_minute';
