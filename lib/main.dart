@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'theme/theme_controller.dart';
+import 'services/settings_service.dart';
+import 'services/notification_service.dart';
 import 'pages/welcome_page.dart';
 import 'pages/home_page.dart';
 import 'pages/add_book_page.dart';
@@ -19,6 +21,17 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  settingsService = await SettingsService.init();
+  themeController.loadSavedTheme();
+
+  await NotificationService.initialize();
+  if (settingsService.dailyReminder) {
+    await NotificationService.scheduleDailyReminder(
+      settingsService.reminderHour,
+      settingsService.reminderMinute,
+    );
+  }
 
   runApp(const ReadifyApp());
 }
