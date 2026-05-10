@@ -29,6 +29,34 @@ class SettingsService {
   double get dailyGoal => _prefs.getDouble(_keyDailyGoal) ?? 20.0;
   Future<void> saveDailyGoal(double value) =>
       _prefs.setDouble(_keyDailyGoal, value);
+
+  // Active reading session
+  static const _keyActiveBookId = 'active_session_book_id';
+  static const _keyActiveStartTime = 'active_session_start_time';
+  static const _keyActiveStartPage = 'active_session_start_page';
+
+  String? get activeSessionBookId => _prefs.getString(_keyActiveBookId);
+
+  DateTime? get activeSessionStartTime {
+    final s = _prefs.getString(_keyActiveStartTime);
+    return s != null ? DateTime.tryParse(s) : null;
+  }
+
+  int get activeSessionStartPage =>
+      _prefs.getInt(_keyActiveStartPage) ?? 0;
+
+  Future<void> saveActiveSession(
+      String bookId, DateTime startTime, int startPage) async {
+    await _prefs.setString(_keyActiveBookId, bookId);
+    await _prefs.setString(_keyActiveStartTime, startTime.toIso8601String());
+    await _prefs.setInt(_keyActiveStartPage, startPage);
+  }
+
+  Future<void> clearActiveSession() async {
+    await _prefs.remove(_keyActiveBookId);
+    await _prefs.remove(_keyActiveStartTime);
+    await _prefs.remove(_keyActiveStartPage);
+  }
 }
 
 late SettingsService settingsService;
