@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/theme_controller.dart';
+import '../services/settings_service.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../services/auth_service.dart';
@@ -12,9 +13,17 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool dailyReminder = true;
-  bool showFavorites = true;
-  double dailyGoal = 20;
+  late bool dailyReminder;
+  late bool showFavorites;
+  late double dailyGoal;
+
+  @override
+  void initState() {
+    super.initState();
+    dailyReminder = settingsService.dailyReminder;
+    showFavorites = settingsService.showFavorites;
+    dailyGoal = settingsService.dailyGoal;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   backgroundColor: Colors.white,
                   child: Icon(Icons.person, size: 45, color: Colors.brown),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
                   authService.currentUser?.displayName ?? 'Readify User',
                   style: const TextStyle(color: Colors.brown, fontSize: 22),
@@ -58,27 +67,25 @@ class _SettingsPageState extends State<SettingsPage> {
               color: Colors.brown,
             ),
           ),
-          RadioListTile<AppThemeType>(
-            title: const Text('Soft Gold Theme'),
-            value: AppThemeType.softGold,
+          RadioGroup<AppThemeType>(
             groupValue: themeController.themeType,
-            activeColor: Colors.brown,
             onChanged: (value) {
-              setState(() {
-                themeController.setTheme(value!);
-              });
+              setState(() => themeController.setTheme(value!));
             },
-          ),
-          RadioListTile<AppThemeType>(
-            title: const Text('Soft Pink Theme'),
-            value: AppThemeType.softPink,
-            groupValue: themeController.themeType,
-            activeColor: Colors.brown,
-            onChanged: (value) {
-              setState(() {
-                themeController.setTheme(value!);
-              });
-            },
+            child: Column(
+              children: [
+                RadioListTile<AppThemeType>(
+                  title: const Text('Soft Gold Theme'),
+                  value: AppThemeType.softGold,
+                  activeColor: Colors.brown,
+                ),
+                RadioListTile<AppThemeType>(
+                  title: const Text('Soft Pink Theme'),
+                  value: AppThemeType.softPink,
+                  activeColor: Colors.brown,
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 8),
           SwitchListTile(
@@ -86,18 +93,16 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: const Text('Show daily reminder option'),
             value: dailyReminder,
             onChanged: (value) {
-              setState(() {
-                dailyReminder = value;
-              });
+              setState(() => dailyReminder = value);
+              settingsService.saveDailyReminder(value);
             },
           ),
           CheckboxListTile(
             title: const Text('Highlight Favorite Books'),
             value: showFavorites,
             onChanged: (value) {
-              setState(() {
-                showFavorites = value!;
-              });
+              setState(() => showFavorites = value!);
+              settingsService.saveShowFavorites(value!);
             },
           ),
           const SizedBox(height: 10),
@@ -117,20 +122,11 @@ class _SettingsPageState extends State<SettingsPage> {
             label: dailyGoal.toInt().toString(),
             activeColor: Colors.amber,
             onChanged: (value) {
-              setState(() {
-                dailyGoal = value;
-              });
+              setState(() => dailyGoal = value);
             },
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Settings saved locally.')),
-              );
+            onChangeEnd: (value) {
+              settingsService.saveDailyGoal(value);
             },
-            icon: const Icon(Icons.save),
-            label: const Text('Save Settings'),
           ),
         ],
       ),

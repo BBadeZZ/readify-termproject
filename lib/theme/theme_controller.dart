@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/settings_service.dart';
 
 enum AppThemeType { softGold, softPink }
 
@@ -7,8 +8,15 @@ class ThemeController extends ChangeNotifier {
 
   AppThemeType get themeType => _themeType;
 
+  void loadSavedTheme() {
+    final saved = settingsService.themeType;
+    _themeType =
+        saved == 'softPink' ? AppThemeType.softPink : AppThemeType.softGold;
+  }
+
   void setTheme(AppThemeType newTheme) {
     _themeType = newTheme;
+    settingsService.saveTheme(newTheme.name);
     notifyListeners();
   }
 
