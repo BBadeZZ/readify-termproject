@@ -14,6 +14,8 @@ import 'pages/recommendations_page.dart';
 import 'pages/settings_page.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
+import 'pages/onboarding_page.dart';
+import 'pages/profile_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +61,8 @@ class ReadifyApp extends StatelessWidget {
             '/settings': (context) => SettingsPage(),
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
+            '/onboarding': (context) => const OnboardingPage(),
+            '/profile': (context) => const ProfilePage(),
           },
         );
       },

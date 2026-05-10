@@ -60,6 +60,7 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
           ),
+          drawerItem(context, Icons.person, 'Profile', '/profile'),
           drawerItem(context, Icons.home, 'Home', '/home'),
           drawerItem(context, Icons.add_circle, 'Add Book', '/add'),
           drawerItem(context, Icons.library_books, 'Library', '/library'),

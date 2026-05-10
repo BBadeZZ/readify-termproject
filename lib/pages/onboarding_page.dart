@@ -1,0 +1,214 @@
+import 'package:flutter/material.dart';
+import '../services/settings_service.dart';
+
+class OnboardingPage extends StatefulWidget {
+  const OnboardingPage({super.key});
+
+  @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final PageController _controller = PageController();
+  int _currentPage = 0;
+
+  final List<_Slide> _slides = const [
+    _Slide(
+      icon: Icons.auto_stories_rounded,
+      title: 'Welcome to Readify',
+      description:
+          'Your cozy digital reading journal.\nAdd every book you read and never lose track again.',
+      bgColor: Color(0xFFFFF6D8),
+      circleColor: Color(0xFFFFE29A),
+      iconColor: Colors.brown,
+    ),
+    _Slide(
+      icon: Icons.timer_rounded,
+      title: 'Track Reading Sessions',
+      description:
+          'Start a session when you sit down to read.\nSee your daily reading time and weekly progress in Analytics.',
+      bgColor: Color(0xFFFFF1F6),
+      circleColor: Color(0xFFFFD6E7),
+      iconColor: Color(0xFF7A3E57),
+    ),
+    _Slide(
+      icon: Icons.search_rounded,
+      title: 'Discover Books Instantly',
+      description:
+          'Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.',
+      bgColor: Color(0xFFFFF6D8),
+      circleColor: Color(0xFFFFE29A),
+      iconColor: Colors.brown,
+    ),
+  ];
+
+  void _next() {
+    if (_currentPage < _slides.length - 1) {
+      _controller.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _finish();
+    }
+  }
+
+  void _finish() async {
+    await settingsService.completeOnboarding();
+    if (mounted) Navigator.pushReplacementNamed(context, '/');
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final slide = _slides[_currentPage];
+
+    return Scaffold(
+      backgroundColor: slide.bgColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Skip button
+            Align(
+              alignment: Alignment.topRight,
+              child: TextButton(
+                onPressed: _finish,
+                child: const Text(
+                  'Skip',
+                  style: TextStyle(color: Colors.brown, fontSize: 16),
+                ),
+              ),
+            ),
+
+            // PageView
+            Expanded(
+              child: PageView.builder(
+                controller: _controller,
+                onPageChanged: (i) => setState(() => _currentPage = i),
+                itemCount: _slides.length,
+                itemBuilder: (_, i) => _SlideView(slide: _slides[i]),
+              ),
+            ),
+
+            // Dot indicators
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                _slides.length,
+                (i) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  width: _currentPage == i ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentPage == i
+                        ? Colors.brown
+                        : Colors.brown.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Next / Get Started button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _next,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: const Color(0xFFFFD76A),
+                    foregroundColor: Colors.brown,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text(
+                    _currentPage == _slides.length - 1
+                        ? 'Get Started'
+                        : 'Next',
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SlideView extends StatelessWidget {
+  final _Slide slide;
+  const _SlideView({required this.slide});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              color: slide.circleColor,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(slide.icon, size: 80, color: slide.iconColor),
+          ),
+          const SizedBox(height: 40),
+          Text(
+            slide.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: slide.iconColor,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            slide.description,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 17,
+              height: 1.5,
+              color: slide.iconColor.withValues(alpha: 0.8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Slide {
+  final IconData icon;
+  final String title;
+  final String description;
+  final Color bgColor;
+  final Color circleColor;
+  final Color iconColor;
+
+  const _Slide({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.bgColor,
+    required this.circleColor,
+    required this.iconColor,
+  });
+}
