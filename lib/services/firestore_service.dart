@@ -50,3 +50,5 @@ class FirestoreService {
             .toList());
   }
 }
+
+final firestoreService = FirestoreService();

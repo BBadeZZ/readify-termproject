@@ -6,14 +6,13 @@ import '../services/google_books_service.dart';
 import '../widgets/app_drawer.dart';
 
 class AddBookPage extends StatefulWidget {
-  AddBookPage({super.key});
+  const AddBookPage({super.key});
 
   @override
   State<AddBookPage> createState() => _AddBookPageState();
 }
 
 class _AddBookPageState extends State<AddBookPage> {
-  final FirestoreService service = FirestoreService();
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
@@ -195,7 +194,7 @@ class _AddBookPageState extends State<AddBookPage> {
       createdAt: DateTime.now(),
     );
 
-    await service.addBook(book);
+    await firestoreService.addBook(book);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

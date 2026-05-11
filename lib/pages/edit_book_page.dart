@@ -12,7 +12,6 @@ class EditBookPage extends StatefulWidget {
 }
 
 class _EditBookPageState extends State<EditBookPage> {
-  final FirestoreService service = FirestoreService();
 
   late TextEditingController titleController;
   late TextEditingController authorController;
@@ -126,7 +125,7 @@ class _EditBookPageState extends State<EditBookPage> {
       createdAt: widget.book.createdAt,
     );
 
-    await service.updateBook(updatedBook);
+    await firestoreService.updateBook(updatedBook);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Book updated successfully.')),
@@ -161,24 +160,23 @@ class _EditBookPageState extends State<EditBookPage> {
     return RadioListTile<String>(
       title: Text(title, style: const TextStyle(fontSize: 17)),
       value: value,
-      groupValue: selectedStatus,
-      activeColor: Colors.brown,
-      onChanged: (newValue) {
-        setState(() {
-          selectedStatus = newValue!;
-
-          if (selectedStatus == 'Wishlist') {
-            currentPageController.text = '0';
-          } else if (selectedStatus == 'Already Read') {
-            currentPageController.text = totalPagesController.text;
-          } else if (selectedStatus == 'Reading') {
-            if (currentPageController.text == totalPagesController.text) {
-              currentPageController.text = '0';
-            }
-          }
-        });
-      },
     );
+  }
+
+  void _onStatusChanged(String? newValue) {
+    if (newValue == null) return;
+    setState(() {
+      selectedStatus = newValue;
+      if (selectedStatus == 'Wishlist') {
+        currentPageController.text = '0';
+      } else if (selectedStatus == 'Already Read') {
+        currentPageController.text = totalPagesController.text;
+      } else if (selectedStatus == 'Reading') {
+        if (currentPageController.text == totalPagesController.text) {
+          currentPageController.text = '0';
+        }
+      }
+    });
   }
 
   @override
@@ -239,9 +237,17 @@ class _EditBookPageState extends State<EditBookPage> {
               color: Colors.brown,
             ),
           ),
-          statusRadio('Reading', 'Reading'),
-          statusRadio('Wishlist', 'Wishlist'),
-          statusRadio('Already Read', 'Already Read'),
+          RadioGroup<String>(
+            groupValue: selectedStatus,
+            onChanged: _onStatusChanged,
+            child: Column(
+              children: [
+                statusRadio('Reading', 'Reading'),
+                statusRadio('Wishlist', 'Wishlist'),
+                statusRadio('Already Read', 'Already Read'),
+              ],
+            ),
+          ),
           const SizedBox(height: 10),
           Text(
             'Rating: $rating / 5',

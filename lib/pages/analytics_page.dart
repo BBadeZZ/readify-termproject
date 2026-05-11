@@ -7,14 +7,13 @@ import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 
 class AnalyticsPage extends StatefulWidget {
-  AnalyticsPage({super.key});
+  const AnalyticsPage({super.key});
 
   @override
   State<AnalyticsPage> createState() => _AnalyticsPageState();
 }
 
 class _AnalyticsPageState extends State<AnalyticsPage> {
-  final FirestoreService _service = FirestoreService();
 
   List<Book> _books = [];
   List<ReadingSession> _sessions = [];
@@ -26,13 +25,13 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   @override
   void initState() {
     super.initState();
-    _booksSub = _service.getBooks().listen((books) {
+    _booksSub = firestoreService.getBooks().listen((books) {
       setState(() {
         _books = books;
         _loading = false;
       });
     });
-    _sessionsSub = _service.getSessions().listen((sessions) {
+    _sessionsSub = firestoreService.getSessions().listen((sessions) {
       setState(() => _sessions = sessions);
     });
   }
@@ -60,7 +59,6 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
     final totalBooks = _books.length;
     final reading = _books.where((b) => b.status == 'Reading').length;
-    final finished = _books.where((b) => b.status == 'Finished').length;
     final wishlist = _books.where((b) => b.status == 'Wishlist').length;
     final alreadyRead = _books.where((b) => b.status == 'Already Read').length;
     final favorite = _books.where((b) => b.favorite).length;
@@ -102,9 +100,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             children: [
               _StatTile(label: 'Total Books', value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
               _StatTile(label: 'Reading', value: '$reading', icon: Icons.auto_stories_rounded, color: const Color(0xFFDCF0FF), iconColor: const Color(0xFF1A6FA8)),
-              _StatTile(label: 'Finished', value: '$finished', icon: Icons.check_circle_rounded, color: const Color(0xFFDCF5E4), iconColor: const Color(0xFF1E8040)),
+              _StatTile(label: 'Already Read', value: '$alreadyRead', icon: Icons.check_circle_rounded, color: const Color(0xFFDCF5E4), iconColor: const Color(0xFF1E8040)),
               _StatTile(label: 'Wishlist', value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
-              _StatTile(label: 'Already Read', value: '$alreadyRead', icon: Icons.history_edu_rounded, color: const Color(0xFFF0EDFF), iconColor: const Color(0xFF5E35B1)),
               _StatTile(label: 'Favorites', value: '$favorite', icon: Icons.favorite_rounded, color: const Color(0xFFFFE8F0), iconColor: Colors.pink),
               _StatTile(label: 'Pages Read', value: '$pagesRead', icon: Icons.menu_book_rounded, color: const Color(0xFFE0F7FA), iconColor: const Color(0xFF00838F)),
               _StatTile(

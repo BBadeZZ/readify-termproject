@@ -9,14 +9,13 @@ import 'book_detail_page.dart';
 import '../utils/page_transitions.dart';
 
 class LibraryPage extends StatefulWidget {
-  LibraryPage({super.key});
+  const LibraryPage({super.key});
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  final FirestoreService service = FirestoreService();
 
   String filter = 'All';
   String searchText = '';
@@ -187,7 +186,7 @@ class _LibraryPageState extends State<LibraryPage> {
           // Book list
           Expanded(
             child: StreamBuilder<List<Book>>(
-              stream: service.getBooks(),
+              stream: firestoreService.getBooks(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Center(child: Text('Something went wrong.'));
@@ -247,7 +246,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                   onTap: () => Navigator.push(context, SlidePageRoute(page: BookDetailPage(book: book))),
                                   onFavorite: () {
                                     setState(() => book.favorite = !book.favorite);
-                                    service.updateBook(book);
+                                    firestoreService.updateBook(book);
                                   },
                                   onDelete: () async {
                                     final confirmed = await showDialog<bool>(
@@ -266,7 +265,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                       ),
                                     );
                                     if (confirmed == true) {
-                                      service.deleteBook(book.id);
+                                      firestoreService.deleteBook(book.id);
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(

@@ -18,7 +18,6 @@ class BookDetailPage extends StatefulWidget {
 }
 
 class _BookDetailPageState extends State<BookDetailPage> {
-  final FirestoreService _service = FirestoreService();
 
   late Book book;
   late TextEditingController pageController;
@@ -103,7 +102,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       durationMinutes: durationMinutes,
     );
 
-    await _service.addSession(session);
+    await firestoreService.addSession(session);
     await settingsService.clearActiveSession();
 
     setState(() {
@@ -119,7 +118,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       _elapsed = Duration.zero;
     });
 
-    await _service.updateBook(book);
+    await firestoreService.updateBook(book);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -203,7 +202,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       }
     });
 
-    await _service.updateBook(book);
+    await firestoreService.updateBook(book);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -218,19 +217,18 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
   void toggleFavorite() async {
     setState(() => book.favorite = !book.favorite);
-    await _service.updateBook(book);
+    await firestoreService.updateBook(book);
   }
 
   void _setRating(int rating) async {
     setState(() => book.rating = rating);
-    await _service.updateBook(book);
+    await firestoreService.updateBook(book);
   }
 
   Color _statusColor(BuildContext context) {
     switch (book.status) {
       case 'Reading':
         return const Color(0xFF1A6FA8);
-      case 'Finished':
       case 'Already Read':
         return const Color(0xFF1E8040);
       case 'Wishlist':

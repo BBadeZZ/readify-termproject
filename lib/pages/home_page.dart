@@ -9,9 +9,7 @@ import 'book_detail_page.dart';
 import '../utils/page_transitions.dart';
 
 class HomePage extends StatelessWidget {
-  final FirestoreService service = FirestoreService();
-
-  HomePage({super.key});
+  const HomePage({super.key});
 
   String _greeting() {
     final hour = DateTime.now().hour;
@@ -50,7 +48,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: StreamBuilder<List<Book>>(
-        stream: service.getBooks(),
+        stream: firestoreService.getBooks(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -59,7 +57,6 @@ class HomePage extends StatelessWidget {
           final books = snapshot.data!;
           final totalBooks = books.length;
           final reading = books.where((b) => b.status == 'Reading').toList();
-          final finished = books.where((b) => b.status == 'Finished').length;
           final alreadyRead = books.where((b) => b.status == 'Already Read').length;
           final pagesRead = books.fold(0, (sum, b) => sum + b.currentPage);
 
@@ -107,12 +104,12 @@ class HomePage extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
                   ),
                   _StatCard(
-                    label: 'Finished',
-                    value: '$finished',
+                    label: 'Already Read',
+                    value: '$alreadyRead',
                     icon: Icons.check_circle_rounded,
                     color: const Color(0xFFDCF5E4),
                     iconColor: const Color(0xFF1E8040),
-                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Finished'}),
+                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Already Read'}),
                   ),
                   _StatCard(
                     label: 'Pages Read',
