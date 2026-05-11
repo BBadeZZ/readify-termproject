@@ -59,40 +59,41 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF6D8),
+      backgroundColor: cs.primaryContainer,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFFDF4),
+              color: cs.surface,
               borderRadius: BorderRadius.circular(28),
               boxShadow: const [
                 BoxShadow(blurRadius: 14, color: Colors.black12, offset: Offset(0, 6)),
               ],
-              border: Border.all(color: const Color(0xFFF7D774), width: 2),
+              border: Border.all(color: cs.outlineVariant, width: 2),
             ),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 42,
-                    backgroundColor: Color(0xFFFFE8A3),
-                    child: Icon(Icons.person_add_rounded, size: 44, color: Colors.brown),
+                    backgroundColor: cs.primaryContainer,
+                    child: Icon(Icons.person_add_rounded, size: 44, color: cs.primary),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     'Create Account',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.brown),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: cs.primary),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Start your reading journey',
-                    style: TextStyle(fontSize: 15, color: Colors.brown),
+                    style: TextStyle(fontSize: 15, color: cs.primary),
                   ),
                   const SizedBox(height: 28),
                   TextFormField(
@@ -123,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          color: Colors.brown,
+                          color: cs.primary,
                         ),
                         onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                       ),
@@ -142,7 +143,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscureConfirm ? Icons.visibility_off : Icons.visibility,
-                          color: Colors.brown,
+                          color: cs.primary,
                         ),
                         onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
                       ),
@@ -175,13 +176,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Already have an account? ', style: TextStyle(color: Colors.brown)),
+                      Text('Already have an account? ', style: TextStyle(color: cs.primary)),
                       GestureDetector(
                         onTap: () => Navigator.pushReplacementNamed(context, '/login'),
-                        child: const Text(
+                        child: Text(
                           'Login',
                           style: TextStyle(
-                            color: Colors.brown,
+                            color: cs.primary,
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
                           ),
@@ -199,23 +200,24 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   InputDecoration _inputDecoration(String label, IconData icon) {
+    final cs = Theme.of(context).colorScheme;
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.brown),
-      prefixIcon: Icon(icon, color: Colors.brown),
+      labelStyle: TextStyle(color: cs.primary),
+      prefixIcon: Icon(icon, color: cs.primary),
       filled: true,
-      fillColor: const Color(0xFFFFF6D8),
+      fillColor: cs.primaryContainer.withValues(alpha: 0.4),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFF7D774)),
+        borderSide: BorderSide(color: cs.outlineVariant),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFF7D774)),
+        borderSide: BorderSide(color: cs.outlineVariant),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.brown, width: 2),
+        borderSide: BorderSide(color: cs.primary, width: 2),
       ),
     );
   }

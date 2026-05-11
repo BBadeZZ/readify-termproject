@@ -508,10 +508,10 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                                 r.coverUrl,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, __, ___) =>
-                                    const Icon(Icons.book, color: Colors.brown),
+                                    Icon(Icons.book, color: Theme.of(context).colorScheme.primary),
                               ),
                             )
-                          : const Icon(Icons.book, color: Colors.brown),
+                          : Icon(Icons.book, color: Theme.of(context).colorScheme.primary),
                     ),
                     title: Text(
                       r.title,

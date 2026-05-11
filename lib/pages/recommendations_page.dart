@@ -57,15 +57,11 @@ class RecommendationsPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
+        final cs = Theme.of(context).colorScheme;
         return AlertDialog(
-          backgroundColor: const Color(0xFFFFFBF0),
           title: Text(
             book.title,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.brown,
-            ),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: cs.primary),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -79,11 +75,7 @@ class RecommendationsPage extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   'Author: ${book.author}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                    color: Colors.brown,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: cs.primary),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -109,13 +101,8 @@ class RecommendationsPage extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'Close',
-                style: TextStyle(color: Colors.brown),
-              ),
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
             ),
             ElevatedButton.icon(
               onPressed: () {
@@ -147,13 +134,11 @@ class RecommendationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FirestoreService service = FirestoreService();
-
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Recommendations'),
       appBar: AppBar(title: const Text('Book Recommendations')),
       body: StreamBuilder<List<Book>>(
-        stream: service.getBooks(),
+        stream: firestoreService.getBooks(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -169,18 +154,16 @@ class RecommendationsPage extends StatelessWidget {
             );
           }).toList();
 
+          final cs = Theme.of(context).colorScheme;
+
           if (visibleRecommendations.isEmpty) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 child: Text(
                   'You have already read all recommended books 💛',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.brown,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, color: cs.primary, fontWeight: FontWeight.bold),
                 ),
               ),
             );
@@ -199,24 +182,15 @@ class RecommendationsPage extends StatelessWidget {
               final book = visibleRecommendations[index];
 
               return InkWell(
-                onTap: () {
-                  showBookDetail(context, book);
-                },
+                onTap: () => showBookDetail(context, book),
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cs.surface,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: const Color(0xFFF7D774),
-                      width: 2,
-                    ),
+                    border: Border.all(color: cs.outlineVariant, width: 2),
                     boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 6,
-                        color: Colors.black12,
-                        offset: Offset(0, 4),
-                      ),
+                      BoxShadow(blurRadius: 6, color: Colors.black12, offset: Offset(0, 4)),
                     ],
                   ),
                   child: Column(
@@ -233,11 +207,7 @@ class RecommendationsPage extends StatelessWidget {
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          color: Colors.brown,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: cs.primary),
                       ),
                       const SizedBox(height: 5),
                       Text(

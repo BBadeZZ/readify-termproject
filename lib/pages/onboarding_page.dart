@@ -66,6 +66,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final slide = _slides[_currentPage];
 
     return Scaffold(
@@ -78,10 +79,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: _finish,
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(color: Colors.brown, fontSize: 16),
-                ),
+                child: Text('Skip', style: TextStyle(color: cs.primary, fontSize: 16)),
               ),
             ),
 
@@ -107,8 +105,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   height: 8,
                   decoration: BoxDecoration(
                     color: _currentPage == i
-                        ? Colors.brown
-                        : Colors.brown.withValues(alpha: 0.25),
+                        ? cs.primary
+                        : cs.primary.withValues(alpha: 0.25),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -125,18 +123,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   onPressed: _next,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: const Color(0xFFFFD76A),
-                    foregroundColor: Colors.brown,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: Text(
-                    _currentPage == _slides.length - 1
-                        ? 'Get Started'
-                        : 'Next',
-                    style: const TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.bold),
+                    _currentPage == _slides.length - 1 ? 'Get Started' : 'Next',
+                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
