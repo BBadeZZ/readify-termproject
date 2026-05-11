@@ -104,13 +104,13 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               StatCard(label: 'Reading', value: '$reading', icon: Icons.auto_stories_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
               StatCard(label: 'Already Read', value: '$alreadyRead', icon: Icons.check_circle_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
               StatCard(label: 'Wishlist', value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
-              StatCard(label: 'Favorites', value: '$favorite', icon: Icons.favorite_rounded, color: const Color(0xFFFFE8F0), iconColor: Colors.pink),
-              StatCard(label: 'Pages Read', value: '$pagesRead', icon: Icons.menu_book_rounded, color: const Color(0xFFE0F7FA), iconColor: const Color(0xFF00838F)),
+              StatCard(label: 'Favorites', value: '$favorite', icon: Icons.favorite_rounded, color: AppColors.favoritesContainer, iconColor: Colors.pink),
+              StatCard(label: 'Pages Read', value: '$pagesRead', icon: Icons.menu_book_rounded, color: AppColors.pagesTealContainer, iconColor: AppColors.pagesTeal),
               StatCard(
                 label: 'Avg Rating',
                 value: avgRating.toStringAsFixed(1),
                 icon: Icons.star_rounded,
-                color: const Color(0xFFFFF8DC),
+                color: AppColors.starYellowContainer,
                 iconColor: AppColors.starYellow,
                 suffix: '/ 5',
               ),
@@ -183,8 +183,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                   label: 'Total Time',
                   value: totalHours > 0 ? '${totalHours}h ${remainingMin}m' : '${totalMinutes}m',
                   icon: Icons.schedule_rounded,
-                  color: const Color(0xFFE0F7FA),
-                  iconColor: const Color(0xFF00838F),
+                  color: AppColors.pagesTealContainer,
+                  iconColor: AppColors.pagesTeal,
                 ),
                 StatCard(label: 'Pages This Week', value: '$weekPages', icon: Icons.trending_up_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
                 StatCard(label: 'Avg Session', value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
@@ -227,7 +227,7 @@ class _SessionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFFEDE7F6),
+              color: AppColors.sessionPurpleContainer,
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.menu_book_rounded, color: Color(0xFF5E35B1), size: 20),
@@ -247,7 +247,7 @@ class _SessionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: const Color(0xFFEDE7F6),
+              color: AppColors.sessionPurpleContainer,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(

@@ -211,7 +211,7 @@ class _LibraryPageState extends State<LibraryPage> {
                           const SizedBox(width: 6),
                           _SummaryChip(icon: Icons.favorite_rounded, value: favCount, color: Colors.pink),
                           const SizedBox(width: 6),
-                          _SummaryChip(icon: Icons.auto_stories_rounded, value: readingCount, color: const Color(0xFF1A6FA8)),
+                          _SummaryChip(icon: Icons.auto_stories_rounded, value: readingCount, color: AppColors.readingBlue),
                         ],
                       ),
                     ),
@@ -237,9 +237,23 @@ class _LibraryPageState extends State<LibraryPage> {
                                   book: book,
                                   statusColor: AppColors.forStatus(book.status),
                                   onTap: () => Navigator.push(context, SlidePageRoute(page: BookDetailPage(book: book))),
-                                  onFavorite: () {
+                                  onFavorite: () async {
                                     setState(() => book.favorite = !book.favorite);
-                                    firestoreService.updateBook(book);
+                                    try {
+                                      await firestoreService.updateBook(book);
+                                    } catch (e) {
+                                      setState(() => book.favorite = !book.favorite);
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: const Text('Failed to update favorite.'),
+                                            backgroundColor: Theme.of(context).colorScheme.error,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          ),
+                                        );
+                                      }
+                                    }
                                   },
                                   onDelete: () async {
                                     final deletedBook = book;

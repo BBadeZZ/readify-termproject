@@ -32,6 +32,36 @@ class Book {
     return currentPage / totalPages;
   }
 
+  Book copyWith({
+    String? id,
+    String? title,
+    String? author,
+    String? genre,
+    int? totalPages,
+    int? currentPage,
+    String? status,
+    int? rating,
+    String? note,
+    bool? favorite,
+    String? coverUrl,
+    DateTime? createdAt,
+  }) {
+    return Book(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      author: author ?? this.author,
+      genre: genre ?? this.genre,
+      totalPages: totalPages ?? this.totalPages,
+      currentPage: currentPage ?? this.currentPage,
+      status: status ?? this.status,
+      rating: rating ?? this.rating,
+      note: note ?? this.note,
+      favorite: favorite ?? this.favorite,
+      coverUrl: coverUrl ?? this.coverUrl,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'title': title,

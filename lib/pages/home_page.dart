@@ -191,7 +191,7 @@ class HomePage extends StatelessWidget {
                     child: _ActionButton(
                       icon: Icons.auto_awesome_rounded,
                       label: 'Suggestions',
-                      color: const Color(0xFF7E5EA8),
+                      color: AppColors.suggestionsPurple,
                       onTap: () => Navigator.pushNamed(context, '/recommendations'),
                     ),
                   ),
@@ -200,7 +200,7 @@ class HomePage extends StatelessWidget {
                     child: _ActionButton(
                       icon: Icons.bar_chart_rounded,
                       label: 'Analytics',
-                      color: const Color(0xFF1A6FA8),
+                      color: AppColors.readingBlue,
                       onTap: () => Navigator.pushNamed(context, '/analytics'),
                     ),
                   ),

@@ -18,6 +18,12 @@ abstract final class AppColors {
   static const suggestionsPurple = Color(0xFF7E5EA8);
 
   static const starYellow = Color(0xFFE8A020);
+  static const starYellowContainer = Color(0xFFFFF8DC);
+
+  static const pagesTeal = Color(0xFF00838F);
+  static const pagesTealContainer = Color(0xFFE0F7FA);
+
+  static const favoritesContainer = Color(0xFFFFE8F0);
 
   /// Returns the semantic status color for a book status string.
   static Color forStatus(String status) => switch (status) {
