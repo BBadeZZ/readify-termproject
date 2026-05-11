@@ -205,12 +205,14 @@ class _AddBookPageState extends State<AddBookPage> {
   }
 
   Widget _inputField(
+    BuildContext context,
     String label,
     TextEditingController controller,
     IconData icon, {
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
   }) {
+    final primary = Theme.of(context).colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       child: TextField(
@@ -219,7 +221,7 @@ class _AddBookPageState extends State<AddBookPage> {
         maxLines: maxLines,
         style: const TextStyle(fontSize: 17),
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.brown),
+          prefixIcon: Icon(icon, color: primary),
           labelText: label,
         ),
       ),
@@ -228,6 +230,7 @@ class _AddBookPageState extends State<AddBookPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Add Book'),
       appBar: AppBar(title: const Text('Add Book')),
@@ -241,14 +244,14 @@ class _AddBookPageState extends State<AddBookPage> {
               margin: const EdgeInsets.only(bottom: 20),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cs.primaryContainer,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.amber, width: 1.5),
+                border: Border.all(color: cs.primary, width: 1.5),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.search, color: Colors.brown),
-                  SizedBox(width: 12),
+                  Icon(Icons.search, color: cs.primary),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,28 +261,28 @@ class _AddBookPageState extends State<AddBookPage> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.brown,
+                            color: cs.onPrimaryContainer,
                           ),
                         ),
                         Text(
                           'Find by title or author — fills form automatically',
-                          style: TextStyle(fontSize: 13, color: Colors.brown),
+                          style: TextStyle(fontSize: 13, color: cs.onPrimaryContainer),
                         ),
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.brown),
+                  Icon(Icons.arrow_forward_ios, size: 16, color: cs.primary),
                 ],
               ),
             ),
           ),
 
-          _inputField('Book Title', titleController, Icons.title),
-          _inputField('Author', authorController, Icons.person),
-          _inputField('Cover URL (optional)', coverUrlController, Icons.image),
-          _inputField('Total Pages', totalPagesController, Icons.pages,
+          _inputField(context, 'Book Title', titleController, Icons.title),
+          _inputField(context, 'Author', authorController, Icons.person),
+          _inputField(context, 'Cover URL (optional)', coverUrlController, Icons.image),
+          _inputField(context, 'Total Pages', totalPagesController, Icons.pages,
               keyboardType: TextInputType.number),
-          _inputField('Current Page', currentPageController, Icons.bookmark,
+          _inputField(context, 'Current Page', currentPageController, Icons.bookmark,
               keyboardType: TextInputType.number),
 
           // Genre dropdown
@@ -287,7 +290,7 @@ class _AddBookPageState extends State<AddBookPage> {
             margin: const EdgeInsets.only(bottom: 14),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.brown.shade200),
+              border: Border.all(color: cs.outline),
               borderRadius: BorderRadius.circular(16),
               color: Colors.white,
             ),
@@ -295,7 +298,7 @@ class _AddBookPageState extends State<AddBookPage> {
               value: selectedGenre,
               isExpanded: true,
               underline: const SizedBox(),
-              style: const TextStyle(fontSize: 17, color: Colors.brown),
+              style: TextStyle(fontSize: 17, color: cs.onSurface),
               items: genres
                   .map((g) => DropdownMenuItem(value: g, child: Text(g)))
                   .toList(),
@@ -303,10 +306,10 @@ class _AddBookPageState extends State<AddBookPage> {
             ),
           ),
 
-          const Text(
+          Text(
             'Reading Status',
             style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.brown),
+                fontWeight: FontWeight.bold, fontSize: 18, color: cs.onSurface),
           ),
           RadioGroup<String>(
             groupValue: selectedStatus,
@@ -344,12 +347,10 @@ class _AddBookPageState extends State<AddBookPage> {
           const SizedBox(height: 10),
           Text(
             'Rating: $rating / 5',
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.brown),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: cs.onSurface),
           ),
           Slider(
-            activeColor: Colors.amber,
-            inactiveColor: Colors.amberAccent,
             value: rating.toDouble(),
             min: 1,
             max: 5,
@@ -361,12 +362,11 @@ class _AddBookPageState extends State<AddBookPage> {
           CheckboxListTile(
             title: const Text('Add to favorites',
                 style: TextStyle(fontSize: 17)),
-            activeColor: Colors.pinkAccent,
             value: favorite,
             onChanged: (value) => setState(() => favorite = value!),
           ),
 
-          _inputField('Personal Note', noteController, Icons.note, maxLines: 3),
+          _inputField(context, 'Personal Note', noteController, Icons.note, maxLines: 3),
 
           ElevatedButton.icon(
             onPressed: saveBook,

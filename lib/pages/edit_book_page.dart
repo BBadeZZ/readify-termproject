@@ -135,12 +135,14 @@ class _EditBookPageState extends State<EditBookPage> {
   }
 
   Widget inputField(
+      BuildContext context,
       String label,
       TextEditingController controller,
       IconData icon, {
         TextInputType keyboardType = TextInputType.text,
         int maxLines = 1,
       }) {
+    final primary = Theme.of(context).colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       child: TextField(
@@ -149,7 +151,7 @@ class _EditBookPageState extends State<EditBookPage> {
         maxLines: maxLines,
         style: const TextStyle(fontSize: 17),
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.brown),
+          prefixIcon: Icon(icon, color: primary),
           labelText: label,
         ),
       ),
@@ -181,6 +183,7 @@ class _EditBookPageState extends State<EditBookPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Book'),
@@ -188,16 +191,18 @@ class _EditBookPageState extends State<EditBookPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          inputField('Book Title', titleController, Icons.title),
-          inputField('Author', authorController, Icons.person),
-          inputField('Cover URL', coverUrlController, Icons.image),
+          inputField(context, 'Book Title', titleController, Icons.title),
+          inputField(context, 'Author', authorController, Icons.person),
+          inputField(context, 'Cover URL', coverUrlController, Icons.image),
           inputField(
+            context,
             'Total Pages',
             totalPagesController,
             Icons.pages,
             keyboardType: TextInputType.number,
           ),
           inputField(
+            context,
             'Current Page',
             currentPageController,
             Icons.bookmark,
@@ -207,7 +212,7 @@ class _EditBookPageState extends State<EditBookPage> {
             margin: const EdgeInsets.only(bottom: 14),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.brown.shade200),
+              border: Border.all(color: cs.outline),
               borderRadius: BorderRadius.circular(16),
               color: Colors.white,
             ),
@@ -215,7 +220,7 @@ class _EditBookPageState extends State<EditBookPage> {
               value: selectedGenre,
               isExpanded: true,
               underline: const SizedBox(),
-              style: const TextStyle(fontSize: 17, color: Colors.brown),
+              style: TextStyle(fontSize: 17, color: cs.onSurface),
               items: genres.map((genre) {
                 return DropdownMenuItem<String>(
                   value: genre,
@@ -229,12 +234,12 @@ class _EditBookPageState extends State<EditBookPage> {
               },
             ),
           ),
-          const Text(
+          Text(
             'Reading Status',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: Colors.brown,
+              color: cs.onSurface,
             ),
           ),
           RadioGroup<String>(
@@ -251,10 +256,10 @@ class _EditBookPageState extends State<EditBookPage> {
           const SizedBox(height: 10),
           Text(
             'Rating: $rating / 5',
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: Colors.brown,
+              color: cs.onSurface,
             ),
           ),
           Slider(
@@ -262,8 +267,6 @@ class _EditBookPageState extends State<EditBookPage> {
             min: 1,
             max: 5,
             divisions: 4,
-            activeColor: Colors.amber,
-            inactiveColor: Colors.amberAccent,
             onChanged: (value) {
               setState(() {
                 rating = value.toInt();
@@ -273,7 +276,6 @@ class _EditBookPageState extends State<EditBookPage> {
           CheckboxListTile(
             title: const Text('Favorite'),
             value: favorite,
-            activeColor: Colors.pinkAccent,
             onChanged: (value) {
               setState(() {
                 favorite = value!;
@@ -281,6 +283,7 @@ class _EditBookPageState extends State<EditBookPage> {
             },
           ),
           inputField(
+            context,
             'Personal Note',
             noteController,
             Icons.note,

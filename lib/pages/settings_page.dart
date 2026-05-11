@@ -7,7 +7,7 @@ import '../widgets/app_bottom_nav.dart';
 import '../services/auth_service.dart';
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage({super.key});
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -53,6 +53,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Settings'),
       appBar: AppBar(title: const Text('Settings')),
@@ -63,24 +66,26 @@ class _SettingsPageState extends State<SettingsPage> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFE29A),
+              color: cs.primaryContainer,
               borderRadius: BorderRadius.circular(18),
             ),
             child: Column(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 42,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 45, color: Colors.brown),
+                  backgroundColor: cs.surface,
+                  child: Icon(Icons.person, size: 45, color: cs.primary),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   authService.currentUser?.displayName ?? 'Readify User',
-                  style: const TextStyle(color: Colors.brown, fontSize: 22),
+                  style: tt.titleLarge?.copyWith(color: cs.onPrimaryContainer),
                 ),
                 Text(
                   authService.currentUser?.email ?? '',
-                  style: const TextStyle(color: Colors.brown),
+                  style: tt.bodyMedium?.copyWith(
+                    color: cs.onPrimaryContainer.withValues(alpha: 0.75),
+                  ),
                 ),
               ],
             ),
@@ -88,30 +93,24 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(height: 20),
 
           // Theme
-          const Text(
+          Text(
             'Theme Selection',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.brown,
-            ),
+            style: tt.titleLarge,
           ),
           RadioGroup<AppThemeType>(
             groupValue: themeController.themeType,
             onChanged: (value) {
               setState(() => themeController.setTheme(value!));
             },
-            child: Column(
+            child: const Column(
               children: [
                 RadioListTile<AppThemeType>(
-                  title: const Text('Soft Gold Theme'),
+                  title: Text('Soft Gold Theme'),
                   value: AppThemeType.softGold,
-                  activeColor: Colors.brown,
                 ),
                 RadioListTile<AppThemeType>(
-                  title: const Text('Soft Pink Theme'),
+                  title: Text('Soft Pink Theme'),
                   value: AppThemeType.softPink,
-                  activeColor: Colors.brown,
                 ),
               ],
             ),
@@ -138,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
           // Reminder time picker — only visible when reminder is ON
           if (dailyReminder)
             ListTile(
-              leading: const Icon(Icons.access_time, color: Colors.brown),
+              leading: Icon(Icons.access_time, color: cs.primary),
               title: const Text('Reminder Time'),
               subtitle: Text(_reminderTimeLabel),
               trailing: const Icon(Icons.chevron_right),
@@ -158,11 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
           // Daily goal
           Text(
             'Daily Reading Goal: ${dailyGoal.toInt()} pages',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.brown,
-            ),
+            style: tt.titleMedium,
           ),
           Slider(
             value: dailyGoal,
@@ -170,7 +165,6 @@ class _SettingsPageState extends State<SettingsPage> {
             max: 100,
             divisions: 19,
             label: dailyGoal.toInt().toString(),
-            activeColor: Colors.amber,
             onChanged: (value) => setState(() => dailyGoal = value),
             onChangeEnd: (value) => settingsService.saveDailyGoal(value),
           ),
