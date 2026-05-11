@@ -85,7 +85,6 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
     final endPage = await _showFinishDialog();
     if (endPage == null) {
-      // User cancelled — resume ticker
       _startTicker();
       return;
     }
@@ -107,7 +106,6 @@ class _BookDetailPageState extends State<BookDetailPage> {
     await _service.addSession(session);
     await settingsService.clearActiveSession();
 
-    // Update book progress with new page
     setState(() {
       book.currentPage = endPage;
       pageController.text = endPage.toString();
@@ -126,10 +124,10 @@ class _BookDetailPageState extends State<BookDetailPage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Session saved! ${durationMinutes}m • $pagesRead pages read',
-          ),
-          backgroundColor: Colors.green,
+          content: Text('Session saved! ${durationMinutes}m · $pagesRead pages read'),
+          backgroundColor: const Color(0xFF1E8040),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
     }
@@ -209,7 +207,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Book updated.')),
+        SnackBar(
+          content: const Text('Progress saved.'),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
     }
   }
@@ -219,8 +221,29 @@ class _BookDetailPageState extends State<BookDetailPage> {
     await _service.updateBook(book);
   }
 
+  void _setRating(int rating) async {
+    setState(() => book.rating = rating);
+    await _service.updateBook(book);
+  }
+
+  Color _statusColor(BuildContext context) {
+    switch (book.status) {
+      case 'Reading':
+        return const Color(0xFF1A6FA8);
+      case 'Finished':
+      case 'Already Read':
+        return const Color(0xFF1E8040);
+      case 'Wishlist':
+        return const Color(0xFFB8740A);
+      default:
+        return Theme.of(context).colorScheme.primary;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     final percent = (book.progress * 100).toInt();
 
     return Scaffold(
@@ -229,9 +252,13 @@ class _BookDetailPageState extends State<BookDetailPage> {
         actions: [
           IconButton(
             onPressed: toggleFavorite,
-            icon: Icon(
-              book.favorite ? Icons.favorite : Icons.favorite_border,
-              color: Colors.pinkAccent,
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: Icon(
+                book.favorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                key: ValueKey(book.favorite),
+                color: book.favorite ? Colors.pink : cs.onSurface.withValues(alpha: 0.6),
+              ),
             ),
           ),
           IconButton(
@@ -248,22 +275,31 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 });
               }
             },
-            icon: const Icon(Icons.edit),
+            icon: const Icon(Icons.edit_outlined),
           ),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
         children: [
-          // Active session banner
-          if (_sessionActive) _buildSessionBanner(),
+          // Session banner
+          if (_sessionActive) ...[
+            const SizedBox(height: 12),
+            _buildSessionBanner(cs),
+          ],
 
-          // Book header card
+          const SizedBox(height: 16),
+
+          // Book header
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFE29A),
-              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                colors: [cs.primaryContainer, cs.secondaryContainer],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
             ),
             child: Column(
               children: [
@@ -272,84 +308,161 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   child: BookCoverWidget(
                     title: book.title,
                     coverUrl: book.coverUrl,
-                    width: 110,
-                    height: 155,
+                    width: 100,
+                    height: 142,
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 Text(
                   book.title,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.brown,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: tt.headlineSmall?.copyWith(color: cs.onPrimaryContainer),
                 ),
+                const SizedBox(height: 4),
                 Text(
                   book.author,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.brown, fontSize: 18),
+                  style: tt.bodyLarge?.copyWith(color: cs.onPrimaryContainer.withValues(alpha: 0.8)),
+                ),
+                const SizedBox(height: 14),
+                // Star rating
+                _StarRating(rating: book.rating, onRate: _setRating),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Info pills row
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _InfoPill(
+                  icon: Icons.category_outlined,
+                  label: book.genre,
+                  color: cs.tertiaryContainer,
+                  textColor: cs.onTertiaryContainer,
+                ),
+                const SizedBox(width: 8),
+                _InfoPill(
+                  icon: Icons.circle,
+                  label: book.status,
+                  color: _statusColor(context).withValues(alpha: 0.15),
+                  textColor: _statusColor(context),
+                ),
+                const SizedBox(width: 8),
+                _InfoPill(
+                  icon: Icons.import_contacts_outlined,
+                  label: '${book.totalPages} pages',
+                  color: cs.surfaceContainerHighest,
+                  textColor: cs.onSurface,
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 18),
 
-          _infoCard(Icons.category, 'Genre', book.genre),
-          _infoCard(Icons.info, 'Status', book.status),
-          _infoCard(Icons.star, 'Rating', '${book.rating} / 5',
-              iconColor: Colors.deepOrange),
+          const SizedBox(height: 20),
 
-          const SizedBox(height: 18),
-          Text(
-            'Reading Progress: $percent%',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.brown,
+          // Progress section
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: cs.outlineVariant),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Reading Progress', style: tt.titleMedium),
+                    Text(
+                      '$percent%',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: cs.primary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: book.progress,
+                    minHeight: 10,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${book.currentPage} of ${book.totalPages} pages',
+                  style: tt.bodyMedium,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: book.progress,
-            minHeight: 12,
-            color: Colors.amber,
-            backgroundColor: Colors.amberAccent,
-          ),
-          const SizedBox(height: 18),
 
-          TextField(
-            controller: pageController,
-            keyboardType: TextInputType.number,
-            style: const TextStyle(fontSize: 17),
-            decoration: const InputDecoration(labelText: 'Current Page'),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: noteController,
-            maxLines: 4,
-            style: const TextStyle(fontSize: 17),
-            decoration: const InputDecoration(labelText: 'Personal Note'),
-          ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
 
-          ElevatedButton.icon(
-            onPressed: updateProgress,
-            icon: const Icon(Icons.update),
-            label: const Text('Update Progress'),
+          // Page + Note inputs
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: cs.outlineVariant),
+            ),
+            child: Column(
+              children: [
+                TextField(
+                  controller: pageController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Current Page',
+                    prefixIcon: Icon(Icons.bookmark_outline_rounded),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: noteController,
+                  maxLines: 4,
+                  decoration: const InputDecoration(
+                    labelText: 'Personal Note',
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.only(bottom: 60),
+                      child: Icon(Icons.notes_rounded),
+                    ),
+                    alignLabelWithHint: true,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: updateProgress,
+                    icon: const Icon(Icons.save_outlined, size: 20),
+                    label: const Text('Save Progress'),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
+
+          const SizedBox(height: 16),
 
           // Reading session button
           if (!_sessionActive)
             OutlinedButton.icon(
               onPressed: _startSession,
-              icon: const Icon(Icons.play_circle_outline),
+              icon: const Icon(Icons.play_circle_outline_rounded),
               label: const Text('Start Reading Session'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.green,
-                side: const BorderSide(color: Colors.green),
+                foregroundColor: const Color(0xFF1E8040),
+                side: const BorderSide(color: Color(0xFF1E8040), width: 1.5),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             )
@@ -359,47 +472,45 @@ class _BookDetailPageState extends State<BookDetailPage> {
               icon: const Icon(Icons.stop_circle_outlined),
               label: const Text('Finish Reading Session'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF1E8040),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
-          const SizedBox(height: 24),
         ],
       ),
     );
   }
 
-  Widget _buildSessionBanner() {
+  Widget _buildSessionBanner(ColorScheme cs) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.green, width: 1.5),
+        color: const Color(0xFFDCF5E4),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF1E8040), width: 1.5),
       ),
       child: Row(
         children: [
-          const Icon(Icons.timer, color: Colors.green),
-          const SizedBox(width: 10),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E8040).withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.timer_rounded, color: Color(0xFF1E8040), size: 22),
+          ),
+          const SizedBox(width: 14),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Reading session in progress',
-                style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                ),
+                'Session in progress',
+                style: TextStyle(color: Color(0xFF1E8040), fontWeight: FontWeight.w600, fontSize: 13),
               ),
               Text(
                 _formatDuration(_elapsed),
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
+                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xFF1E8040), height: 1.1),
               ),
             ],
           ),
@@ -407,15 +518,59 @@ class _BookDetailPageState extends State<BookDetailPage> {
       ),
     );
   }
+}
 
-  Widget _infoCard(IconData icon, String title, String value,
-      {Color iconColor = Colors.brown}) {
-    return Card(
-      color: const Color(0xFFFFFBF0),
-      child: ListTile(
-        leading: Icon(icon, color: iconColor),
-        title: Text(title, style: const TextStyle(fontSize: 18)),
-        subtitle: Text(value, style: const TextStyle(fontSize: 16)),
+class _StarRating extends StatelessWidget {
+  final int rating;
+  final ValueChanged<int> onRate;
+
+  const _StarRating({required this.rating, required this.onRate});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(5, (i) {
+        final star = i + 1;
+        return GestureDetector(
+          onTap: () => onRate(star),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: Icon(
+              star <= rating ? Icons.star_rounded : Icons.star_outline_rounded,
+              color: star <= rating ? const Color(0xFFE8A020) : Colors.grey.shade400,
+              size: 30,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class _InfoPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color textColor;
+
+  const _InfoPill({required this.icon, required this.label, required this.color, required this.textColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: textColor),
+          const SizedBox(width: 5),
+          Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: textColor)),
+        ],
       ),
     );
   }
