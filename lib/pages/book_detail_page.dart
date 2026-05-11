@@ -6,6 +6,7 @@ import '../services/firestore_service.dart';
 import '../services/settings_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/book_cover_widget.dart';
+import '../l10n/app_localizations.dart';
 import 'edit_book_page.dart';
 import '../utils/page_transitions.dart';
 
@@ -89,6 +90,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       return;
     }
 
+    final l10n = AppLocalizations.of(context)!;
     final endedAt = DateTime.now();
     final durationMinutes = _elapsed.inMinutes;
     final pagesRead = (endPage - _sessionStartPage).clamp(0, book.totalPages);
@@ -125,7 +127,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Session saved! ${durationMinutes}m · $pagesRead pages read'),
+            content: Text(l10n.detailSessionSaved(durationMinutes, pagesRead)),
             backgroundColor: AppColors.completedGreen,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -136,7 +138,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Failed to save session. Please try again.'),
+            content: Text(l10n.detailErrSaveSession),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -147,28 +149,29 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   Future<int?> _showFinishDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: book.currentPage.toString());
     return showDialog<int>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Finish Reading Session'),
+        title: Text(l10n.detailFinishDialogTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Duration: ${_formatDuration(_elapsed)}',
+              l10n.detailDuration(_formatDuration(_elapsed)),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const Text('What page did you reach?'),
+            Text(l10n.detailWhatPage),
             const SizedBox(height: 8),
             TextField(
               controller: controller,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: 'Current Page',
+                labelText: l10n.fieldCurrentPage,
                 hintText: '1 – ${book.totalPages}',
               ),
               autofocus: true,
@@ -178,7 +181,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, null),
-            child: const Text('Cancel'),
+            child: Text(l10n.detailCancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -186,7 +189,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
               page = page.clamp(0, book.totalPages);
               Navigator.pop(ctx, page);
             },
-            child: const Text('Save Session'),
+            child: Text(l10n.detailSaveSession),
           ),
         ],
       ),
@@ -201,6 +204,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   void updateProgress() async {
+    final l10n = AppLocalizations.of(context)!;
     final original = book.copyWith();
     int newPage = int.tryParse(pageController.text) ?? book.currentPage;
     newPage = newPage.clamp(0, book.totalPages);
@@ -222,7 +226,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Progress saved.'),
+            content: Text(l10n.detailProgressSaved),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -237,7 +241,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Failed to save progress. Please try again.'),
+            content: Text(l10n.detailErrProgress),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -252,12 +256,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
     try {
       await firestoreService.updateBook(book);
     } catch (e) {
-      // Revert optimistic update on failure
       setState(() => book.favorite = !book.favorite);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Failed to update favorite.'),
+            content: Text(AppLocalizations.of(context)!.detailErrFavorite),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -277,7 +280,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Failed to save rating.'),
+            content: Text(AppLocalizations.of(context)!.detailErrRating),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -291,11 +294,12 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     final percent = (book.progress * 100).toInt();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Book Detail'),
+        title: Text(l10n.detailTitle),
         actions: [
           IconButton(
             onPressed: toggleFavorite,
@@ -332,7 +336,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
           // Session banner
           if (_sessionActive) ...[
             const SizedBox(height: 12),
-            _buildSessionBanner(cs),
+            _buildSessionBanner(cs, l10n),
           ],
 
           const SizedBox(height: 16),
@@ -401,7 +405,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 const SizedBox(width: 8),
                 _InfoPill(
                   icon: Icons.import_contacts_outlined,
-                  label: '${book.totalPages} pages',
+                  label: l10n.detailPages(book.totalPages),
                   color: cs.surfaceContainerHighest,
                   textColor: cs.onSurface,
                 ),
@@ -425,7 +429,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Reading Progress', style: tt.titleMedium),
+                    Text(l10n.detailReadingProgress, style: tt.titleMedium),
                     Text(
                       '$percent%',
                       style: TextStyle(
@@ -446,7 +450,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '${book.currentPage} of ${book.totalPages} pages',
+                  l10n.pagesProgress(book.currentPage, book.totalPages),
                   style: tt.bodyMedium,
                 ),
               ],
@@ -468,18 +472,18 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 TextField(
                   controller: pageController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Current Page',
-                    prefixIcon: Icon(Icons.bookmark_outline_rounded),
+                  decoration: InputDecoration(
+                    labelText: l10n.fieldCurrentPage,
+                    prefixIcon: const Icon(Icons.bookmark_outline_rounded),
                   ),
                 ),
                 const SizedBox(height: 14),
                 TextField(
                   controller: noteController,
                   maxLines: 4,
-                  decoration: const InputDecoration(
-                    labelText: 'Personal Note',
-                    prefixIcon: Padding(
+                  decoration: InputDecoration(
+                    labelText: l10n.fieldNote,
+                    prefixIcon: const Padding(
                       padding: EdgeInsets.only(bottom: 60),
                       child: Icon(Icons.notes_rounded),
                     ),
@@ -492,7 +496,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   child: ElevatedButton.icon(
                     onPressed: updateProgress,
                     icon: const Icon(Icons.save_outlined, size: 20),
-                    label: const Text('Save Progress'),
+                    label: Text(l10n.detailSaveProgress),
                   ),
                 ),
               ],
@@ -506,7 +510,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
             OutlinedButton.icon(
               onPressed: _startSession,
               icon: const Icon(Icons.play_circle_outline_rounded),
-              label: const Text('Start Reading Session'),
+              label: Text(l10n.detailStartSession),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.completedGreen,
                 side: const BorderSide(color: AppColors.completedGreen, width: 1.5),
@@ -517,7 +521,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
             ElevatedButton.icon(
               onPressed: _finishSession,
               icon: const Icon(Icons.stop_circle_outlined),
-              label: const Text('Finish Reading Session'),
+              label: Text(l10n.detailFinishSession),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.completedGreen,
                 foregroundColor: Colors.white,
@@ -529,7 +533,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
     );
   }
 
-  Widget _buildSessionBanner(ColorScheme cs) {
+  Widget _buildSessionBanner(ColorScheme cs, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
@@ -551,9 +555,9 @@ class _BookDetailPageState extends State<BookDetailPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Session in progress',
-                style: TextStyle(color: AppColors.completedGreen, fontWeight: FontWeight.w600, fontSize: 13),
+              Text(
+                l10n.detailSessionInProgress,
+                style: const TextStyle(color: AppColors.completedGreen, fontWeight: FontWeight.w600, fontSize: 13),
               ),
               Text(
                 _formatDuration(_elapsed),

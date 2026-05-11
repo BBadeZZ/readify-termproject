@@ -1,0 +1,267 @@
+{
+  "@@locale": "en",
+
+  "navHome": "Home",
+  "navLibrary": "Library",
+  "navAnalytics": "Analytics",
+  "navSettings": "Settings",
+  "navSuggest": "Suggest",
+  "navProfile": "Profile",
+  "navAddBook": "Add Book",
+  "navRecommendations": "Recommendations",
+  "navLogout": "Logout",
+
+  "statusReading": "Reading",
+  "statusWishlist": "Wishlist",
+  "statusAlreadyRead": "Already Read",
+
+  "welcomeSubtitle": "Smart Book Tracking\nand Reading Analytics App",
+  "welcomeTagline": "Cute, cozy and smart reading journal for book lovers 💛",
+  "welcomeLogin": "Login",
+  "welcomeRegister": "Register",
+
+  "loginWelcomeBack": "Welcome Back!",
+  "loginSubtitle": "Login to continue reading",
+  "loginEmail": "Email",
+  "loginPassword": "Password",
+  "loginButton": "Login",
+  "loginNoAccount": "Don't have an account? ",
+  "loginRegisterLink": "Register",
+  "loginErrEmailEmpty": "Please enter your email.",
+  "loginErrEmailInvalid": "Please enter a valid email.",
+  "loginErrPasswordEmpty": "Please enter your password.",
+  "loginErrUserNotFound": "No account found with this email.",
+  "loginErrWrongPassword": "Incorrect email or password.",
+  "loginErrInvalidEmail": "Please enter a valid email address.",
+  "loginErrTooManyRequests": "Too many attempts. Please try again later.",
+  "loginErrGeneral": "Login failed. Please try again.",
+
+  "registerCreateAccount": "Create Account",
+  "registerSubtitle": "Start your reading journey",
+  "registerFullName": "Full Name",
+  "registerEmail": "Email",
+  "registerPassword": "Password",
+  "registerConfirmPassword": "Confirm Password",
+  "registerButton": "Register",
+  "registerHaveAccount": "Already have an account? ",
+  "registerLoginLink": "Login",
+  "registerErrNameEmpty": "Please enter your name.",
+  "registerErrEmailEmpty": "Please enter your email.",
+  "registerErrEmailInvalid": "Please enter a valid email.",
+  "registerErrPasswordEmpty": "Please enter a password.",
+  "registerErrPasswordShort": "Password must be at least 6 characters.",
+  "registerErrConfirmEmpty": "Please confirm your password.",
+  "registerErrPasswordMismatch": "Passwords do not match.",
+  "registerErrEmailInUse": "This email is already registered.",
+  "registerErrWeakPassword": "Password must be at least 6 characters.",
+  "registerErrGeneral": "Registration failed. Please try again.",
+
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingGetStarted": "Get Started",
+  "onboarding1Title": "Welcome to Readify",
+  "onboarding1Desc": "Your cozy digital reading journal.\nAdd every book you read and never lose track again.",
+  "onboarding2Title": "Track Reading Sessions",
+  "onboarding2Desc": "Start a session when you sit down to read.\nSee your daily reading time and weekly progress in Analytics.",
+  "onboarding3Title": "Discover Books Instantly",
+  "onboarding3Desc": "Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.",
+
+  "homeGreetMorning": "Good morning",
+  "homeGreetAfternoon": "Good afternoon",
+  "homeGreetEvening": "Good evening",
+  "homeReader": "Reader",
+  "homeSubtitle": "Here's your reading overview",
+  "homeTotalBooks": "Total Books",
+  "homeReading": "Reading",
+  "homeAlreadyRead": "Already Read",
+  "homePagesRead": "Pages Read",
+  "homeCurrentlyReading": "Currently Reading",
+  "homeSeeAll": "See all",
+  "homeQuickActions": "Quick Actions",
+  "homeMyLibrary": "My Library",
+  "homeSuggestions": "Suggestions",
+  "homeAddBook": "Add Book",
+  "homeBooksAlreadyRead": "{count} books already read",
+  "@homeBooksAlreadyRead": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "homeViewHistory": "Tap to view your reading history",
+
+  "libraryTitle": "My Library",
+  "librarySearchHint": "Search title, author, genre…",
+  "libraryFilterAll": "All",
+  "libraryFilterFavorites": "Favorites",
+  "librarySortDateAdded": "Date Added",
+  "librarySortTitle": "Title",
+  "librarySortAuthor": "Author",
+  "librarySortProgress": "Progress",
+  "libraryEmptyFavorites": "No favorites yet.\nTap the heart icon on any book.",
+  "libraryEmptyReading": "Not reading anything right now.",
+  "libraryEmptyWishlist": "Your wishlist is empty.",
+  "libraryEmptyAlreadyRead": "No completed books yet.",
+  "libraryEmptyDefault": "No books found. Add one!",
+  "libraryNoResults": "No results for \"{query}\"",
+  "@libraryNoResults": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "libraryDelete": "Delete",
+  "libraryDeleted": "\"{title}\" deleted.",
+  "@libraryDeleted": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "libraryUndo": "Undo",
+  "libraryErrFavorite": "Failed to update favorite.",
+  "libraryErrDelete": "Failed to delete book.",
+  "libraryErrRestore": "Could not restore book.",
+  "librarySomethingWrong": "Something went wrong.",
+
+  "analyticsTitle": "Analytics",
+  "analyticsReadingSummary": "Reading Summary",
+  "analyticsOverallProgress": "Overall Progress",
+  "analyticsTotalBooks": "Total Books",
+  "analyticsReading": "Reading",
+  "analyticsAlreadyRead": "Already Read",
+  "analyticsWishlist": "Wishlist",
+  "analyticsFavorites": "Favorites",
+  "analyticsPagesRead": "Pages Read",
+  "analyticsAvgRating": "Avg Rating",
+  "analyticsReadingSessions": "Reading Sessions",
+  "analyticsNoSessions": "No sessions yet.\nStart a reading session!",
+  "analyticsRecentSessions": "Recent Sessions",
+  "analyticsSessions": "Sessions",
+  "analyticsTotalTime": "Total Time",
+  "analyticsPagesThisWeek": "Pages This Week",
+  "analyticsAvgSession": "Avg Session",
+
+  "profileTitle": "My Profile",
+  "profileFavoriteGenre": "Favorite genre: {genre}",
+  "@profileFavoriteGenre": {
+    "placeholders": {
+      "genre": { "type": "String" }
+    }
+  },
+  "profileLibrary": "Library",
+  "profileActivity": "Reading Activity",
+  "profileTotalBooks": "Total Books",
+  "profileFinished": "Finished",
+  "profileReading": "Reading",
+  "profileWishlist": "Wishlist",
+  "profileFavorites": "Favorites",
+  "profilePagesRead": "Pages Read",
+  "profileSessions": "Sessions",
+  "profileTotalTime": "Total Time",
+  "profileAvgSession": "Avg Session",
+  "profilePagesInSessions": "Pages in Sessions",
+  "profileNoSessions": "No reading sessions yet.\nOpen a book and start reading!",
+
+  "settingsTitle": "Settings",
+  "settingsTheme": "Theme Selection",
+  "settingsSoftGold": "Soft Gold Theme",
+  "settingsSoftPink": "Soft Pink Theme",
+  "settingsDailyReminder": "Daily Reading Reminder",
+  "settingsDailyReminderSub": "Receive a daily push notification",
+  "settingsReminderTime": "Reminder Time",
+  "settingsHighlightFavorites": "Highlight Favorite Books",
+  "settingsDailyGoal": "Daily Reading Goal: {count} pages",
+  "@settingsDailyGoal": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "settingsLanguage": "Language",
+
+  "addBookTitle": "Add Book",
+  "addBookSearchCardTitle": "Search to auto-fill",
+  "addBookSearchCardSub": "Find by title or author — fills form automatically",
+  "fieldBookTitle": "Book Title",
+  "fieldAuthor": "Author",
+  "fieldCoverUrlOptional": "Cover URL (optional)",
+  "fieldCoverUrl": "Cover URL",
+  "fieldTotalPages": "Total Pages",
+  "fieldCurrentPage": "Current Page",
+  "fieldNote": "Personal Note",
+  "fieldFavorite": "Add to favorites",
+  "fieldFavoriteShort": "Favorite",
+  "fieldRating": "Rating: {value} / 5",
+  "@fieldRating": {
+    "placeholders": {
+      "value": { "type": "int" }
+    }
+  },
+  "fieldReadingStatus": "Reading Status",
+  "addBookSave": "Save Book",
+  "addBookSaving": "Saving…",
+  "addBookSuccess": "Book added successfully.",
+  "addBookFailed": "Failed to save book. Please try again.",
+  "addBookAutoFill": "\"{title}\" filled in automatically.",
+  "@addBookAutoFill": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "addBookPartialFill": "\"{title}\" partially filled. Please enter {missing} manually.",
+  "@addBookPartialFill": {
+    "placeholders": {
+      "title": { "type": "String" },
+      "missing": { "type": "String" }
+    }
+  },
+  "editBookTitle": "Edit Book",
+  "editBookUpdate": "Update Book",
+  "editBookSaving": "Saving…",
+  "editBookSuccess": "Book updated successfully.",
+  "editBookFailed": "Failed to update book. Please try again.",
+  "searchHintSheet": "Search by title or author...",
+  "searchNoResults": "No results found.",
+  "validatorTitleRequired": "Title is required",
+  "validatorAuthorRequired": "Author is required",
+  "validatorPagesRequired": "Enter a valid page count",
+
+  "detailTitle": "Book Detail",
+  "detailReadingProgress": "Reading Progress",
+  "pagesProgress": "{current} of {total} pages",
+  "@pagesProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "detailPages": "{count} pages",
+  "@detailPages": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "detailSaveProgress": "Save Progress",
+  "detailStartSession": "Start Reading Session",
+  "detailFinishSession": "Finish Reading Session",
+  "detailSessionInProgress": "Session in progress",
+  "detailFinishDialogTitle": "Finish Reading Session",
+  "detailDuration": "Duration: {time}",
+  "@detailDuration": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "detailWhatPage": "What page did you reach?",
+  "detailSaveSession": "Save Session",
+  "detailCancel": "Cancel",
+  "detailSessionSaved": "Session saved! {duration}m · {pages} pages read",
+  "@detailSessionSaved": {
+    "placeholders": {
+      "duration": { "type": "int" },
+      "pages": { "type": "int" }
+    }
+  },
+  "detailErrSaveSession": "Failed to save session. Please try again.",
+  "detailProgressSaved": "Progress saved.",
+  "detailErrProgress": "Failed to save progress. Please try again.",
+  "detailErrFavorite": "Failed to update favorite.",
+  "detailErrRating": "Failed to save rating."
+}

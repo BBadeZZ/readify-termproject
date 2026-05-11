@@ -8,6 +8,7 @@ import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/stat_card.dart';
+import '../l10n/app_localizations.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -76,15 +77,16 @@ class _ProfilePageState extends State<ProfilePage> {
     final avgSession = totalSessions == 0 ? 0 : totalMinutes ~/ totalSessions;
     final sessionPages = _sessions.fold(0, (s, e) => s + e.pagesRead);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Profile'),
-      appBar: AppBar(title: const Text('My Profile')),
+      appBar: AppBar(title: Text(l10n.profileTitle)),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                // Profile card
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
                   decoration: BoxDecoration(
@@ -127,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               const Icon(Icons.favorite, size: 16, color: Colors.pinkAccent),
                               const SizedBox(width: 6),
                               Text(
-                                'Favorite genre: $favoriteGenre',
+                                l10n.profileFavoriteGenre(favoriteGenre),
                                 style: tt.bodySmall?.copyWith(
                                   color: cs.onPrimaryContainer,
                                   fontWeight: FontWeight.bold,
@@ -142,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 24),
 
-                Text('Library', style: tt.titleLarge),
+                Text(l10n.profileLibrary, style: tt.titleLarge),
                 const SizedBox(height: 10),
                 GridView.count(
                   shrinkWrap: true,
@@ -152,17 +154,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   crossAxisSpacing: 10,
                   childAspectRatio: 1.6,
                   children: [
-                    StatCard(label: 'Total Books', value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
-                    StatCard(label: 'Finished', value: '$finished', icon: Icons.check_circle_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
-                    StatCard(label: 'Reading', value: '$reading', icon: Icons.auto_stories_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
-                    StatCard(label: 'Wishlist', value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
-                    StatCard(label: 'Favorites', value: '$favorites', icon: Icons.favorite_rounded, color: AppColors.favoritesContainer, iconColor: Colors.pink),
-                    StatCard(label: 'Pages Read', value: '$totalPages', icon: Icons.menu_book_rounded, color: AppColors.pagesTealContainer, iconColor: AppColors.pagesTeal),
+                    StatCard(label: l10n.profileTotalBooks, value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
+                    StatCard(label: l10n.profileFinished, value: '$finished', icon: Icons.check_circle_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
+                    StatCard(label: l10n.profileReading, value: '$reading', icon: Icons.auto_stories_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
+                    StatCard(label: l10n.profileWishlist, value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
+                    StatCard(label: l10n.profileFavorites, value: '$favorites', icon: Icons.favorite_rounded, color: AppColors.favoritesContainer, iconColor: Colors.pink),
+                    StatCard(label: l10n.profilePagesRead, value: '$totalPages', icon: Icons.menu_book_rounded, color: AppColors.pagesTealContainer, iconColor: AppColors.pagesTeal),
                   ],
                 ),
 
                 const SizedBox(height: 24),
-                Text('Reading Activity', style: tt.titleLarge),
+                Text(l10n.profileActivity, style: tt.titleLarge),
                 const SizedBox(height: 10),
 
                 if (totalSessions == 0)
@@ -177,10 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         Icon(Icons.timer_off_outlined, color: cs.outline, size: 28),
                         const SizedBox(width: 12),
-                        Text(
-                          'No reading sessions yet.\nOpen a book and start reading!',
-                          style: tt.bodyMedium,
-                        ),
+                        Text(l10n.profileNoSessions, style: tt.bodyMedium),
                       ],
                     ),
                   )
@@ -193,16 +192,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     crossAxisSpacing: 10,
                     childAspectRatio: 1.6,
                     children: [
-                      StatCard(label: 'Sessions', value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
+                      StatCard(label: l10n.profileSessions, value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
                       StatCard(
-                        label: 'Total Time',
+                        label: l10n.profileTotalTime,
                         value: totalHours > 0 ? '${totalHours}h ${remMin}m' : '${totalMinutes}m',
                         icon: Icons.schedule_rounded,
                         color: AppColors.pagesTealContainer,
                         iconColor: AppColors.pagesTeal,
                       ),
-                      StatCard(label: 'Avg Session', value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
-                      StatCard(label: 'Pages in Sessions', value: '$sessionPages', icon: Icons.trending_up_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
+                      StatCard(label: l10n.profileAvgSession, value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
+                      StatCard(label: l10n.profilePagesInSessions, value: '$sessionPages', icon: Icons.trending_up_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
                     ],
                   ),
                 const SizedBox(height: 24),

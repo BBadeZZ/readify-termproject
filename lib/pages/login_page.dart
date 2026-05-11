@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -45,18 +46,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   String _friendlyError(String error) {
-    if (error.contains('user-not-found')) return 'No account found with this email.';
+    final l10n = AppLocalizations.of(context)!;
+    if (error.contains('user-not-found')) return l10n.loginErrUserNotFound;
     if (error.contains('wrong-password') || error.contains('invalid-credential')) {
-      return 'Incorrect email or password.';
+      return l10n.loginErrWrongPassword;
     }
-    if (error.contains('invalid-email')) return 'Please enter a valid email address.';
-    if (error.contains('too-many-requests')) return 'Too many attempts. Please try again later.';
-    return 'Login failed. Please try again.';
+    if (error.contains('invalid-email')) return l10n.loginErrInvalidEmail;
+    if (error.contains('too-many-requests')) return l10n.loginErrTooManyRequests;
+    return l10n.loginErrGeneral;
   }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: cs.primaryContainer,
       body: Center(
@@ -84,22 +87,22 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Welcome Back!',
+                    l10n.loginWelcomeBack,
                     style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: cs.primary),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Login to continue reading',
+                    l10n.loginSubtitle,
                     style: TextStyle(fontSize: 15, color: cs.primary),
                   ),
                   const SizedBox(height: 28),
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: _inputDecoration('Email', Icons.email_outlined),
+                    decoration: _inputDecoration(l10n.loginEmail, Icons.email_outlined),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Please enter your email.';
-                      if (!v.contains('@')) return 'Please enter a valid email.';
+                      if (v == null || v.trim().isEmpty) return l10n.loginErrEmailEmpty;
+                      if (!v.contains('@')) return l10n.loginErrEmailInvalid;
                       return null;
                     },
                   ),
@@ -107,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    decoration: _inputDecoration('Password', Icons.lock_outline).copyWith(
+                    decoration: _inputDecoration(l10n.loginPassword, Icons.lock_outline).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_off : Icons.visibility,
@@ -117,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Please enter your password.';
+                      if (v == null || v.isEmpty) return l10n.loginErrPasswordEmpty;
                       return null;
                     },
                   ),
@@ -136,18 +139,18 @@ class _LoginPageState extends State<LoginPage> {
                               width: 20,
                               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                             )
-                          : const Text('Login', style: TextStyle(fontSize: 16)),
+                          : Text(l10n.loginButton, style: const TextStyle(fontSize: 16)),
                     ),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account? ", style: TextStyle(color: cs.primary)),
+                      Text(l10n.loginNoAccount, style: TextStyle(color: cs.primary)),
                       GestureDetector(
                         onTap: () => Navigator.pushReplacementNamed(context, '/register'),
                         child: Text(
-                          'Register',
+                          l10n.loginRegisterLink,
                           style: TextStyle(
                             color: cs.primary,
                             fontWeight: FontWeight.bold,

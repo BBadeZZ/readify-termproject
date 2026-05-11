@@ -7,22 +7,23 @@ import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
 import '../widgets/stat_card.dart';
 import '../theme/app_colors.dart';
+import '../l10n/app_localizations.dart';
 import 'book_detail_page.dart';
 import '../utils/page_transitions.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  String _greeting() {
+  String _greeting(AppLocalizations l10n) {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return l10n.homeGreetMorning;
+    if (hour < 17) return l10n.homeGreetAfternoon;
+    return l10n.homeGreetEvening;
   }
 
-  String _firstName() {
+  String _firstName(AppLocalizations l10n) {
     final name = authService.currentUser?.displayName ?? '';
-    if (name.trim().isEmpty) return 'Reader';
+    if (name.trim().isEmpty) return l10n.homeReader;
     return name.split(' ').first;
   }
 
@@ -30,6 +31,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Home'),
@@ -46,7 +48,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             onPressed: () => Navigator.pushNamed(context, '/add'),
             icon: Icon(Icons.add_circle_outline_rounded, color: cs.primary, size: 26),
-            tooltip: 'Add Book',
+            tooltip: l10n.homeAddBook,
           ),
         ],
       ),
@@ -63,25 +65,22 @@ class HomePage extends StatelessWidget {
           final alreadyRead = books.where((b) => b.status == 'Already Read').length;
           final pagesRead = books.fold(0, (sum, b) => sum + b.currentPage);
 
-          // Sort currently reading by most progress
           reading.sort((a, b) => b.progress.compareTo(a.progress));
 
           return ListView(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
             children: [
-              // Greeting
               Text(
-                '${_greeting()}, ${_firstName()} 👋',
+                '${_greeting(l10n)}, ${_firstName(l10n)} 👋',
                 style: tt.headlineMedium,
               ),
               const SizedBox(height: 4),
               Text(
-                'Here\'s your reading overview',
+                l10n.homeSubtitle,
                 style: tt.bodyMedium,
               ),
               const SizedBox(height: 24),
 
-              // Stats grid
               GridView.count(
                 crossAxisCount: 2,
                 shrinkWrap: true,
@@ -91,7 +90,7 @@ class HomePage extends StatelessWidget {
                 childAspectRatio: 1.55,
                 children: [
                   StatCard(
-                    label: 'Total Books',
+                    label: l10n.homeTotalBooks,
                     value: '$totalBooks',
                     icon: Icons.book_rounded,
                     color: cs.primaryContainer,
@@ -99,7 +98,7 @@ class HomePage extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'All'}),
                   ),
                   StatCard(
-                    label: 'Reading',
+                    label: l10n.homeReading,
                     value: '${reading.length}',
                     icon: Icons.auto_stories_rounded,
                     color: AppColors.readingBlueContainer,
@@ -107,7 +106,7 @@ class HomePage extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
                   ),
                   StatCard(
-                    label: 'Already Read',
+                    label: l10n.homeAlreadyRead,
                     value: '$alreadyRead',
                     icon: Icons.check_circle_rounded,
                     color: AppColors.completedGreenContainer,
@@ -115,7 +114,7 @@ class HomePage extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Already Read'}),
                   ),
                   StatCard(
-                    label: 'Pages Read',
+                    label: l10n.homePagesRead,
                     value: '$pagesRead',
                     icon: Icons.menu_book_rounded,
                     color: cs.secondaryContainer,
@@ -127,15 +126,14 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 28),
 
-              // Currently Reading section
               if (reading.isNotEmpty) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Currently Reading', style: tt.titleLarge),
+                    Text(l10n.homeCurrentlyReading, style: tt.titleLarge),
                     TextButton(
                       onPressed: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
-                      child: Text('See all', style: TextStyle(color: cs.primary)),
+                      child: Text(l10n.homeSeeAll, style: TextStyle(color: cs.primary)),
                     ),
                   ],
                 ),
@@ -161,15 +159,14 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 28),
               ],
 
-              // Quick actions
-              Text('Quick Actions', style: tt.titleLarge),
+              Text(l10n.homeQuickActions, style: tt.titleLarge),
               const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
                     child: _ActionButton(
                       icon: Icons.add_rounded,
-                      label: 'Add Book',
+                      label: l10n.homeAddBook,
                       color: cs.primary,
                       onTap: () => Navigator.pushNamed(context, '/add'),
                     ),
@@ -178,7 +175,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: _ActionButton(
                       icon: Icons.library_books_rounded,
-                      label: 'My Library',
+                      label: l10n.homeMyLibrary,
                       color: cs.secondary,
                       onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'All'}),
                     ),
@@ -191,7 +188,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: _ActionButton(
                       icon: Icons.auto_awesome_rounded,
-                      label: 'Suggestions',
+                      label: l10n.homeSuggestions,
                       color: AppColors.suggestionsPurple,
                       onTap: () => Navigator.pushNamed(context, '/recommendations'),
                     ),
@@ -200,7 +197,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: _ActionButton(
                       icon: Icons.bar_chart_rounded,
-                      label: 'Analytics',
+                      label: l10n.navAnalytics,
                       color: AppColors.readingBlue,
                       onTap: () => Navigator.pushNamed(context, '/analytics'),
                     ),
@@ -360,8 +357,8 @@ class _AlreadyReadBanner extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$count books already read', style: TextStyle(fontWeight: FontWeight.bold, color: cs.onPrimaryContainer, fontSize: 15)),
-                  Text('Tap to view your reading history', style: TextStyle(fontSize: 12, color: cs.onPrimaryContainer.withValues(alpha: 0.7))),
+                  Text(AppLocalizations.of(context)!.homeBooksAlreadyRead(count), style: TextStyle(fontWeight: FontWeight.bold, color: cs.onPrimaryContainer, fontSize: 15)),
+                  Text(AppLocalizations.of(context)!.homeViewHistory, style: TextStyle(fontSize: 12, color: cs.onPrimaryContainer.withValues(alpha: 0.7))),
                 ],
               ),
             ),

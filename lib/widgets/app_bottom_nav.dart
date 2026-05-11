@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 class AppBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -23,34 +24,35 @@ class AppBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: (index) => _navigate(context, index),
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home_rounded),
-          label: 'Home',
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home_rounded),
+          label: l10n.navHome,
         ),
         NavigationDestination(
-          icon: Icon(Icons.library_books_outlined),
-          selectedIcon: Icon(Icons.library_books_rounded),
-          label: 'Library',
+          icon: const Icon(Icons.library_books_outlined),
+          selectedIcon: const Icon(Icons.library_books_rounded),
+          label: l10n.navLibrary,
         ),
         NavigationDestination(
-          icon: Icon(Icons.auto_awesome_outlined),
-          selectedIcon: Icon(Icons.auto_awesome),
-          label: 'Suggest',
+          icon: const Icon(Icons.auto_awesome_outlined),
+          selectedIcon: const Icon(Icons.auto_awesome),
+          label: l10n.navSuggest,
         ),
         NavigationDestination(
-          icon: Icon(Icons.bar_chart_outlined),
-          selectedIcon: Icon(Icons.bar_chart_rounded),
-          label: 'Analytics',
+          icon: const Icon(Icons.bar_chart_outlined),
+          selectedIcon: const Icon(Icons.bar_chart_rounded),
+          label: l10n.navAnalytics,
         ),
         NavigationDestination(
-          icon: Icon(Icons.settings_outlined),
-          selectedIcon: Icon(Icons.settings_rounded),
-          label: 'Settings',
+          icon: const Icon(Icons.settings_outlined),
+          selectedIcon: const Icon(Icons.settings_rounded),
+          label: l10n.navSettings,
         ),
       ],
     );

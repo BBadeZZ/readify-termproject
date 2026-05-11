@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/firestore_service.dart';
+import '../l10n/app_localizations.dart';
 
 class EditBookPage extends StatefulWidget {
   final Book book;
@@ -82,6 +83,7 @@ class _EditBookPageState extends State<EditBookPage> {
   void updateBook() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final l10n = AppLocalizations.of(context)!;
     String title = titleController.text.trim();
     String author = authorController.text.trim();
     int totalPages = int.tryParse(totalPagesController.text) ?? 0;
@@ -127,7 +129,7 @@ class _EditBookPageState extends State<EditBookPage> {
       await firestoreService.updateBook(updatedBook);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Book updated successfully.')),
+          SnackBar(content: Text(l10n.editBookSuccess)),
         );
         Navigator.pop(context, updatedBook);
       }
@@ -135,7 +137,7 @@ class _EditBookPageState extends State<EditBookPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Failed to update book. Please try again.'),
+            content: Text(l10n.editBookFailed),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -173,13 +175,6 @@ class _EditBookPageState extends State<EditBookPage> {
     );
   }
 
-  Widget statusRadio(String title, String value) {
-    return RadioListTile<String>(
-      title: Text(title, style: const TextStyle(fontSize: 17)),
-      value: value,
-    );
-  }
-
   void _onStatusChanged(String? newValue) {
     if (newValue == null) return;
     setState(() {
@@ -199,35 +194,37 @@ class _EditBookPageState extends State<EditBookPage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Book'),
+        title: Text(l10n.editBookTitle),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          inputField(context, 'Book Title', titleController, Icons.title,
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Title is required' : null),
-          inputField(context, 'Author', authorController, Icons.person,
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Author is required' : null),
-          inputField(context, 'Cover URL', coverUrlController, Icons.image),
+          inputField(context, l10n.fieldBookTitle, titleController, Icons.title,
+              validator: (v) => (v == null || v.trim().isEmpty) ? l10n.validatorTitleRequired : null),
+          inputField(context, l10n.fieldAuthor, authorController, Icons.person,
+              validator: (v) => (v == null || v.trim().isEmpty) ? l10n.validatorAuthorRequired : null),
+          inputField(context, l10n.fieldCoverUrl, coverUrlController, Icons.image),
           inputField(
             context,
-            'Total Pages',
+            l10n.fieldTotalPages,
             totalPagesController,
             Icons.pages,
             keyboardType: TextInputType.number,
             validator: (v) {
               final n = int.tryParse(v ?? '');
-              if (n == null || n <= 0) return 'Enter a valid page count';
+              if (n == null || n <= 0) return l10n.validatorPagesRequired;
               return null;
             },
           ),
           inputField(
             context,
-            'Current Page',
+            l10n.fieldCurrentPage,
             currentPageController,
             Icons.bookmark,
             keyboardType: TextInputType.number,
@@ -259,7 +256,7 @@ class _EditBookPageState extends State<EditBookPage> {
             ),
           ),
           Text(
-            'Reading Status',
+            l10n.fieldReadingStatus,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -271,15 +268,24 @@ class _EditBookPageState extends State<EditBookPage> {
             onChanged: _onStatusChanged,
             child: Column(
               children: [
-                statusRadio('Reading', 'Reading'),
-                statusRadio('Wishlist', 'Wishlist'),
-                statusRadio('Already Read', 'Already Read'),
+                RadioListTile<String>(
+                  title: Text(l10n.statusReading, style: const TextStyle(fontSize: 17)),
+                  value: 'Reading',
+                ),
+                RadioListTile<String>(
+                  title: Text(l10n.statusWishlist, style: const TextStyle(fontSize: 17)),
+                  value: 'Wishlist',
+                ),
+                RadioListTile<String>(
+                  title: Text(l10n.statusAlreadyRead, style: const TextStyle(fontSize: 17)),
+                  value: 'Already Read',
+                ),
               ],
             ),
           ),
           const SizedBox(height: 10),
           Text(
-            'Rating: $rating / 5',
+            l10n.fieldRating(rating),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -298,7 +304,7 @@ class _EditBookPageState extends State<EditBookPage> {
             },
           ),
           CheckboxListTile(
-            title: const Text('Favorite'),
+            title: Text(l10n.fieldFavoriteShort),
             value: favorite,
             onChanged: (value) {
               setState(() {
@@ -308,7 +314,7 @@ class _EditBookPageState extends State<EditBookPage> {
           ),
           inputField(
             context,
-            'Personal Note',
+            l10n.fieldNote,
             noteController,
             Icons.note,
             maxLines: 3,
@@ -322,7 +328,7 @@ class _EditBookPageState extends State<EditBookPage> {
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
                 : const Icon(Icons.edit),
-            label: Text(_saving ? 'Saving…' : 'Update Book'),
+            label: Text(_saving ? l10n.editBookSaving : l10n.editBookUpdate),
           ),
         ],
       ),

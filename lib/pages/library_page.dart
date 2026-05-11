@@ -6,6 +6,7 @@ import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
+import '../l10n/app_localizations.dart';
 import 'book_detail_page.dart';
 import '../utils/page_transitions.dart';
 
@@ -79,14 +80,35 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
 
-  String _emptyMessage() {
-    if (searchText.isNotEmpty) return 'No results for "$searchText"';
+  String _emptyMessage(AppLocalizations l10n) {
+    if (searchText.isNotEmpty) return l10n.libraryNoResults(searchText);
     switch (filter) {
-      case 'Favorites': return 'No favorites yet.\nTap the heart icon on any book.';
-      case 'Reading': return 'Not reading anything right now.';
-      case 'Wishlist': return 'Your wishlist is empty.';
-      case 'Already Read': return 'No completed books yet.';
-      default: return 'No books found. Add one!';
+      case 'Favorites': return l10n.libraryEmptyFavorites;
+      case 'Reading': return l10n.libraryEmptyReading;
+      case 'Wishlist': return l10n.libraryEmptyWishlist;
+      case 'Already Read': return l10n.libraryEmptyAlreadyRead;
+      default: return l10n.libraryEmptyDefault;
+    }
+  }
+
+  String _filterLabel(String f, AppLocalizations l10n) {
+    switch (f) {
+      case 'All': return l10n.libraryFilterAll;
+      case 'Reading': return l10n.statusReading;
+      case 'Wishlist': return l10n.statusWishlist;
+      case 'Already Read': return l10n.statusAlreadyRead;
+      case 'Favorites': return l10n.libraryFilterFavorites;
+      default: return f;
+    }
+  }
+
+  String _sortLabel(String s, AppLocalizations l10n) {
+    switch (s) {
+      case 'Date Added': return l10n.librarySortDateAdded;
+      case 'Title': return l10n.librarySortTitle;
+      case 'Author': return l10n.librarySortAuthor;
+      case 'Progress': return l10n.librarySortProgress;
+      default: return s;
     }
   }
 
@@ -104,14 +126,15 @@ class _LibraryPageState extends State<LibraryPage> {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Library'),
       appBar: AppBar(
-        title: const Text('My Library'),
+        title: Text(l10n.libraryTitle),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort_rounded),
-            tooltip: 'Sort',
             initialValue: sortBy,
             onSelected: (v) => setState(() => sortBy = v),
             itemBuilder: (_) => _sortOptions.map((o) => PopupMenuItem(
@@ -119,7 +142,7 @@ class _LibraryPageState extends State<LibraryPage> {
               child: Row(children: [
                 Icon(sortBy == o ? Icons.check_rounded : null, size: 18, color: cs.primary),
                 const SizedBox(width: 8),
-                Text(o),
+                Text(_sortLabel(o, l10n)),
               ]),
             )).toList(),
           ),
@@ -127,7 +150,6 @@ class _LibraryPageState extends State<LibraryPage> {
       ),
       body: Column(
         children: [
-          // Search
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: TextField(
@@ -149,12 +171,11 @@ class _LibraryPageState extends State<LibraryPage> {
                         }),
                       )
                     : null,
-                hintText: 'Search title, author, genre…',
+                hintText: l10n.librarySearchHint,
               ),
             ),
           ),
 
-          // Filter chips
           SizedBox(
             height: 52,
             child: ListView.separated(
@@ -166,7 +187,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 final item = _filters[index];
                 final selected = filter == item;
                 return FilterChip(
-                  label: Text(item),
+                  label: Text(_filterLabel(item, l10n)),
                   selected: selected,
                   onSelected: (_) => setState(() => filter = item),
                   showCheckmark: false,
@@ -182,7 +203,7 @@ class _LibraryPageState extends State<LibraryPage> {
               stream: firestoreService.getBooks(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Center(child: Text('Something went wrong.'));
+                  return Center(child: Text(l10n.librarySomethingWrong));
                 }
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
@@ -224,7 +245,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                 children: [
                                   Icon(_emptyIcon(), size: 72, color: cs.outlineVariant),
                                   const SizedBox(height: 16),
-                                  Text(_emptyMessage(), textAlign: TextAlign.center, style: tt.titleMedium?.copyWith(color: cs.outline)),
+                                  Text(_emptyMessage(l10n), textAlign: TextAlign.center, style: tt.titleMedium?.copyWith(color: cs.outline)),
                                 ],
                               ),
                             )
@@ -246,7 +267,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
-                                            content: const Text('Failed to update favorite.'),
+                                            content: Text(AppLocalizations.of(context)!.libraryErrFavorite),
                                             backgroundColor: Theme.of(context).colorScheme.error,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -263,7 +284,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
-                                            content: const Text('Failed to delete book.'),
+                                            content: Text(AppLocalizations.of(context)!.libraryErrDelete),
                                             backgroundColor: Theme.of(context).colorScheme.error,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -273,15 +294,16 @@ class _LibraryPageState extends State<LibraryPage> {
                                       return;
                                     }
                                     if (context.mounted) {
+                                      final l = AppLocalizations.of(context)!;
                                       ScaffoldMessenger.of(context).clearSnackBars();
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text('"${deletedBook.title}" deleted.'),
+                                          content: Text(l.libraryDeleted(deletedBook.title)),
                                           duration: const Duration(seconds: 5),
                                           behavior: SnackBarBehavior.floating,
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                           action: SnackBarAction(
-                                            label: 'Undo',
+                                            label: l.libraryUndo,
                                             onPressed: () async {
                                               try {
                                                 await firestoreService.addBook(deletedBook);
@@ -289,7 +311,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                                 if (context.mounted) {
                                                   ScaffoldMessenger.of(context).showSnackBar(
                                                     SnackBar(
-                                                      content: const Text('Could not restore book.'),
+                                                      content: Text(AppLocalizations.of(context)!.libraryErrRestore),
                                                       backgroundColor: Theme.of(context).colorScheme.error,
                                                       behavior: SnackBarBehavior.floating,
                                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

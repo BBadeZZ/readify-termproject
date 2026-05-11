@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/settings_service.dart';
+import '../l10n/app_localizations.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -13,30 +14,27 @@ class _OnboardingPageState extends State<OnboardingPage> {
   int _currentPage = 0;
   List<_Slide> _slides = [];
 
-  List<_Slide> _buildSlides(ColorScheme cs) => [
+  List<_Slide> _buildSlides(ColorScheme cs, AppLocalizations l10n) => [
     _Slide(
       icon: Icons.auto_stories_rounded,
-      title: 'Welcome to Readify',
-      description:
-          'Your cozy digital reading journal.\nAdd every book you read and never lose track again.',
+      title: l10n.onboarding1Title,
+      description: l10n.onboarding1Desc,
       bgColor: cs.primaryContainer,
       circleColor: cs.primary.withValues(alpha: 0.2),
       iconColor: cs.primary,
     ),
     _Slide(
       icon: Icons.timer_rounded,
-      title: 'Track Reading Sessions',
-      description:
-          'Start a session when you sit down to read.\nSee your daily reading time and weekly progress in Analytics.',
+      title: l10n.onboarding2Title,
+      description: l10n.onboarding2Desc,
       bgColor: cs.secondaryContainer,
       circleColor: cs.secondary.withValues(alpha: 0.2),
       iconColor: cs.secondary,
     ),
     _Slide(
       icon: Icons.search_rounded,
-      title: 'Discover Books Instantly',
-      description:
-          'Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.',
+      title: l10n.onboarding3Title,
+      description: l10n.onboarding3Desc,
       bgColor: cs.primaryContainer,
       circleColor: cs.primary.withValues(alpha: 0.2),
       iconColor: cs.primary,
@@ -68,7 +66,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    _slides = _buildSlides(cs);
+    final l10n = AppLocalizations.of(context)!;
+    _slides = _buildSlides(cs, l10n);
     final slide = _slides[_currentPage];
 
     return Scaffold(
@@ -81,7 +80,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: _finish,
-                child: Text('Skip', style: TextStyle(color: cs.primary, fontSize: 16)),
+                child: Text(l10n.onboardingSkip, style: TextStyle(color: cs.primary, fontSize: 16)),
               ),
             ),
 
@@ -128,7 +127,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: Text(
-                    _currentPage == _slides.length - 1 ? 'Get Started' : 'Next',
+                    _currentPage == _slides.length - 1 ? l10n.onboardingGetStarted : l10n.onboardingNext,
                     style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),

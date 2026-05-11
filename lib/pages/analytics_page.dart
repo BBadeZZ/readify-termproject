@@ -7,6 +7,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/stat_card.dart';
 import '../theme/app_colors.dart';
+import '../l10n/app_localizations.dart';
 
 class AnalyticsPage extends StatefulWidget {
   const AnalyticsPage({super.key});
@@ -47,10 +48,12 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
+    final l10n = AppLocalizations.of(context)!;
+
     if (_loading) {
       return Scaffold(
         drawer: const AppDrawer(currentPage: 'Analytics'),
-        appBar: AppBar(title: const Text('Analytics')),
+        appBar: AppBar(title: Text(l10n.analyticsTitle)),
         body: const Center(child: CircularProgressIndicator()),
         bottomNavigationBar: const AppBottomNav(currentIndex: 3),
       );
@@ -81,14 +84,13 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Analytics'),
-      appBar: AppBar(title: const Text('Analytics')),
+      appBar: AppBar(title: Text(l10n.analyticsTitle)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
-          Text('Reading Summary', style: tt.headlineSmall),
+          Text(l10n.analyticsReadingSummary, style: tt.headlineSmall),
           const SizedBox(height: 16),
 
-          // 2-column stat grid
           GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
@@ -97,14 +99,14 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             mainAxisSpacing: 10,
             childAspectRatio: 1.6,
             children: [
-              StatCard(label: 'Total Books', value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
-              StatCard(label: 'Reading', value: '$reading', icon: Icons.auto_stories_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
-              StatCard(label: 'Already Read', value: '$alreadyRead', icon: Icons.check_circle_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
-              StatCard(label: 'Wishlist', value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
-              StatCard(label: 'Favorites', value: '$favorite', icon: Icons.favorite_rounded, color: AppColors.favoritesContainer, iconColor: Colors.pink),
-              StatCard(label: 'Pages Read', value: '$pagesRead', icon: Icons.menu_book_rounded, color: AppColors.pagesTealContainer, iconColor: AppColors.pagesTeal),
+              StatCard(label: l10n.analyticsTotalBooks, value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
+              StatCard(label: l10n.analyticsReading, value: '$reading', icon: Icons.auto_stories_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
+              StatCard(label: l10n.analyticsAlreadyRead, value: '$alreadyRead', icon: Icons.check_circle_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
+              StatCard(label: l10n.analyticsWishlist, value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
+              StatCard(label: l10n.analyticsFavorites, value: '$favorite', icon: Icons.favorite_rounded, color: AppColors.favoritesContainer, iconColor: Colors.pink),
+              StatCard(label: l10n.analyticsPagesRead, value: '$pagesRead', icon: Icons.menu_book_rounded, color: AppColors.pagesTealContainer, iconColor: AppColors.pagesTeal),
               StatCard(
-                label: 'Avg Rating',
+                label: l10n.analyticsAvgRating,
                 value: avgRating.toStringAsFixed(1),
                 icon: Icons.star_rounded,
                 color: AppColors.starYellowContainer,
@@ -116,7 +118,6 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
           const SizedBox(height: 24),
 
-          // Overall progress
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
@@ -127,7 +128,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Overall Progress', style: tt.titleMedium),
+                Text(l10n.analyticsOverallProgress, style: tt.titleMedium),
                 const SizedBox(height: 12),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
@@ -137,7 +138,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('$pagesRead of $totalPages pages', style: tt.bodyMedium),
+                    Text(l10n.pagesProgress(pagesRead, totalPages), style: tt.bodyMedium),
                     Text('${(progress * 100).toInt()}%', style: TextStyle(fontWeight: FontWeight.bold, color: cs.primary)),
                   ],
                 ),
@@ -147,7 +148,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
           const SizedBox(height: 24),
 
-          Text('Reading Sessions', style: tt.headlineSmall),
+          Text(l10n.analyticsReadingSessions, style: tt.headlineSmall),
           const SizedBox(height: 12),
 
           if (totalSessions == 0)
@@ -162,7 +163,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 children: [
                   Icon(Icons.timer_off_outlined, color: cs.outline, size: 28),
                   const SizedBox(width: 16),
-                  Text('No sessions yet.\nStart a reading session!', style: tt.bodyMedium),
+                  Text(l10n.analyticsNoSessions, style: tt.bodyMedium),
                 ],
               ),
             )
@@ -175,21 +176,21 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               mainAxisSpacing: 10,
               childAspectRatio: 1.6,
               children: [
-                StatCard(label: 'Sessions', value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
+                StatCard(label: l10n.analyticsSessions, value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
                 StatCard(
-                  label: 'Total Time',
+                  label: l10n.analyticsTotalTime,
                   value: totalHours > 0 ? '${totalHours}h ${remainingMin}m' : '${totalMinutes}m',
                   icon: Icons.schedule_rounded,
                   color: AppColors.pagesTealContainer,
                   iconColor: AppColors.pagesTeal,
                 ),
-                StatCard(label: 'Pages This Week', value: '$weekPages', icon: Icons.trending_up_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
-                StatCard(label: 'Avg Session', value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
+                StatCard(label: l10n.analyticsPagesThisWeek, value: '$weekPages', icon: Icons.trending_up_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
+                StatCard(label: l10n.analyticsAvgSession, value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
               ],
             ),
 
             const SizedBox(height: 24),
-            Text('Recent Sessions', style: tt.titleLarge),
+            Text(l10n.analyticsRecentSessions, style: tt.titleLarge),
             const SizedBox(height: 10),
             ..._sessions.take(5).map((s) => _SessionCard(session: s)),
           ],

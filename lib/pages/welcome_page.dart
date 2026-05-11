@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/settings_service.dart';
+import '../l10n/app_localizations.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -25,6 +26,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: cs.primaryContainer,
       body: SingleChildScrollView(
@@ -73,13 +75,13 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Smart Book Tracking\nand Reading Analytics App',
+                  l10n.welcomeSubtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 19, height: 1.4, color: cs.primary),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Cute, cozy and smart reading journal for book lovers 💛',
+                  l10n.welcomeTagline,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: cs.primary),
                 ),
@@ -92,7 +94,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: const Text('Login', style: TextStyle(fontSize: 16)),
+                    child: Text(l10n.welcomeLogin, style: const TextStyle(fontSize: 16)),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -105,7 +107,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       side: BorderSide(color: cs.primary, width: 2),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: Text('Register', style: TextStyle(fontSize: 16, color: cs.primary)),
+                    child: Text(l10n.welcomeRegister, style: TextStyle(fontSize: 16, color: cs.primary)),
                   ),
                 ),
               ],
