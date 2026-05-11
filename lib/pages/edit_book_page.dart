@@ -13,6 +13,7 @@ class EditBookPage extends StatefulWidget {
 
 class _EditBookPageState extends State<EditBookPage> {
 
+  final _formKey = GlobalKey<FormState>();
   late TextEditingController titleController;
   late TextEditingController authorController;
   late TextEditingController totalPagesController;
@@ -79,18 +80,12 @@ class _EditBookPageState extends State<EditBookPage> {
   }
 
   void updateBook() async {
+    if (!_formKey.currentState!.validate()) return;
+
     String title = titleController.text.trim();
     String author = authorController.text.trim();
-
     int totalPages = int.tryParse(totalPagesController.text) ?? 0;
     int currentPage = int.tryParse(currentPageController.text) ?? 0;
-
-    if (title.isEmpty || author.isEmpty || totalPages <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter valid book information.')),
-      );
-      return;
-    }
 
     setState(() => _saving = true);
 
@@ -159,15 +154,17 @@ class _EditBookPageState extends State<EditBookPage> {
       IconData icon, {
         TextInputType keyboardType = TextInputType.text,
         int maxLines = 1,
+        String? Function(String?)? validator,
       }) {
     final primary = Theme.of(context).colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         maxLines: maxLines,
         style: const TextStyle(fontSize: 17),
+        validator: validator,
         decoration: InputDecoration(
           prefixIcon: Icon(icon, color: primary),
           labelText: label,
@@ -206,11 +203,15 @@ class _EditBookPageState extends State<EditBookPage> {
       appBar: AppBar(
         title: const Text('Edit Book'),
       ),
-      body: ListView(
+      body: Form(
+        key: _formKey,
+        child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          inputField(context, 'Book Title', titleController, Icons.title),
-          inputField(context, 'Author', authorController, Icons.person),
+          inputField(context, 'Book Title', titleController, Icons.title,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Title is required' : null),
+          inputField(context, 'Author', authorController, Icons.person,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Author is required' : null),
           inputField(context, 'Cover URL', coverUrlController, Icons.image),
           inputField(
             context,
@@ -218,6 +219,11 @@ class _EditBookPageState extends State<EditBookPage> {
             totalPagesController,
             Icons.pages,
             keyboardType: TextInputType.number,
+            validator: (v) {
+              final n = int.tryParse(v ?? '');
+              if (n == null || n <= 0) return 'Enter a valid page count';
+              return null;
+            },
           ),
           inputField(
             context,
@@ -319,6 +325,7 @@ class _EditBookPageState extends State<EditBookPage> {
             label: Text(_saving ? 'Saving…' : 'Update Book'),
           ),
         ],
+      ),
       ),
     );
   }

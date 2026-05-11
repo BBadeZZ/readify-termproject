@@ -28,13 +28,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   void initState() {
     super.initState();
     _booksSub = firestoreService.getBooks().listen((books) {
-      setState(() {
-        _books = books;
-        _loading = false;
-      });
+      if (mounted) setState(() { _books = books; _loading = false; });
     });
     _sessionsSub = firestoreService.getSessions().listen((sessions) {
-      setState(() => _sessions = sessions);
+      if (mounted) setState(() => _sessions = sessions);
     });
   }
 

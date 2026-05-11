@@ -11,34 +11,35 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _controller = PageController();
   int _currentPage = 0;
+  List<_Slide> _slides = [];
 
-  final List<_Slide> _slides = const [
+  List<_Slide> _buildSlides(ColorScheme cs) => [
     _Slide(
       icon: Icons.auto_stories_rounded,
       title: 'Welcome to Readify',
       description:
           'Your cozy digital reading journal.\nAdd every book you read and never lose track again.',
-      bgColor: Color(0xFFFFF6D8),
-      circleColor: Color(0xFFFFE29A),
-      iconColor: Colors.brown,
+      bgColor: cs.primaryContainer,
+      circleColor: cs.primary.withValues(alpha: 0.2),
+      iconColor: cs.primary,
     ),
     _Slide(
       icon: Icons.timer_rounded,
       title: 'Track Reading Sessions',
       description:
           'Start a session when you sit down to read.\nSee your daily reading time and weekly progress in Analytics.',
-      bgColor: Color(0xFFFFF1F6),
-      circleColor: Color(0xFFFFD6E7),
-      iconColor: Color(0xFF7A3E57),
+      bgColor: cs.secondaryContainer,
+      circleColor: cs.secondary.withValues(alpha: 0.2),
+      iconColor: cs.secondary,
     ),
     _Slide(
       icon: Icons.search_rounded,
       title: 'Discover Books Instantly',
       description:
           'Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.',
-      bgColor: Color(0xFFFFF6D8),
-      circleColor: Color(0xFFFFE29A),
-      iconColor: Colors.brown,
+      bgColor: cs.primaryContainer,
+      circleColor: cs.primary.withValues(alpha: 0.2),
+      iconColor: cs.primary,
     ),
   ];
 
@@ -67,6 +68,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    _slides = _buildSlides(cs);
     final slide = _slides[_currentPage];
 
     return Scaffold(

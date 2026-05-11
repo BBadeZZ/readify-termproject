@@ -15,6 +15,7 @@ class AddBookPage extends StatefulWidget {
 
 class _AddBookPageState extends State<AddBookPage> {
 
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
   final TextEditingController totalPagesController = TextEditingController();
@@ -158,17 +159,12 @@ class _AddBookPageState extends State<AddBookPage> {
   }
 
   void saveBook() async {
+    if (!_formKey.currentState!.validate()) return;
+
     final title = titleController.text.trim();
     final author = authorController.text.trim();
     int totalPages = int.tryParse(totalPagesController.text) ?? 0;
     int currentPage = int.tryParse(currentPageController.text) ?? 0;
-
-    if (title.isEmpty || author.isEmpty || totalPages <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter valid book information.')),
-      );
-      return;
-    }
 
     setState(() => _saving = true);
 
@@ -229,15 +225,17 @@ class _AddBookPageState extends State<AddBookPage> {
     IconData icon, {
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    String? Function(String?)? validator,
   }) {
     final primary = Theme.of(context).colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         maxLines: maxLines,
         style: const TextStyle(fontSize: 17),
+        validator: validator,
         decoration: InputDecoration(
           prefixIcon: Icon(icon, color: primary),
           labelText: label,
@@ -252,7 +250,9 @@ class _AddBookPageState extends State<AddBookPage> {
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Add Book'),
       appBar: AppBar(title: const Text('Add Book')),
-      body: ListView(
+      body: Form(
+        key: _formKey,
+        child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Google Books search card
@@ -295,11 +295,18 @@ class _AddBookPageState extends State<AddBookPage> {
             ),
           ),
 
-          _inputField(context, 'Book Title', titleController, Icons.title),
-          _inputField(context, 'Author', authorController, Icons.person),
+          _inputField(context, 'Book Title', titleController, Icons.title,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Title is required' : null),
+          _inputField(context, 'Author', authorController, Icons.person,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Author is required' : null),
           _inputField(context, 'Cover URL (optional)', coverUrlController, Icons.image),
           _inputField(context, 'Total Pages', totalPagesController, Icons.pages,
-              keyboardType: TextInputType.number),
+              keyboardType: TextInputType.number,
+              validator: (v) {
+                final n = int.tryParse(v ?? '');
+                if (n == null || n <= 0) return 'Enter a valid page count';
+                return null;
+              }),
           _inputField(context, 'Current Page', currentPageController, Icons.bookmark,
               keyboardType: TextInputType.number),
 
@@ -398,6 +405,7 @@ class _AddBookPageState extends State<AddBookPage> {
             label: Text(_saving ? 'Saving…' : 'Save Book'),
           ),
         ],
+      ),
       ),
     );
   }

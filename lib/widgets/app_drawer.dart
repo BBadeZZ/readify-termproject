@@ -119,7 +119,7 @@ class AppDrawer extends StatelessWidget {
           ),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        onTap: () {
+        onTap: selected ? () => Navigator.pop(context) : () {
           Navigator.pop(context);
           Navigator.pushReplacementNamed(context, route);
         },
