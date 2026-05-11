@@ -238,7 +238,7 @@ class _ReadingBookCard extends StatelessWidget {
         width: 150,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cs.surface,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: cs.outlineVariant),
         ),
@@ -296,13 +296,14 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cs.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),

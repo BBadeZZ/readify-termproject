@@ -232,7 +232,7 @@ class _EditBookPageState extends State<EditBookPage> {
             decoration: BoxDecoration(
               border: Border.all(color: cs.outline),
               borderRadius: BorderRadius.circular(16),
-              color: Colors.white,
+              color: cs.surface,
             ),
             child: DropdownButton<String>(
               value: selectedGenre,

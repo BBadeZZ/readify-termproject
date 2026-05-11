@@ -309,7 +309,7 @@ class _AddBookPageState extends State<AddBookPage> {
             decoration: BoxDecoration(
               border: Border.all(color: cs.outline),
               borderRadius: BorderRadius.circular(16),
-              color: Colors.white,
+              color: cs.surface,
             ),
             child: DropdownButton<String>(
               value: selectedGenre,

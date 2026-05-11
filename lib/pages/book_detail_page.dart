@@ -407,7 +407,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: cs.outlineVariant),
             ),
@@ -451,7 +451,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: cs.outlineVariant),
             ),
@@ -500,8 +500,8 @@ class _BookDetailPageState extends State<BookDetailPage> {
               icon: const Icon(Icons.play_circle_outline_rounded),
               label: const Text('Start Reading Session'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF1E8040),
-                side: const BorderSide(color: Color(0xFF1E8040), width: 1.5),
+                foregroundColor: AppColors.completedGreen,
+                side: const BorderSide(color: AppColors.completedGreen, width: 1.5),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             )
@@ -511,7 +511,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
               icon: const Icon(Icons.stop_circle_outlined),
               label: const Text('Finish Reading Session'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E8040),
+                backgroundColor: AppColors.completedGreen,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
@@ -525,19 +525,19 @@ class _BookDetailPageState extends State<BookDetailPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFDCF5E4),
+        color: AppColors.completedGreenContainer,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1E8040), width: 1.5),
+        border: Border.all(color: AppColors.completedGreen, width: 1.5),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E8040).withValues(alpha: 0.15),
+              color: AppColors.completedGreen.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.timer_rounded, color: Color(0xFF1E8040), size: 22),
+            child: const Icon(Icons.timer_rounded, color: AppColors.completedGreen, size: 22),
           ),
           const SizedBox(width: 14),
           Column(
@@ -545,11 +545,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
             children: [
               const Text(
                 'Session in progress',
-                style: TextStyle(color: Color(0xFF1E8040), fontWeight: FontWeight.w600, fontSize: 13),
+                style: TextStyle(color: AppColors.completedGreen, fontWeight: FontWeight.w600, fontSize: 13),
               ),
               Text(
                 _formatDuration(_elapsed),
-                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xFF1E8040), height: 1.1),
+                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.completedGreen, height: 1.1),
               ),
             ],
           ),
@@ -577,7 +577,7 @@ class _StarRating extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 3),
             child: Icon(
               star <= rating ? Icons.star_rounded : Icons.star_outline_rounded,
-              color: star <= rating ? const Color(0xFFE8A020) : Colors.grey.shade400,
+              color: star <= rating ? AppColors.starYellow : Theme.of(context).colorScheme.outline,
               size: 30,
             ),
           ),

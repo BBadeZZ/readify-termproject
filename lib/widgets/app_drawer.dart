@@ -60,13 +60,13 @@ class AppDrawer extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _DrawerItem(context, icon: Icons.person_outline_rounded, label: 'Profile', route: '/profile', selected: currentPage == 'Profile'),
-                _DrawerItem(context, icon: Icons.home_outlined, label: 'Home', route: '/home', selected: currentPage == 'Home'),
-                _DrawerItem(context, icon: Icons.add_circle_outline_rounded, label: 'Add Book', route: '/add', selected: currentPage == 'Add Book'),
-                _DrawerItem(context, icon: Icons.library_books_outlined, label: 'Library', route: '/library', selected: currentPage == 'Library'),
-                _DrawerItem(context, icon: Icons.bar_chart_outlined, label: 'Analytics', route: '/analytics', selected: currentPage == 'Analytics'),
-                _DrawerItem(context, icon: Icons.auto_awesome_outlined, label: 'Recommendations', route: '/recommendations', selected: currentPage == 'Recommendations'),
-                _DrawerItem(context, icon: Icons.settings_outlined, label: 'Settings', route: '/settings', selected: currentPage == 'Settings'),
+                _drawerItem(context, icon: Icons.person_outline_rounded, label: 'Profile', route: '/profile', selected: currentPage == 'Profile'),
+                _drawerItem(context, icon: Icons.home_outlined, label: 'Home', route: '/home', selected: currentPage == 'Home'),
+                _drawerItem(context, icon: Icons.add_circle_outline_rounded, label: 'Add Book', route: '/add', selected: currentPage == 'Add Book'),
+                _drawerItem(context, icon: Icons.library_books_outlined, label: 'Library', route: '/library', selected: currentPage == 'Library'),
+                _drawerItem(context, icon: Icons.bar_chart_outlined, label: 'Analytics', route: '/analytics', selected: currentPage == 'Analytics'),
+                _drawerItem(context, icon: Icons.auto_awesome_outlined, label: 'Recommendations', route: '/recommendations', selected: currentPage == 'Recommendations'),
+                _drawerItem(context, icon: Icons.settings_outlined, label: 'Settings', route: '/settings', selected: currentPage == 'Settings'),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Divider(),
@@ -90,7 +90,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget _DrawerItem(
+  Widget _drawerItem(
     BuildContext context, {
     required IconData icon,
     required String label,

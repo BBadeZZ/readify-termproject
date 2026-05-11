@@ -123,7 +123,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: cs.outlineVariant),
             ),
@@ -157,7 +157,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cs.surface,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: cs.outlineVariant),
               ),
@@ -218,7 +218,7 @@ class _SessionCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: cs.outlineVariant),
       ),
