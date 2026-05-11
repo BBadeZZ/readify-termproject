@@ -24,6 +24,7 @@ class _EditBookPageState extends State<EditBookPage> {
   late String selectedStatus;
   late int rating;
   late bool favorite;
+  bool _saving = false;
 
   final List<String> genres = [
     'Novel',
@@ -91,6 +92,8 @@ class _EditBookPageState extends State<EditBookPage> {
       return;
     }
 
+    setState(() => _saving = true);
+
     if (currentPage < 0) currentPage = 0;
     if (currentPage > totalPages) currentPage = totalPages;
 
@@ -144,6 +147,8 @@ class _EditBookPageState extends State<EditBookPage> {
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
@@ -303,9 +308,15 @@ class _EditBookPageState extends State<EditBookPage> {
             maxLines: 3,
           ),
           ElevatedButton.icon(
-            onPressed: updateBook,
-            icon: const Icon(Icons.edit),
-            label: const Text('Update Book'),
+            onPressed: _saving ? null : updateBook,
+            icon: _saving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Icon(Icons.edit),
+            label: Text(_saving ? 'Saving…' : 'Update Book'),
           ),
         ],
       ),

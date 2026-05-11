@@ -249,32 +249,51 @@ class _LibraryPageState extends State<LibraryPage> {
                                     firestoreService.updateBook(book);
                                   },
                                   onDelete: () async {
-                                    final confirmed = await showDialog<bool>(
-                                      context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        title: const Text('Delete Book'),
-                                        content: Text('Delete "${book.title}"?'),
-                                        actions: [
-                                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(ctx, true),
-                                            style: TextButton.styleFrom(foregroundColor: Colors.red),
-                                            child: const Text('Delete'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                    if (confirmed == true) {
-                                      firestoreService.deleteBook(book.id);
+                                    final deletedBook = book;
+                                    try {
+                                      await firestoreService.deleteBook(deletedBook.id);
+                                    } catch (e) {
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
-                                            content: const Text('Book deleted.'),
+                                            content: const Text('Failed to delete book.'),
+                                            backgroundColor: Theme.of(context).colorScheme.error,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                           ),
                                         );
                                       }
+                                      return;
+                                    }
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).clearSnackBars();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('"${deletedBook.title}" deleted.'),
+                                          duration: const Duration(seconds: 5),
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          action: SnackBarAction(
+                                            label: 'Undo',
+                                            onPressed: () async {
+                                              try {
+                                                await firestoreService.addBook(deletedBook);
+                                              } catch (e) {
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(
+                                                      content: const Text('Could not restore book.'),
+                                                      backgroundColor: Theme.of(context).colorScheme.error,
+                                                      behavior: SnackBarBehavior.floating,
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                                    ),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      );
                                     }
                                   },
                                 );
@@ -364,7 +383,7 @@ class _BookCard extends StatelessWidget {
       ),
       confirmDismiss: (_) async {
         onDelete();
-        return false; // dialog handles deletion
+        return false; // StreamBuilder handles visual removal after Firestore confirms
       },
       child: Card(
         child: InkWell(

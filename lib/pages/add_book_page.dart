@@ -26,6 +26,7 @@ class _AddBookPageState extends State<AddBookPage> {
   int rating = 3;
   bool favorite = false;
   bool argsLoaded = false;
+  bool _saving = false;
 
   final List<String> genres = [
     'Novel',
@@ -168,6 +169,8 @@ class _AddBookPageState extends State<AddBookPage> {
       return;
     }
 
+    setState(() => _saving = true);
+
     currentPage = currentPage.clamp(0, totalPages);
 
     String finalStatus = selectedStatus;
@@ -213,6 +216,8 @@ class _AddBookPageState extends State<AddBookPage> {
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
@@ -381,9 +386,15 @@ class _AddBookPageState extends State<AddBookPage> {
           _inputField(context, 'Personal Note', noteController, Icons.note, maxLines: 3),
 
           ElevatedButton.icon(
-            onPressed: saveBook,
-            icon: const Icon(Icons.save),
-            label: const Text('Save Book'),
+            onPressed: _saving ? null : saveBook,
+            icon: _saving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Icon(Icons.save),
+            label: Text(_saving ? 'Saving…' : 'Save Book'),
           ),
         ],
       ),
