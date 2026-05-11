@@ -5,23 +5,25 @@ import '../services/firestore_service.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
+import '../widgets/stat_card.dart';
+import '../theme/app_colors.dart';
+import '../l10n/app_localizations.dart';
 import 'book_detail_page.dart';
 import '../utils/page_transitions.dart';
 
 class HomePage extends StatelessWidget {
-  final FirestoreService service = FirestoreService();
+  const HomePage({super.key});
 
-  HomePage({super.key});
-
-  String _greeting() {
+  String _greeting(AppLocalizations l10n) {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return l10n.homeGreetMorning;
+    if (hour < 17) return l10n.homeGreetAfternoon;
+    return l10n.homeGreetEvening;
   }
 
-  String _firstName() {
+  String _firstName(AppLocalizations l10n) {
     final name = authService.currentUser?.displayName ?? '';
+    if (name.trim().isEmpty) return l10n.homeReader;
     return name.split(' ').first;
   }
 
@@ -29,6 +31,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Home'),
@@ -45,12 +48,12 @@ class HomePage extends StatelessWidget {
           IconButton(
             onPressed: () => Navigator.pushNamed(context, '/add'),
             icon: Icon(Icons.add_circle_outline_rounded, color: cs.primary, size: 26),
-            tooltip: 'Add Book',
+            tooltip: l10n.homeAddBook,
           ),
         ],
       ),
       body: StreamBuilder<List<Book>>(
-        stream: service.getBooks(),
+        stream: firestoreService.getBooks(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -59,29 +62,25 @@ class HomePage extends StatelessWidget {
           final books = snapshot.data!;
           final totalBooks = books.length;
           final reading = books.where((b) => b.status == 'Reading').toList();
-          final finished = books.where((b) => b.status == 'Finished').length;
           final alreadyRead = books.where((b) => b.status == 'Already Read').length;
           final pagesRead = books.fold(0, (sum, b) => sum + b.currentPage);
 
-          // Sort currently reading by most progress
           reading.sort((a, b) => b.progress.compareTo(a.progress));
 
           return ListView(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
             children: [
-              // Greeting
               Text(
-                '${_greeting()}, ${_firstName()} 👋',
+                '${_greeting(l10n)}, ${_firstName(l10n)} 👋',
                 style: tt.headlineMedium,
               ),
               const SizedBox(height: 4),
               Text(
-                'Here\'s your reading overview',
+                l10n.homeSubtitle,
                 style: tt.bodyMedium,
               ),
               const SizedBox(height: 24),
 
-              // Stats grid
               GridView.count(
                 crossAxisCount: 2,
                 shrinkWrap: true,
@@ -90,52 +89,51 @@ class HomePage extends StatelessWidget {
                 mainAxisSpacing: 12,
                 childAspectRatio: 1.55,
                 children: [
-                  _StatCard(
-                    label: 'Total Books',
+                  StatCard(
+                    label: l10n.homeTotalBooks,
                     value: '$totalBooks',
                     icon: Icons.book_rounded,
                     color: cs.primaryContainer,
                     iconColor: cs.primary,
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'All'}),
                   ),
-                  _StatCard(
-                    label: 'Reading',
+                  StatCard(
+                    label: l10n.homeReading,
                     value: '${reading.length}',
                     icon: Icons.auto_stories_rounded,
-                    color: const Color(0xFFDCF0FF),
-                    iconColor: const Color(0xFF1A6FA8),
+                    color: AppColors.readingBlueContainer,
+                    iconColor: AppColors.readingBlue,
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
                   ),
-                  _StatCard(
-                    label: 'Finished',
-                    value: '$finished',
+                  StatCard(
+                    label: l10n.homeAlreadyRead,
+                    value: '$alreadyRead',
                     icon: Icons.check_circle_rounded,
-                    color: const Color(0xFFDCF5E4),
-                    iconColor: const Color(0xFF1E8040),
-                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Finished'}),
+                    color: AppColors.completedGreenContainer,
+                    iconColor: AppColors.completedGreen,
+                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Already Read'}),
                   ),
-                  _StatCard(
-                    label: 'Pages Read',
+                  StatCard(
+                    label: l10n.homePagesRead,
                     value: '$pagesRead',
                     icon: Icons.menu_book_rounded,
                     color: cs.secondaryContainer,
                     iconColor: cs.secondary,
-                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Pages Read'}),
+                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'All'}),
                   ),
                 ],
               ),
 
               const SizedBox(height: 28),
 
-              // Currently Reading section
               if (reading.isNotEmpty) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Currently Reading', style: tt.titleLarge),
+                    Text(l10n.homeCurrentlyReading, style: tt.titleLarge),
                     TextButton(
                       onPressed: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
-                      child: Text('See all', style: TextStyle(color: cs.primary)),
+                      child: Text(l10n.homeSeeAll, style: TextStyle(color: cs.primary)),
                     ),
                   ],
                 ),
@@ -161,15 +159,14 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 28),
               ],
 
-              // Quick actions
-              Text('Quick Actions', style: tt.titleLarge),
+              Text(l10n.homeQuickActions, style: tt.titleLarge),
               const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
                     child: _ActionButton(
                       icon: Icons.add_rounded,
-                      label: 'Add Book',
+                      label: l10n.homeAddBook,
                       color: cs.primary,
                       onTap: () => Navigator.pushNamed(context, '/add'),
                     ),
@@ -178,7 +175,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: _ActionButton(
                       icon: Icons.library_books_rounded,
-                      label: 'My Library',
+                      label: l10n.homeMyLibrary,
                       color: cs.secondary,
                       onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'All'}),
                     ),
@@ -191,8 +188,8 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: _ActionButton(
                       icon: Icons.auto_awesome_rounded,
-                      label: 'Suggestions',
-                      color: const Color(0xFF7E5EA8),
+                      label: l10n.homeSuggestions,
+                      color: AppColors.suggestionsPurple,
                       onTap: () => Navigator.pushNamed(context, '/recommendations'),
                     ),
                   ),
@@ -200,8 +197,8 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: _ActionButton(
                       icon: Icons.bar_chart_rounded,
-                      label: 'Analytics',
-                      color: const Color(0xFF1A6FA8),
+                      label: l10n.navAnalytics,
+                      color: AppColors.readingBlue,
                       onTap: () => Navigator.pushNamed(context, '/analytics'),
                     ),
                   ),
@@ -217,68 +214,6 @@ class HomePage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 0),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final Color iconColor;
-  final VoidCallback onTap;
-
-  const _StatCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    required this.iconColor,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(icon, color: iconColor, size: 26),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: iconColor,
-                    height: 1.1,
-                  ),
-                ),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: iconColor.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -301,7 +236,7 @@ class _ReadingBookCard extends StatelessWidget {
         width: 150,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cs.surface,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: cs.outlineVariant),
         ),
@@ -359,13 +294,14 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cs.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
@@ -421,8 +357,8 @@ class _AlreadyReadBanner extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$count books already read', style: TextStyle(fontWeight: FontWeight.bold, color: cs.onPrimaryContainer, fontSize: 15)),
-                  Text('Tap to view your reading history', style: TextStyle(fontSize: 12, color: cs.onPrimaryContainer.withValues(alpha: 0.7))),
+                  Text(AppLocalizations.of(context)!.homeBooksAlreadyRead(count), style: TextStyle(fontWeight: FontWeight.bold, color: cs.onPrimaryContainer, fontSize: 15)),
+                  Text(AppLocalizations.of(context)!.homeViewHistory, style: TextStyle(fontSize: 12, color: cs.onPrimaryContainer.withValues(alpha: 0.7))),
                 ],
               ),
             ),

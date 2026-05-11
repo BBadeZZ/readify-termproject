@@ -24,18 +24,16 @@ class BookCoverWidget extends StatelessWidget {
           width: width,
           height: height,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _placeholderCover();
-          },
+          errorBuilder: (context, error, stackTrace) => _placeholderCover(context),
         ),
       );
     }
-
-    return _placeholderCover();
+    return _placeholderCover(context);
   }
 
-  Widget _placeholderCover() {
-    bool smallCover = width <= 60;
+  Widget _placeholderCover(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final smallCover = width <= 60;
 
     return Container(
       width: width,
@@ -43,46 +41,29 @@ class BookCoverWidget extends StatelessWidget {
       padding: EdgeInsets.all(smallCover ? 4 : 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFFFFE7A9),
-            Color(0xFFFFC8DD),
-          ],
+        gradient: LinearGradient(
+          colors: [cs.primaryContainer, cs.secondaryContainer],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: Colors.brown.shade200),
+        border: Border.all(color: cs.outlineVariant),
       ),
       child: smallCover
-          ? const Center(
-        child: Icon(
-          Icons.menu_book,
-          color: Colors.brown,
-          size: 30,
-        ),
-      )
+          ? Center(child: Icon(Icons.menu_book, color: cs.primary, size: 30))
           : Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.menu_book,
-            color: Colors.brown,
-            size: 34,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: Colors.brown,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.menu_book, color: cs.primary, size: 34),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: cs.primary),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

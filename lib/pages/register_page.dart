@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -51,56 +52,59 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   String _friendlyError(String error) {
-    if (error.contains('email-already-in-use')) return 'This email is already registered.';
-    if (error.contains('invalid-email')) return 'Please enter a valid email address.';
-    if (error.contains('weak-password')) return 'Password must be at least 6 characters.';
-    return 'Registration failed. Please try again.';
+    final l10n = AppLocalizations.of(context)!;
+    if (error.contains('email-already-in-use')) return l10n.registerErrEmailInUse;
+    if (error.contains('invalid-email')) return l10n.registerErrEmailInvalid;
+    if (error.contains('weak-password')) return l10n.registerErrWeakPassword;
+    return l10n.registerErrGeneral;
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF6D8),
+      backgroundColor: cs.primaryContainer,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFFDF4),
+              color: cs.surface,
               borderRadius: BorderRadius.circular(28),
               boxShadow: const [
                 BoxShadow(blurRadius: 14, color: Colors.black12, offset: Offset(0, 6)),
               ],
-              border: Border.all(color: const Color(0xFFF7D774), width: 2),
+              border: Border.all(color: cs.outlineVariant, width: 2),
             ),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 42,
-                    backgroundColor: Color(0xFFFFE8A3),
-                    child: Icon(Icons.person_add_rounded, size: 44, color: Colors.brown),
+                    backgroundColor: cs.primaryContainer,
+                    child: Icon(Icons.person_add_rounded, size: 44, color: cs.primary),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Create Account',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.brown),
+                  Text(
+                    l10n.registerCreateAccount,
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: cs.primary),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Start your reading journey',
-                    style: TextStyle(fontSize: 15, color: Colors.brown),
+                  Text(
+                    l10n.registerSubtitle,
+                    style: TextStyle(fontSize: 15, color: cs.primary),
                   ),
                   const SizedBox(height: 28),
                   TextFormField(
                     controller: _nameController,
                     textCapitalization: TextCapitalization.words,
-                    decoration: _inputDecoration('Full Name', Icons.person_outline),
+                    decoration: _inputDecoration(l10n.registerFullName, Icons.person_outline),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Please enter your name.';
+                      if (v == null || v.trim().isEmpty) return l10n.registerErrNameEmpty;
                       return null;
                     },
                   ),
@@ -108,10 +112,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: _inputDecoration('Email', Icons.email_outlined),
+                    decoration: _inputDecoration(l10n.registerEmail, Icons.email_outlined),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Please enter your email.';
-                      if (!v.contains('@')) return 'Please enter a valid email.';
+                      if (v == null || v.trim().isEmpty) return l10n.registerErrEmailEmpty;
+                      if (!v.contains('@')) return l10n.registerErrEmailInvalid;
                       return null;
                     },
                   ),
@@ -119,18 +123,18 @@ class _RegisterPageState extends State<RegisterPage> {
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    decoration: _inputDecoration('Password', Icons.lock_outline).copyWith(
+                    decoration: _inputDecoration(l10n.registerPassword, Icons.lock_outline).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          color: Colors.brown,
+                          color: cs.primary,
                         ),
                         onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                       ),
                     ),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Please enter a password.';
-                      if (v.length < 6) return 'Password must be at least 6 characters.';
+                      if (v == null || v.isEmpty) return l10n.registerErrPasswordEmpty;
+                      if (v.length < 6) return l10n.registerErrPasswordShort;
                       return null;
                     },
                   ),
@@ -138,18 +142,18 @@ class _RegisterPageState extends State<RegisterPage> {
                   TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: _obscureConfirm,
-                    decoration: _inputDecoration('Confirm Password', Icons.lock_outline).copyWith(
+                    decoration: _inputDecoration(l10n.registerConfirmPassword, Icons.lock_outline).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscureConfirm ? Icons.visibility_off : Icons.visibility,
-                          color: Colors.brown,
+                          color: cs.primary,
                         ),
                         onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
                       ),
                     ),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Please confirm your password.';
-                      if (v != _passwordController.text) return 'Passwords do not match.';
+                      if (v == null || v.isEmpty) return l10n.registerErrConfirmEmpty;
+                      if (v != _passwordController.text) return l10n.registerErrPasswordMismatch;
                       return null;
                     },
                   ),
@@ -168,20 +172,20 @@ class _RegisterPageState extends State<RegisterPage> {
                               width: 20,
                               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                             )
-                          : const Text('Register', style: TextStyle(fontSize: 16)),
+                          : Text(l10n.registerButton, style: const TextStyle(fontSize: 16)),
                     ),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Already have an account? ', style: TextStyle(color: Colors.brown)),
+                      Text(l10n.registerHaveAccount, style: TextStyle(color: cs.primary)),
                       GestureDetector(
                         onTap: () => Navigator.pushReplacementNamed(context, '/login'),
-                        child: const Text(
-                          'Login',
+                        child: Text(
+                          l10n.registerLoginLink,
                           style: TextStyle(
-                            color: Colors.brown,
+                            color: cs.primary,
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
                           ),
@@ -199,23 +203,24 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   InputDecoration _inputDecoration(String label, IconData icon) {
+    final cs = Theme.of(context).colorScheme;
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.brown),
-      prefixIcon: Icon(icon, color: Colors.brown),
+      labelStyle: TextStyle(color: cs.primary),
+      prefixIcon: Icon(icon, color: cs.primary),
       filled: true,
-      fillColor: const Color(0xFFFFF6D8),
+      fillColor: cs.primaryContainer.withValues(alpha: 0.4),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFF7D774)),
+        borderSide: BorderSide(color: cs.outlineVariant),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFF7D774)),
+        borderSide: BorderSide(color: cs.outlineVariant),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.brown, width: 2),
+        borderSide: BorderSide(color: cs.primary, width: 2),
       ),
     );
   }

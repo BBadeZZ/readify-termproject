@@ -63,6 +63,12 @@ class SettingsService {
   Future<void> completeOnboarding() =>
       _prefs.setBool('onboarding_done', true);
 
+  // Language
+  static const _keyLanguageCode = 'language_code';
+  String get languageCode => _prefs.getString(_keyLanguageCode) ?? 'en';
+  Future<void> saveLanguageCode(String code) =>
+      _prefs.setString(_keyLanguageCode, code);
+
   // Reminder time
   static const _keyReminderHour = 'reminder_hour';
   static const _keyReminderMinute = 'reminder_minute';

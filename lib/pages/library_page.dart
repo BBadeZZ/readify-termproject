@@ -2,21 +2,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/firestore_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
+import '../l10n/app_localizations.dart';
 import 'book_detail_page.dart';
 import '../utils/page_transitions.dart';
 
 class LibraryPage extends StatefulWidget {
-  LibraryPage({super.key});
+  const LibraryPage({super.key});
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  final FirestoreService service = FirestoreService();
 
   String filter = 'All';
   String searchText = '';
@@ -78,23 +79,36 @@ class _LibraryPageState extends State<LibraryPage> {
     return result;
   }
 
-  Color _statusColor(String status) {
-    switch (status) {
-      case 'Reading': return const Color(0xFF1A6FA8);
-      case 'Wishlist': return const Color(0xFFB8740A);
-      case 'Already Read': return const Color(0xFF1E8040);
-      default: return Colors.grey.shade600;
+
+  String _emptyMessage(AppLocalizations l10n) {
+    if (searchText.isNotEmpty) return l10n.libraryNoResults(searchText);
+    switch (filter) {
+      case 'Favorites': return l10n.libraryEmptyFavorites;
+      case 'Reading': return l10n.libraryEmptyReading;
+      case 'Wishlist': return l10n.libraryEmptyWishlist;
+      case 'Already Read': return l10n.libraryEmptyAlreadyRead;
+      default: return l10n.libraryEmptyDefault;
     }
   }
 
-  String _emptyMessage() {
-    if (searchText.isNotEmpty) return 'No results for "$searchText"';
-    switch (filter) {
-      case 'Favorites': return 'No favorites yet.\nTap the heart icon on any book.';
-      case 'Reading': return 'Not reading anything right now.';
-      case 'Wishlist': return 'Your wishlist is empty.';
-      case 'Already Read': return 'No completed books yet.';
-      default: return 'No books found. Add one!';
+  String _filterLabel(String f, AppLocalizations l10n) {
+    switch (f) {
+      case 'All': return l10n.libraryFilterAll;
+      case 'Reading': return l10n.statusReading;
+      case 'Wishlist': return l10n.statusWishlist;
+      case 'Already Read': return l10n.statusAlreadyRead;
+      case 'Favorites': return l10n.libraryFilterFavorites;
+      default: return f;
+    }
+  }
+
+  String _sortLabel(String s, AppLocalizations l10n) {
+    switch (s) {
+      case 'Date Added': return l10n.librarySortDateAdded;
+      case 'Title': return l10n.librarySortTitle;
+      case 'Author': return l10n.librarySortAuthor;
+      case 'Progress': return l10n.librarySortProgress;
+      default: return s;
     }
   }
 
@@ -112,14 +126,15 @@ class _LibraryPageState extends State<LibraryPage> {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Library'),
       appBar: AppBar(
-        title: const Text('My Library'),
+        title: Text(l10n.libraryTitle),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort_rounded),
-            tooltip: 'Sort',
             initialValue: sortBy,
             onSelected: (v) => setState(() => sortBy = v),
             itemBuilder: (_) => _sortOptions.map((o) => PopupMenuItem(
@@ -127,7 +142,7 @@ class _LibraryPageState extends State<LibraryPage> {
               child: Row(children: [
                 Icon(sortBy == o ? Icons.check_rounded : null, size: 18, color: cs.primary),
                 const SizedBox(width: 8),
-                Text(o),
+                Text(_sortLabel(o, l10n)),
               ]),
             )).toList(),
           ),
@@ -135,7 +150,6 @@ class _LibraryPageState extends State<LibraryPage> {
       ),
       body: Column(
         children: [
-          // Search
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: TextField(
@@ -157,12 +171,11 @@ class _LibraryPageState extends State<LibraryPage> {
                         }),
                       )
                     : null,
-                hintText: 'Search title, author, genre…',
+                hintText: l10n.librarySearchHint,
               ),
             ),
           ),
 
-          // Filter chips
           SizedBox(
             height: 52,
             child: ListView.separated(
@@ -174,7 +187,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 final item = _filters[index];
                 final selected = filter == item;
                 return FilterChip(
-                  label: Text(item),
+                  label: Text(_filterLabel(item, l10n)),
                   selected: selected,
                   onSelected: (_) => setState(() => filter = item),
                   showCheckmark: false,
@@ -187,10 +200,10 @@ class _LibraryPageState extends State<LibraryPage> {
           // Book list
           Expanded(
             child: StreamBuilder<List<Book>>(
-              stream: service.getBooks(),
+              stream: firestoreService.getBooks(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Center(child: Text('Something went wrong.'));
+                  return Center(child: Text(l10n.librarySomethingWrong));
                 }
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
@@ -219,7 +232,7 @@ class _LibraryPageState extends State<LibraryPage> {
                           const SizedBox(width: 6),
                           _SummaryChip(icon: Icons.favorite_rounded, value: favCount, color: Colors.pink),
                           const SizedBox(width: 6),
-                          _SummaryChip(icon: Icons.auto_stories_rounded, value: readingCount, color: const Color(0xFF1A6FA8)),
+                          _SummaryChip(icon: Icons.auto_stories_rounded, value: readingCount, color: AppColors.readingBlue),
                         ],
                       ),
                     ),
@@ -232,7 +245,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                 children: [
                                   Icon(_emptyIcon(), size: 72, color: cs.outlineVariant),
                                   const SizedBox(height: 16),
-                                  Text(_emptyMessage(), textAlign: TextAlign.center, style: tt.titleMedium?.copyWith(color: cs.outline)),
+                                  Text(_emptyMessage(l10n), textAlign: TextAlign.center, style: tt.titleMedium?.copyWith(color: cs.outline)),
                                 ],
                               ),
                             )
@@ -243,39 +256,73 @@ class _LibraryPageState extends State<LibraryPage> {
                                 final book = books[index];
                                 return _BookCard(
                                   book: book,
-                                  statusColor: _statusColor(book.status),
+                                  statusColor: AppColors.forStatus(book.status),
                                   onTap: () => Navigator.push(context, SlidePageRoute(page: BookDetailPage(book: book))),
-                                  onFavorite: () {
+                                  onFavorite: () async {
                                     setState(() => book.favorite = !book.favorite);
-                                    service.updateBook(book);
-                                  },
-                                  onDelete: () async {
-                                    final confirmed = await showDialog<bool>(
-                                      context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        title: const Text('Delete Book'),
-                                        content: Text('Delete "${book.title}"?'),
-                                        actions: [
-                                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(ctx, true),
-                                            style: TextButton.styleFrom(foregroundColor: Colors.red),
-                                            child: const Text('Delete'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                    if (confirmed == true) {
-                                      service.deleteBook(book.id);
+                                    try {
+                                      await firestoreService.updateBook(book);
+                                    } catch (e) {
+                                      setState(() => book.favorite = !book.favorite);
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
-                                            content: const Text('Book deleted.'),
+                                            content: Text(AppLocalizations.of(context)!.libraryErrFavorite),
+                                            backgroundColor: Theme.of(context).colorScheme.error,
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                           ),
                                         );
                                       }
+                                    }
+                                  },
+                                  onDelete: () async {
+                                    final deletedBook = book;
+                                    try {
+                                      await firestoreService.deleteBook(deletedBook.id);
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(AppLocalizations.of(context)!.libraryErrDelete),
+                                            backgroundColor: Theme.of(context).colorScheme.error,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          ),
+                                        );
+                                      }
+                                      return;
+                                    }
+                                    if (context.mounted) {
+                                      final l = AppLocalizations.of(context)!;
+                                      ScaffoldMessenger.of(context).clearSnackBars();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(l.libraryDeleted(deletedBook.title)),
+                                          duration: const Duration(seconds: 5),
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          action: SnackBarAction(
+                                            label: l.libraryUndo,
+                                            onPressed: () async {
+                                              try {
+                                                await firestoreService.addBook(deletedBook);
+                                              } catch (e) {
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(AppLocalizations.of(context)!.libraryErrRestore),
+                                                      backgroundColor: Theme.of(context).colorScheme.error,
+                                                      behavior: SnackBarBehavior.floating,
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                                    ),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      );
                                     }
                                   },
                                 );
@@ -347,25 +394,30 @@ class _BookCard extends StatelessWidget {
     return Dismissible(
       key: Key(book.id),
       direction: DismissDirection.startToEnd,
-      background: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.redAccent.shade100,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 24),
-        child: const Row(
-          children: [
-            Icon(Icons.delete_outline_rounded, color: Colors.red),
-            SizedBox(width: 8),
-            Text('Delete', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
-          ],
-        ),
+      background: Builder(
+        builder: (context) {
+          final cs = Theme.of(context).colorScheme;
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              color: cs.errorContainer,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 24),
+            child: Row(
+              children: [
+                Icon(Icons.delete_outline_rounded, color: cs.error),
+                const SizedBox(width: 8),
+                Text('Delete', style: TextStyle(color: cs.error, fontWeight: FontWeight.w600)),
+              ],
+            ),
+          );
+        },
       ),
       confirmDismiss: (_) async {
         onDelete();
-        return false; // dialog handles deletion
+        return false; // StreamBuilder handles visual removal after Firestore confirms
       },
       child: Card(
         child: InkWell(

@@ -17,6 +17,26 @@ class ReadingSession {
     required this.durationMinutes,
   });
 
+  ReadingSession copyWith({
+    String? id,
+    String? bookId,
+    String? bookTitle,
+    DateTime? startedAt,
+    DateTime? endedAt,
+    int? pagesRead,
+    int? durationMinutes,
+  }) {
+    return ReadingSession(
+      id: id ?? this.id,
+      bookId: bookId ?? this.bookId,
+      bookTitle: bookTitle ?? this.bookTitle,
+      startedAt: startedAt ?? this.startedAt,
+      endedAt: endedAt ?? this.endedAt,
+      pagesRead: pagesRead ?? this.pagesRead,
+      durationMinutes: durationMinutes ?? this.durationMinutes,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'bookId': bookId,

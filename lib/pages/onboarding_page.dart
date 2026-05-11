@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/settings_service.dart';
+import '../l10n/app_localizations.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -11,34 +12,32 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _controller = PageController();
   int _currentPage = 0;
+  List<_Slide> _slides = [];
 
-  final List<_Slide> _slides = const [
+  List<_Slide> _buildSlides(ColorScheme cs, AppLocalizations l10n) => [
     _Slide(
       icon: Icons.auto_stories_rounded,
-      title: 'Welcome to Readify',
-      description:
-          'Your cozy digital reading journal.\nAdd every book you read and never lose track again.',
-      bgColor: Color(0xFFFFF6D8),
-      circleColor: Color(0xFFFFE29A),
-      iconColor: Colors.brown,
+      title: l10n.onboarding1Title,
+      description: l10n.onboarding1Desc,
+      bgColor: cs.primaryContainer,
+      circleColor: cs.primary.withValues(alpha: 0.2),
+      iconColor: cs.primary,
     ),
     _Slide(
       icon: Icons.timer_rounded,
-      title: 'Track Reading Sessions',
-      description:
-          'Start a session when you sit down to read.\nSee your daily reading time and weekly progress in Analytics.',
-      bgColor: Color(0xFFFFF1F6),
-      circleColor: Color(0xFFFFD6E7),
-      iconColor: Color(0xFF7A3E57),
+      title: l10n.onboarding2Title,
+      description: l10n.onboarding2Desc,
+      bgColor: cs.secondaryContainer,
+      circleColor: cs.secondary.withValues(alpha: 0.2),
+      iconColor: cs.secondary,
     ),
     _Slide(
       icon: Icons.search_rounded,
-      title: 'Discover Books Instantly',
-      description:
-          'Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.',
-      bgColor: Color(0xFFFFF6D8),
-      circleColor: Color(0xFFFFE29A),
-      iconColor: Colors.brown,
+      title: l10n.onboarding3Title,
+      description: l10n.onboarding3Desc,
+      bgColor: cs.primaryContainer,
+      circleColor: cs.primary.withValues(alpha: 0.2),
+      iconColor: cs.primary,
     ),
   ];
 
@@ -66,6 +65,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+    _slides = _buildSlides(cs, l10n);
     final slide = _slides[_currentPage];
 
     return Scaffold(
@@ -78,10 +80,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: _finish,
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(color: Colors.brown, fontSize: 16),
-                ),
+                child: Text(l10n.onboardingSkip, style: TextStyle(color: cs.primary, fontSize: 16)),
               ),
             ),
 
@@ -107,8 +106,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   height: 8,
                   decoration: BoxDecoration(
                     color: _currentPage == i
-                        ? Colors.brown
-                        : Colors.brown.withValues(alpha: 0.25),
+                        ? cs.primary
+                        : cs.primary.withValues(alpha: 0.25),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -125,18 +124,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   onPressed: _next,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: const Color(0xFFFFD76A),
-                    foregroundColor: Colors.brown,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: Text(
-                    _currentPage == _slides.length - 1
-                        ? 'Get Started'
-                        : 'Next',
-                    style: const TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.bold),
+                    _currentPage == _slides.length - 1 ? l10n.onboardingGetStarted : l10n.onboardingNext,
+                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

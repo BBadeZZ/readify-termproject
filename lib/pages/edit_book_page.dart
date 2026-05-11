@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/firestore_service.dart';
+import '../l10n/app_localizations.dart';
 
 class EditBookPage extends StatefulWidget {
   final Book book;
@@ -12,8 +13,8 @@ class EditBookPage extends StatefulWidget {
 }
 
 class _EditBookPageState extends State<EditBookPage> {
-  final FirestoreService service = FirestoreService();
 
+  final _formKey = GlobalKey<FormState>();
   late TextEditingController titleController;
   late TextEditingController authorController;
   late TextEditingController totalPagesController;
@@ -25,6 +26,7 @@ class _EditBookPageState extends State<EditBookPage> {
   late String selectedStatus;
   late int rating;
   late bool favorite;
+  bool _saving = false;
 
   final List<String> genres = [
     'Novel',
@@ -79,18 +81,15 @@ class _EditBookPageState extends State<EditBookPage> {
   }
 
   void updateBook() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final l10n = AppLocalizations.of(context)!;
     String title = titleController.text.trim();
     String author = authorController.text.trim();
-
     int totalPages = int.tryParse(totalPagesController.text) ?? 0;
     int currentPage = int.tryParse(currentPageController.text) ?? 0;
 
-    if (title.isEmpty || author.isEmpty || totalPages <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter valid book information.')),
-      );
-      return;
-    }
+    setState(() => _saving = true);
 
     if (currentPage < 0) currentPage = 0;
     if (currentPage > totalPages) currentPage = totalPages;
@@ -126,81 +125,106 @@ class _EditBookPageState extends State<EditBookPage> {
       createdAt: widget.book.createdAt,
     );
 
-    await service.updateBook(updatedBook);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Book updated successfully.')),
-    );
-
-    Navigator.pop(context, updatedBook);
+    try {
+      await firestoreService.updateBook(updatedBook);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.editBookSuccess)),
+        );
+        Navigator.pop(context, updatedBook);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.editBookFailed),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   Widget inputField(
+      BuildContext context,
       String label,
       TextEditingController controller,
       IconData icon, {
         TextInputType keyboardType = TextInputType.text,
         int maxLines = 1,
+        String? Function(String?)? validator,
       }) {
+    final primary = Theme.of(context).colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         maxLines: maxLines,
         style: const TextStyle(fontSize: 17),
+        validator: validator,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.brown),
+          prefixIcon: Icon(icon, color: primary),
           labelText: label,
         ),
       ),
     );
   }
 
-  Widget statusRadio(String title, String value) {
-    return RadioListTile<String>(
-      title: Text(title, style: const TextStyle(fontSize: 17)),
-      value: value,
-      groupValue: selectedStatus,
-      activeColor: Colors.brown,
-      onChanged: (newValue) {
-        setState(() {
-          selectedStatus = newValue!;
-
-          if (selectedStatus == 'Wishlist') {
-            currentPageController.text = '0';
-          } else if (selectedStatus == 'Already Read') {
-            currentPageController.text = totalPagesController.text;
-          } else if (selectedStatus == 'Reading') {
-            if (currentPageController.text == totalPagesController.text) {
-              currentPageController.text = '0';
-            }
-          }
-        });
-      },
-    );
+  void _onStatusChanged(String? newValue) {
+    if (newValue == null) return;
+    setState(() {
+      selectedStatus = newValue;
+      if (selectedStatus == 'Wishlist') {
+        currentPageController.text = '0';
+      } else if (selectedStatus == 'Already Read') {
+        currentPageController.text = totalPagesController.text;
+      } else if (selectedStatus == 'Reading') {
+        if (currentPageController.text == totalPagesController.text) {
+          currentPageController.text = '0';
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Book'),
+        title: Text(l10n.editBookTitle),
       ),
-      body: ListView(
+      body: Form(
+        key: _formKey,
+        child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          inputField('Book Title', titleController, Icons.title),
-          inputField('Author', authorController, Icons.person),
-          inputField('Cover URL', coverUrlController, Icons.image),
+          inputField(context, l10n.fieldBookTitle, titleController, Icons.title,
+              validator: (v) => (v == null || v.trim().isEmpty) ? l10n.validatorTitleRequired : null),
+          inputField(context, l10n.fieldAuthor, authorController, Icons.person,
+              validator: (v) => (v == null || v.trim().isEmpty) ? l10n.validatorAuthorRequired : null),
+          inputField(context, l10n.fieldCoverUrl, coverUrlController, Icons.image),
           inputField(
-            'Total Pages',
+            context,
+            l10n.fieldTotalPages,
             totalPagesController,
             Icons.pages,
             keyboardType: TextInputType.number,
+            validator: (v) {
+              final n = int.tryParse(v ?? '');
+              if (n == null || n <= 0) return l10n.validatorPagesRequired;
+              return null;
+            },
           ),
           inputField(
-            'Current Page',
+            context,
+            l10n.fieldCurrentPage,
             currentPageController,
             Icons.bookmark,
             keyboardType: TextInputType.number,
@@ -209,15 +233,15 @@ class _EditBookPageState extends State<EditBookPage> {
             margin: const EdgeInsets.only(bottom: 14),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.brown.shade200),
+              border: Border.all(color: cs.outline),
               borderRadius: BorderRadius.circular(16),
-              color: Colors.white,
+              color: cs.surface,
             ),
             child: DropdownButton<String>(
               value: selectedGenre,
               isExpanded: true,
               underline: const SizedBox(),
-              style: const TextStyle(fontSize: 17, color: Colors.brown),
+              style: TextStyle(fontSize: 17, color: cs.onSurface),
               items: genres.map((genre) {
                 return DropdownMenuItem<String>(
                   value: genre,
@@ -231,24 +255,41 @@ class _EditBookPageState extends State<EditBookPage> {
               },
             ),
           ),
-          const Text(
-            'Reading Status',
+          Text(
+            l10n.fieldReadingStatus,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: Colors.brown,
+              color: cs.onSurface,
             ),
           ),
-          statusRadio('Reading', 'Reading'),
-          statusRadio('Wishlist', 'Wishlist'),
-          statusRadio('Already Read', 'Already Read'),
+          RadioGroup<String>(
+            groupValue: selectedStatus,
+            onChanged: _onStatusChanged,
+            child: Column(
+              children: [
+                RadioListTile<String>(
+                  title: Text(l10n.statusReading, style: const TextStyle(fontSize: 17)),
+                  value: 'Reading',
+                ),
+                RadioListTile<String>(
+                  title: Text(l10n.statusWishlist, style: const TextStyle(fontSize: 17)),
+                  value: 'Wishlist',
+                ),
+                RadioListTile<String>(
+                  title: Text(l10n.statusAlreadyRead, style: const TextStyle(fontSize: 17)),
+                  value: 'Already Read',
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 10),
           Text(
-            'Rating: $rating / 5',
-            style: const TextStyle(
+            l10n.fieldRating(rating),
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: Colors.brown,
+              color: cs.onSurface,
             ),
           ),
           Slider(
@@ -256,8 +297,6 @@ class _EditBookPageState extends State<EditBookPage> {
             min: 1,
             max: 5,
             divisions: 4,
-            activeColor: Colors.amber,
-            inactiveColor: Colors.amberAccent,
             onChanged: (value) {
               setState(() {
                 rating = value.toInt();
@@ -265,9 +304,8 @@ class _EditBookPageState extends State<EditBookPage> {
             },
           ),
           CheckboxListTile(
-            title: const Text('Favorite'),
+            title: Text(l10n.fieldFavoriteShort),
             value: favorite,
-            activeColor: Colors.pinkAccent,
             onChanged: (value) {
               setState(() {
                 favorite = value!;
@@ -275,17 +313,25 @@ class _EditBookPageState extends State<EditBookPage> {
             },
           ),
           inputField(
-            'Personal Note',
+            context,
+            l10n.fieldNote,
             noteController,
             Icons.note,
             maxLines: 3,
           ),
           ElevatedButton.icon(
-            onPressed: updateBook,
-            icon: const Icon(Icons.edit),
-            label: const Text('Update Book'),
+            onPressed: _saving ? null : updateBook,
+            icon: _saving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Icon(Icons.edit),
+            label: Text(_saving ? l10n.editBookSaving : l10n.editBookUpdate),
           ),
         ],
+      ),
       ),
     );
   }

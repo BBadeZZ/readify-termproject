@@ -5,16 +5,18 @@ import '../models/reading_session.dart';
 import '../services/firestore_service.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../widgets/stat_card.dart';
+import '../theme/app_colors.dart';
+import '../l10n/app_localizations.dart';
 
 class AnalyticsPage extends StatefulWidget {
-  AnalyticsPage({super.key});
+  const AnalyticsPage({super.key});
 
   @override
   State<AnalyticsPage> createState() => _AnalyticsPageState();
 }
 
 class _AnalyticsPageState extends State<AnalyticsPage> {
-  final FirestoreService _service = FirestoreService();
 
   List<Book> _books = [];
   List<ReadingSession> _sessions = [];
@@ -26,14 +28,11 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   @override
   void initState() {
     super.initState();
-    _booksSub = _service.getBooks().listen((books) {
-      setState(() {
-        _books = books;
-        _loading = false;
-      });
+    _booksSub = firestoreService.getBooks().listen((books) {
+      if (mounted) setState(() { _books = books; _loading = false; });
     });
-    _sessionsSub = _service.getSessions().listen((sessions) {
-      setState(() => _sessions = sessions);
+    _sessionsSub = firestoreService.getSessions().listen((sessions) {
+      if (mounted) setState(() => _sessions = sessions);
     });
   }
 
@@ -49,10 +48,12 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
+    final l10n = AppLocalizations.of(context)!;
+
     if (_loading) {
       return Scaffold(
         drawer: const AppDrawer(currentPage: 'Analytics'),
-        appBar: AppBar(title: const Text('Analytics')),
+        appBar: AppBar(title: Text(l10n.analyticsTitle)),
         body: const Center(child: CircularProgressIndicator()),
         bottomNavigationBar: const AppBottomNav(currentIndex: 3),
       );
@@ -60,7 +61,6 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
     final totalBooks = _books.length;
     final reading = _books.where((b) => b.status == 'Reading').length;
-    final finished = _books.where((b) => b.status == 'Finished').length;
     final wishlist = _books.where((b) => b.status == 'Wishlist').length;
     final alreadyRead = _books.where((b) => b.status == 'Already Read').length;
     final favorite = _books.where((b) => b.favorite).length;
@@ -84,14 +84,13 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Analytics'),
-      appBar: AppBar(title: const Text('Analytics')),
+      appBar: AppBar(title: Text(l10n.analyticsTitle)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
-          Text('Reading Summary', style: tt.headlineSmall),
+          Text(l10n.analyticsReadingSummary, style: tt.headlineSmall),
           const SizedBox(height: 16),
 
-          // 2-column stat grid
           GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
@@ -100,19 +99,18 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             mainAxisSpacing: 10,
             childAspectRatio: 1.6,
             children: [
-              _StatTile(label: 'Total Books', value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
-              _StatTile(label: 'Reading', value: '$reading', icon: Icons.auto_stories_rounded, color: const Color(0xFFDCF0FF), iconColor: const Color(0xFF1A6FA8)),
-              _StatTile(label: 'Finished', value: '$finished', icon: Icons.check_circle_rounded, color: const Color(0xFFDCF5E4), iconColor: const Color(0xFF1E8040)),
-              _StatTile(label: 'Wishlist', value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
-              _StatTile(label: 'Already Read', value: '$alreadyRead', icon: Icons.history_edu_rounded, color: const Color(0xFFF0EDFF), iconColor: const Color(0xFF5E35B1)),
-              _StatTile(label: 'Favorites', value: '$favorite', icon: Icons.favorite_rounded, color: const Color(0xFFFFE8F0), iconColor: Colors.pink),
-              _StatTile(label: 'Pages Read', value: '$pagesRead', icon: Icons.menu_book_rounded, color: const Color(0xFFE0F7FA), iconColor: const Color(0xFF00838F)),
-              _StatTile(
-                label: 'Avg Rating',
+              StatCard(label: l10n.analyticsTotalBooks, value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
+              StatCard(label: l10n.analyticsReading, value: '$reading', icon: Icons.auto_stories_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
+              StatCard(label: l10n.analyticsAlreadyRead, value: '$alreadyRead', icon: Icons.check_circle_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
+              StatCard(label: l10n.analyticsWishlist, value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
+              StatCard(label: l10n.analyticsFavorites, value: '$favorite', icon: Icons.favorite_rounded, color: AppColors.favoritesContainer, iconColor: Colors.pink),
+              StatCard(label: l10n.analyticsPagesRead, value: '$pagesRead', icon: Icons.menu_book_rounded, color: AppColors.pagesTealContainer, iconColor: AppColors.pagesTeal),
+              StatCard(
+                label: l10n.analyticsAvgRating,
                 value: avgRating.toStringAsFixed(1),
                 icon: Icons.star_rounded,
-                color: const Color(0xFFFFF8DC),
-                iconColor: const Color(0xFFE8A020),
+                color: AppColors.starYellowContainer,
+                iconColor: AppColors.starYellow,
                 suffix: '/ 5',
               ),
             ],
@@ -120,18 +118,17 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
           const SizedBox(height: 24),
 
-          // Overall progress
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: cs.outlineVariant),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Overall Progress', style: tt.titleMedium),
+                Text(l10n.analyticsOverallProgress, style: tt.titleMedium),
                 const SizedBox(height: 12),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
@@ -141,7 +138,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('$pagesRead of $totalPages pages', style: tt.bodyMedium),
+                    Text(l10n.pagesProgress(pagesRead, totalPages), style: tt.bodyMedium),
                     Text('${(progress * 100).toInt()}%', style: TextStyle(fontWeight: FontWeight.bold, color: cs.primary)),
                   ],
                 ),
@@ -151,14 +148,14 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
           const SizedBox(height: 24),
 
-          Text('Reading Sessions', style: tt.headlineSmall),
+          Text(l10n.analyticsReadingSessions, style: tt.headlineSmall),
           const SizedBox(height: 12),
 
           if (totalSessions == 0)
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cs.surface,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: cs.outlineVariant),
               ),
@@ -166,7 +163,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 children: [
                   Icon(Icons.timer_off_outlined, color: cs.outline, size: 28),
                   const SizedBox(width: 16),
-                  Text('No sessions yet.\nStart a reading session!', style: tt.bodyMedium),
+                  Text(l10n.analyticsNoSessions, style: tt.bodyMedium),
                 ],
               ),
             )
@@ -179,86 +176,27 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               mainAxisSpacing: 10,
               childAspectRatio: 1.6,
               children: [
-                _StatTile(label: 'Sessions', value: '$totalSessions', icon: Icons.timer_rounded, color: const Color(0xFFEDE7F6), iconColor: const Color(0xFF5E35B1)),
-                _StatTile(
-                  label: 'Total Time',
+                StatCard(label: l10n.analyticsSessions, value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
+                StatCard(
+                  label: l10n.analyticsTotalTime,
                   value: totalHours > 0 ? '${totalHours}h ${remainingMin}m' : '${totalMinutes}m',
                   icon: Icons.schedule_rounded,
-                  color: const Color(0xFFE0F7FA),
-                  iconColor: const Color(0xFF00838F),
+                  color: AppColors.pagesTealContainer,
+                  iconColor: AppColors.pagesTeal,
                 ),
-                _StatTile(label: 'Pages This Week', value: '$weekPages', icon: Icons.trending_up_rounded, color: const Color(0xFFDCF5E4), iconColor: const Color(0xFF1E8040)),
-                _StatTile(label: 'Avg Session', value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: const Color(0xFFDCF0FF), iconColor: const Color(0xFF1A6FA8)),
+                StatCard(label: l10n.analyticsPagesThisWeek, value: '$weekPages', icon: Icons.trending_up_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
+                StatCard(label: l10n.analyticsAvgSession, value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
               ],
             ),
 
             const SizedBox(height: 24),
-            Text('Recent Sessions', style: tt.titleLarge),
+            Text(l10n.analyticsRecentSessions, style: tt.titleLarge),
             const SizedBox(height: 10),
             ..._sessions.take(5).map((s) => _SessionCard(session: s)),
           ],
         ],
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 3),
-    );
-  }
-}
-
-class _StatTile extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final Color iconColor;
-  final String? suffix;
-
-  const _StatTile({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    required this.iconColor,
-    this.suffix,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(icon, color: iconColor, size: 22),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    value,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: iconColor, height: 1.1),
-                  ),
-                  if (suffix != null) ...[
-                    const SizedBox(width: 4),
-                    Text(suffix!, style: TextStyle(fontSize: 11, color: iconColor.withValues(alpha: 0.7))),
-                  ],
-                ],
-              ),
-              Text(
-                label,
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: iconColor.withValues(alpha: 0.8)),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }
@@ -278,7 +216,7 @@ class _SessionCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: cs.outlineVariant),
       ),
@@ -287,7 +225,7 @@ class _SessionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFFEDE7F6),
+              color: AppColors.sessionPurpleContainer,
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.menu_book_rounded, color: Color(0xFF5E35B1), size: 20),
@@ -307,7 +245,7 @@ class _SessionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: const Color(0xFFEDE7F6),
+              color: AppColors.sessionPurpleContainer,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(

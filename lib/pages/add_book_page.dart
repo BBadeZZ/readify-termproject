@@ -3,18 +3,20 @@ import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/firestore_service.dart';
 import '../services/google_books_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
+import '../l10n/app_localizations.dart';
 
 class AddBookPage extends StatefulWidget {
-  AddBookPage({super.key});
+  const AddBookPage({super.key});
 
   @override
   State<AddBookPage> createState() => _AddBookPageState();
 }
 
 class _AddBookPageState extends State<AddBookPage> {
-  final FirestoreService service = FirestoreService();
 
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
   final TextEditingController totalPagesController = TextEditingController();
@@ -27,6 +29,7 @@ class _AddBookPageState extends State<AddBookPage> {
   int rating = 3;
   bool favorite = false;
   bool argsLoaded = false;
+  bool _saving = false;
 
   final List<String> genres = [
     'Novel',
@@ -83,6 +86,7 @@ class _AddBookPageState extends State<AddBookPage> {
   }
 
   void _autoFill(GoogleBooksResult result) {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       titleController.text = result.title;
       if (result.author.isNotEmpty) authorController.text = result.author;
@@ -109,17 +113,16 @@ class _AddBookPageState extends State<AddBookPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-              '"${result.title}" partially filled. Please enter $missing manually.'),
-          backgroundColor: Colors.orange,
+          content: Text(l10n.addBookPartialFill(result.title, missing)),
+          backgroundColor: AppColors.wishlistAmber,
           duration: const Duration(seconds: 4),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('"${result.title}" filled in automatically.'),
-          backgroundColor: Colors.green,
+          content: Text(l10n.addBookAutoFill(result.title)),
+          backgroundColor: AppColors.completedGreen,
         ),
       );
     }
@@ -136,7 +139,6 @@ class _AddBookPageState extends State<AddBookPage> {
     );
     if (result == null) return;
 
-    // If Serper returned incomplete data, retry with Google Books using exact title
     if (result.author.isEmpty || result.pageCount == 0) {
       final retry = await GoogleBooksService.search(result.title);
       if (retry.isNotEmpty) {
@@ -157,17 +159,15 @@ class _AddBookPageState extends State<AddBookPage> {
   }
 
   void saveBook() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final l10n = AppLocalizations.of(context)!;
     final title = titleController.text.trim();
     final author = authorController.text.trim();
     int totalPages = int.tryParse(totalPagesController.text) ?? 0;
     int currentPage = int.tryParse(currentPageController.text) ?? 0;
 
-    if (title.isEmpty || author.isEmpty || totalPages <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter valid book information.')),
-      );
-      return;
-    }
+    setState(() => _saving = true);
 
     currentPage = currentPage.clamp(0, totalPages);
 
@@ -195,32 +195,50 @@ class _AddBookPageState extends State<AddBookPage> {
       createdAt: DateTime.now(),
     );
 
-    await service.addBook(book);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Book added successfully.')),
-      );
-      Navigator.pushReplacementNamed(context, '/library');
+    try {
+      await firestoreService.addBook(book);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.addBookSuccess)),
+        );
+        Navigator.pushReplacementNamed(context, '/library');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.addBookFailed),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
   Widget _inputField(
+    BuildContext context,
     String label,
     TextEditingController controller,
     IconData icon, {
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    String? Function(String?)? validator,
   }) {
+    final primary = Theme.of(context).colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         maxLines: maxLines,
         style: const TextStyle(fontSize: 17),
+        validator: validator,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.brown),
+          prefixIcon: Icon(icon, color: primary),
           labelText: label,
         ),
       ),
@@ -229,10 +247,15 @@ class _AddBookPageState extends State<AddBookPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Add Book'),
-      appBar: AppBar(title: const Text('Add Book')),
-      body: ListView(
+      appBar: AppBar(title: Text(l10n.addBookTitle)),
+      body: Form(
+        key: _formKey,
+        child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Google Books search card
@@ -242,45 +265,52 @@ class _AddBookPageState extends State<AddBookPage> {
               margin: const EdgeInsets.only(bottom: 20),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cs.primaryContainer,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.amber, width: 1.5),
+                border: Border.all(color: cs.primary, width: 1.5),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.search, color: Colors.brown),
-                  SizedBox(width: 12),
+                  Icon(Icons.search, color: cs.primary),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Search to auto-fill',
+                          l10n.addBookSearchCardTitle,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.brown,
+                            color: cs.onPrimaryContainer,
                           ),
                         ),
                         Text(
-                          'Find by title or author — fills form automatically',
-                          style: TextStyle(fontSize: 13, color: Colors.brown),
+                          l10n.addBookSearchCardSub,
+                          style: TextStyle(fontSize: 13, color: cs.onPrimaryContainer),
                         ),
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.brown),
+                  Icon(Icons.arrow_forward_ios, size: 16, color: cs.primary),
                 ],
               ),
             ),
           ),
 
-          _inputField('Book Title', titleController, Icons.title),
-          _inputField('Author', authorController, Icons.person),
-          _inputField('Cover URL (optional)', coverUrlController, Icons.image),
-          _inputField('Total Pages', totalPagesController, Icons.pages,
-              keyboardType: TextInputType.number),
-          _inputField('Current Page', currentPageController, Icons.bookmark,
+          _inputField(context, l10n.fieldBookTitle, titleController, Icons.title,
+              validator: (v) => (v == null || v.trim().isEmpty) ? l10n.validatorTitleRequired : null),
+          _inputField(context, l10n.fieldAuthor, authorController, Icons.person,
+              validator: (v) => (v == null || v.trim().isEmpty) ? l10n.validatorAuthorRequired : null),
+          _inputField(context, l10n.fieldCoverUrlOptional, coverUrlController, Icons.image),
+          _inputField(context, l10n.fieldTotalPages, totalPagesController, Icons.pages,
+              keyboardType: TextInputType.number,
+              validator: (v) {
+                final n = int.tryParse(v ?? '');
+                if (n == null || n <= 0) return l10n.validatorPagesRequired;
+                return null;
+              }),
+          _inputField(context, l10n.fieldCurrentPage, currentPageController, Icons.bookmark,
               keyboardType: TextInputType.number),
 
           // Genre dropdown
@@ -288,15 +318,15 @@ class _AddBookPageState extends State<AddBookPage> {
             margin: const EdgeInsets.only(bottom: 14),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.brown.shade200),
+              border: Border.all(color: cs.outline),
               borderRadius: BorderRadius.circular(16),
-              color: Colors.white,
+              color: cs.surface,
             ),
             child: DropdownButton<String>(
               value: selectedGenre,
               isExpanded: true,
               underline: const SizedBox(),
-              style: const TextStyle(fontSize: 17, color: Colors.brown),
+              style: TextStyle(fontSize: 17, color: cs.onSurface),
               items: genres
                   .map((g) => DropdownMenuItem(value: g, child: Text(g)))
                   .toList(),
@@ -304,10 +334,10 @@ class _AddBookPageState extends State<AddBookPage> {
             ),
           ),
 
-          const Text(
-            'Reading Status',
+          Text(
+            l10n.fieldReadingStatus,
             style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.brown),
+                fontWeight: FontWeight.bold, fontSize: 18, color: cs.onSurface),
           ),
           RadioGroup<String>(
             groupValue: selectedStatus,
@@ -324,18 +354,18 @@ class _AddBookPageState extends State<AddBookPage> {
                 }
               });
             },
-            child: const Column(
+            child: Column(
               children: [
                 RadioListTile<String>(
-                  title: Text('Reading', style: TextStyle(fontSize: 17)),
+                  title: Text(l10n.statusReading, style: const TextStyle(fontSize: 17)),
                   value: 'Reading',
                 ),
                 RadioListTile<String>(
-                  title: Text('Wishlist', style: TextStyle(fontSize: 17)),
+                  title: Text(l10n.statusWishlist, style: const TextStyle(fontSize: 17)),
                   value: 'Wishlist',
                 ),
                 RadioListTile<String>(
-                  title: Text('Already Read', style: TextStyle(fontSize: 17)),
+                  title: Text(l10n.statusAlreadyRead, style: const TextStyle(fontSize: 17)),
                   value: 'Already Read',
                 ),
               ],
@@ -344,13 +374,11 @@ class _AddBookPageState extends State<AddBookPage> {
 
           const SizedBox(height: 10),
           Text(
-            'Rating: $rating / 5',
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.brown),
+            l10n.fieldRating(rating),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: cs.onSurface),
           ),
           Slider(
-            activeColor: Colors.amber,
-            inactiveColor: Colors.amberAccent,
             value: rating.toDouble(),
             min: 1,
             max: 5,
@@ -360,21 +388,26 @@ class _AddBookPageState extends State<AddBookPage> {
           ),
 
           CheckboxListTile(
-            title: const Text('Add to favorites',
-                style: TextStyle(fontSize: 17)),
-            activeColor: Colors.pinkAccent,
+            title: Text(l10n.fieldFavorite, style: const TextStyle(fontSize: 17)),
             value: favorite,
             onChanged: (value) => setState(() => favorite = value!),
           ),
 
-          _inputField('Personal Note', noteController, Icons.note, maxLines: 3),
+          _inputField(context, l10n.fieldNote, noteController, Icons.note, maxLines: 3),
 
           ElevatedButton.icon(
-            onPressed: saveBook,
-            icon: const Icon(Icons.save),
-            label: const Text('Save Book'),
+            onPressed: _saving ? null : saveBook,
+            icon: _saving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Icon(Icons.save),
+            label: Text(_saving ? l10n.addBookSaving : l10n.addBookSave),
           ),
         ],
+      ),
       ),
     );
   }
@@ -421,6 +454,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -437,7 +471,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -448,7 +482,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                 onChanged: _onChanged,
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: 'Search by title or author...',
+                  hintText: l10n.searchHintSheet,
                   prefixIcon: const Icon(Icons.search),
                   suffixIcon: _controller.text.isNotEmpty
                       ? IconButton(
@@ -464,10 +498,12 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
             ),
             if (_loading) const LinearProgressIndicator(),
             if (!_loading && _results.isEmpty && _controller.text.isNotEmpty)
-              const Padding(
-                padding: EdgeInsets.all(24),
-                child: Text('No results found.',
-                    style: TextStyle(color: Colors.grey)),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  l10n.searchNoResults,
+                  style: TextStyle(color: Theme.of(context).colorScheme.outline),
+                ),
               ),
             Flexible(
               child: ListView.builder(
@@ -486,10 +522,10 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                                 r.coverUrl,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, __, ___) =>
-                                    const Icon(Icons.book, color: Colors.brown),
+                                    Icon(Icons.book, color: Theme.of(context).colorScheme.primary),
                               ),
                             )
-                          : const Icon(Icons.book, color: Colors.brown),
+                          : Icon(Icons.book, color: Theme.of(context).colorScheme.primary),
                     ),
                     title: Text(
                       r.title,

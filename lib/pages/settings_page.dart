@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../theme/theme_controller.dart';
 import '../services/settings_service.dart';
 import '../services/notification_service.dart';
+import '../services/locale_provider.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../services/auth_service.dart';
+import '../l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage({super.key});
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -53,9 +55,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Settings'),
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -63,24 +69,26 @@ class _SettingsPageState extends State<SettingsPage> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFE29A),
+              color: cs.primaryContainer,
               borderRadius: BorderRadius.circular(18),
             ),
             child: Column(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 42,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 45, color: Colors.brown),
+                  backgroundColor: cs.surface,
+                  child: Icon(Icons.person, size: 45, color: cs.primary),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   authService.currentUser?.displayName ?? 'Readify User',
-                  style: const TextStyle(color: Colors.brown, fontSize: 22),
+                  style: tt.titleLarge?.copyWith(color: cs.onPrimaryContainer),
                 ),
                 Text(
                   authService.currentUser?.email ?? '',
-                  style: const TextStyle(color: Colors.brown),
+                  style: tt.bodyMedium?.copyWith(
+                    color: cs.onPrimaryContainer.withValues(alpha: 0.75),
+                  ),
                 ),
               ],
             ),
@@ -88,14 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(height: 20),
 
           // Theme
-          const Text(
-            'Theme Selection',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.brown,
-            ),
-          ),
+          Text(l10n.settingsTheme, style: tt.titleLarge),
           RadioGroup<AppThemeType>(
             groupValue: themeController.themeType,
             onChanged: (value) {
@@ -104,14 +105,12 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
               children: [
                 RadioListTile<AppThemeType>(
-                  title: const Text('Soft Gold Theme'),
+                  title: Text(l10n.settingsSoftGold),
                   value: AppThemeType.softGold,
-                  activeColor: Colors.brown,
                 ),
                 RadioListTile<AppThemeType>(
-                  title: const Text('Soft Pink Theme'),
+                  title: Text(l10n.settingsSoftPink),
                   value: AppThemeType.softPink,
-                  activeColor: Colors.brown,
                 ),
               ],
             ),
@@ -120,8 +119,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
           // Daily reminder toggle
           SwitchListTile(
-            title: const Text('Daily Reading Reminder'),
-            subtitle: const Text('Receive a daily push notification'),
+            title: Text(l10n.settingsDailyReminder),
+            subtitle: Text(l10n.settingsDailyReminderSub),
             value: dailyReminder,
             onChanged: (value) async {
               setState(() => dailyReminder = value);
@@ -138,15 +137,15 @@ class _SettingsPageState extends State<SettingsPage> {
           // Reminder time picker — only visible when reminder is ON
           if (dailyReminder)
             ListTile(
-              leading: const Icon(Icons.access_time, color: Colors.brown),
-              title: const Text('Reminder Time'),
+              leading: Icon(Icons.access_time, color: cs.primary),
+              title: Text(l10n.settingsReminderTime),
               subtitle: Text(_reminderTimeLabel),
               trailing: const Icon(Icons.chevron_right),
               onTap: _pickReminderTime,
             ),
 
           CheckboxListTile(
-            title: const Text('Highlight Favorite Books'),
+            title: Text(l10n.settingsHighlightFavorites),
             value: showFavorites,
             onChanged: (value) {
               setState(() => showFavorites = value!);
@@ -157,12 +156,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
           // Daily goal
           Text(
-            'Daily Reading Goal: ${dailyGoal.toInt()} pages',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.brown,
-            ),
+            l10n.settingsDailyGoal(dailyGoal.toInt()),
+            style: tt.titleMedium,
           ),
           Slider(
             value: dailyGoal,
@@ -170,9 +165,25 @@ class _SettingsPageState extends State<SettingsPage> {
             max: 100,
             divisions: 19,
             label: dailyGoal.toInt().toString(),
-            activeColor: Colors.amber,
             onChanged: (value) => setState(() => dailyGoal = value),
             onChangeEnd: (value) => settingsService.saveDailyGoal(value),
+          ),
+          const SizedBox(height: 10),
+
+          // Language
+          Text(l10n.settingsLanguage, style: tt.titleLarge),
+          RadioGroup<String>(
+            groupValue: localeProvider.locale.languageCode,
+            onChanged: (value) {
+              if (value != null) localeProvider.setLocale(Locale(value));
+            },
+            child: const Column(
+              children: [
+                RadioListTile<String>(title: Text('English'), value: 'en'),
+                RadioListTile<String>(title: Text('Türkçe'), value: 'tr'),
+                RadioListTile<String>(title: Text('العربية'), value: 'ar'),
+              ],
+            ),
           ),
         ],
       ),
