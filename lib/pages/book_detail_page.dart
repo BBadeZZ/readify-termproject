@@ -4,6 +4,7 @@ import '../models/book.dart';
 import '../models/reading_session.dart';
 import '../services/firestore_service.dart';
 import '../services/settings_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/book_cover_widget.dart';
 import 'edit_book_page.dart';
 import '../utils/page_transitions.dart';
@@ -102,33 +103,46 @@ class _BookDetailPageState extends State<BookDetailPage> {
       durationMinutes: durationMinutes,
     );
 
-    await firestoreService.addSession(session);
-    await settingsService.clearActiveSession();
+    try {
+      await firestoreService.addSession(session);
+      await settingsService.clearActiveSession();
 
-    setState(() {
-      book.currentPage = endPage;
-      pageController.text = endPage.toString();
-      if (book.currentPage >= book.totalPages) {
-        book.status = 'Already Read';
-      } else if (book.currentPage > 0) {
-        book.status = 'Reading';
+      setState(() {
+        book.currentPage = endPage;
+        pageController.text = endPage.toString();
+        if (book.currentPage >= book.totalPages) {
+          book.status = 'Already Read';
+        } else if (book.currentPage > 0) {
+          book.status = 'Reading';
+        }
+        _sessionActive = false;
+        _sessionStart = null;
+        _elapsed = Duration.zero;
+      });
+
+      await firestoreService.updateBook(book);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Session saved! ${durationMinutes}m · $pagesRead pages read'),
+            backgroundColor: AppColors.completedGreen,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
       }
-      _sessionActive = false;
-      _sessionStart = null;
-      _elapsed = Duration.zero;
-    });
-
-    await firestoreService.updateBook(book);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Session saved! ${durationMinutes}m · $pagesRead pages read'),
-          backgroundColor: const Color(0xFF1E8040),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to save session. Please try again.'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
     }
   }
 
@@ -202,27 +216,67 @@ class _BookDetailPageState extends State<BookDetailPage> {
       }
     });
 
-    await firestoreService.updateBook(book);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Progress saved.'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+    try {
+      await firestoreService.updateBook(book);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Progress saved.'),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to save progress. Please try again.'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
     }
   }
 
   void toggleFavorite() async {
     setState(() => book.favorite = !book.favorite);
-    await firestoreService.updateBook(book);
+    try {
+      await firestoreService.updateBook(book);
+    } catch (e) {
+      // Revert optimistic update on failure
+      setState(() => book.favorite = !book.favorite);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to update favorite.'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    }
   }
 
   void _setRating(int rating) async {
     setState(() => book.rating = rating);
-    await firestoreService.updateBook(book);
+    try {
+      await firestoreService.updateBook(book);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to save rating.'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    }
   }
 
   Color _statusColor(BuildContext context) {

@@ -125,13 +125,26 @@ class _EditBookPageState extends State<EditBookPage> {
       createdAt: widget.book.createdAt,
     );
 
-    await firestoreService.updateBook(updatedBook);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Book updated successfully.')),
-    );
-
-    Navigator.pop(context, updatedBook);
+    try {
+      await firestoreService.updateBook(updatedBook);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Book updated successfully.')),
+        );
+        Navigator.pop(context, updatedBook);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to update book. Please try again.'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    }
   }
 
   Widget inputField(

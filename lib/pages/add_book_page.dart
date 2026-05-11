@@ -194,13 +194,25 @@ class _AddBookPageState extends State<AddBookPage> {
       createdAt: DateTime.now(),
     );
 
-    await firestoreService.addBook(book);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Book added successfully.')),
-      );
-      Navigator.pushReplacementNamed(context, '/library');
+    try {
+      await firestoreService.addBook(book);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Book added successfully.')),
+        );
+        Navigator.pushReplacementNamed(context, '/library');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to save book. Please try again.'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
     }
   }
 
