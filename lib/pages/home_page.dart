@@ -22,6 +22,7 @@ class HomePage extends StatelessWidget {
 
   String _firstName() {
     final name = authService.currentUser?.displayName ?? '';
+    if (name.trim().isEmpty) return 'Reader';
     return name.split(' ').first;
   }
 

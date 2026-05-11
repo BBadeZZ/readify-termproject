@@ -201,6 +201,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   void updateProgress() async {
+    final original = book.copyWith();
     int newPage = int.tryParse(pageController.text) ?? book.currentPage;
     newPage = newPage.clamp(0, book.totalPages);
 
@@ -228,6 +229,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
         );
       }
     } catch (e) {
+      setState(() {
+        book = original;
+        pageController.text = original.currentPage.toString();
+        noteController.text = original.note;
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -262,10 +268,12 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   void _setRating(int rating) async {
+    final originalRating = book.rating;
     setState(() => book.rating = rating);
     try {
       await firestoreService.updateBook(book);
     } catch (e) {
+      setState(() => book.rating = originalRating);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
