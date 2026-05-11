@@ -279,19 +279,6 @@ class _BookDetailPageState extends State<BookDetailPage> {
     }
   }
 
-  Color _statusColor(BuildContext context) {
-    switch (book.status) {
-      case 'Reading':
-        return const Color(0xFF1A6FA8);
-      case 'Already Read':
-        return const Color(0xFF1E8040);
-      case 'Wishlist':
-        return const Color(0xFFB8740A);
-      default:
-        return Theme.of(context).colorScheme.primary;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -400,8 +387,8 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 _InfoPill(
                   icon: Icons.circle,
                   label: book.status,
-                  color: _statusColor(context).withValues(alpha: 0.15),
-                  textColor: _statusColor(context),
+                  color: AppColors.forStatus(book.status).withValues(alpha: 0.15),
+                  textColor: AppColors.forStatus(book.status),
                 ),
                 const SizedBox(width: 8),
                 _InfoPill(

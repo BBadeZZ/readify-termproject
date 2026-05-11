@@ -10,10 +10,20 @@ abstract final class AppColors {
   static const completedGreen = Color(0xFF1E8040);
   static const completedGreenContainer = Color(0xFFDCF5E4);
 
+  static const wishlistAmber = Color(0xFFB8740A);
+
   static const sessionPurple = Color(0xFF5E35B1);
   static const sessionPurpleContainer = Color(0xFFEDE7F6);
 
   static const suggestionsPurple = Color(0xFF7E5EA8);
 
   static const starYellow = Color(0xFFE8A020);
+
+  /// Returns the semantic status color for a book status string.
+  static Color forStatus(String status) => switch (status) {
+    'Reading'      => AppColors.readingBlue,
+    'Already Read' => AppColors.completedGreen,
+    'Wishlist'     => AppColors.wishlistAmber,
+    _              => const Color(0xFF9E9E9E),
+  };
 }

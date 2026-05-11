@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/firestore_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
@@ -77,14 +78,6 @@ class _LibraryPageState extends State<LibraryPage> {
     return result;
   }
 
-  Color _statusColor(String status) {
-    switch (status) {
-      case 'Reading': return const Color(0xFF1A6FA8);
-      case 'Wishlist': return const Color(0xFFB8740A);
-      case 'Already Read': return const Color(0xFF1E8040);
-      default: return Colors.grey.shade600;
-    }
-  }
 
   String _emptyMessage() {
     if (searchText.isNotEmpty) return 'No results for "$searchText"';
@@ -242,7 +235,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                 final book = books[index];
                                 return _BookCard(
                                   book: book,
-                                  statusColor: _statusColor(book.status),
+                                  statusColor: AppColors.forStatus(book.status),
                                   onTap: () => Navigator.push(context, SlidePageRoute(page: BookDetailPage(book: book))),
                                   onFavorite: () {
                                     setState(() => book.favorite = !book.favorite);

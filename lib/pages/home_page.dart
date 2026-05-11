@@ -5,6 +5,8 @@ import '../services/firestore_service.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
+import '../widgets/stat_card.dart';
+import '../theme/app_colors.dart';
 import 'book_detail_page.dart';
 import '../utils/page_transitions.dart';
 
@@ -87,7 +89,7 @@ class HomePage extends StatelessWidget {
                 mainAxisSpacing: 12,
                 childAspectRatio: 1.55,
                 children: [
-                  _StatCard(
+                  StatCard(
                     label: 'Total Books',
                     value: '$totalBooks',
                     icon: Icons.book_rounded,
@@ -95,29 +97,29 @@ class HomePage extends StatelessWidget {
                     iconColor: cs.primary,
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'All'}),
                   ),
-                  _StatCard(
+                  StatCard(
                     label: 'Reading',
                     value: '${reading.length}',
                     icon: Icons.auto_stories_rounded,
-                    color: const Color(0xFFDCF0FF),
-                    iconColor: const Color(0xFF1A6FA8),
+                    color: AppColors.readingBlueContainer,
+                    iconColor: AppColors.readingBlue,
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
                   ),
-                  _StatCard(
+                  StatCard(
                     label: 'Already Read',
                     value: '$alreadyRead',
                     icon: Icons.check_circle_rounded,
-                    color: const Color(0xFFDCF5E4),
-                    iconColor: const Color(0xFF1E8040),
+                    color: AppColors.completedGreenContainer,
+                    iconColor: AppColors.completedGreen,
                     onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Already Read'}),
                   ),
-                  _StatCard(
+                  StatCard(
                     label: 'Pages Read',
                     value: '$pagesRead',
                     icon: Icons.menu_book_rounded,
                     color: cs.secondaryContainer,
                     iconColor: cs.secondary,
-                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Pages Read'}),
+                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'All'}),
                   ),
                 ],
               ),
@@ -214,68 +216,6 @@ class HomePage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 0),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final Color iconColor;
-  final VoidCallback onTap;
-
-  const _StatCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    required this.iconColor,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(icon, color: iconColor, size: 26),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: iconColor,
-                    height: 1.1,
-                  ),
-                ),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: iconColor.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

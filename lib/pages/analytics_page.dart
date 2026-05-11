@@ -5,6 +5,8 @@ import '../models/reading_session.dart';
 import '../services/firestore_service.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../widgets/stat_card.dart';
+import '../theme/app_colors.dart';
 
 class AnalyticsPage extends StatefulWidget {
   const AnalyticsPage({super.key});
@@ -98,18 +100,18 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             mainAxisSpacing: 10,
             childAspectRatio: 1.6,
             children: [
-              _StatTile(label: 'Total Books', value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
-              _StatTile(label: 'Reading', value: '$reading', icon: Icons.auto_stories_rounded, color: const Color(0xFFDCF0FF), iconColor: const Color(0xFF1A6FA8)),
-              _StatTile(label: 'Already Read', value: '$alreadyRead', icon: Icons.check_circle_rounded, color: const Color(0xFFDCF5E4), iconColor: const Color(0xFF1E8040)),
-              _StatTile(label: 'Wishlist', value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
-              _StatTile(label: 'Favorites', value: '$favorite', icon: Icons.favorite_rounded, color: const Color(0xFFFFE8F0), iconColor: Colors.pink),
-              _StatTile(label: 'Pages Read', value: '$pagesRead', icon: Icons.menu_book_rounded, color: const Color(0xFFE0F7FA), iconColor: const Color(0xFF00838F)),
-              _StatTile(
+              StatCard(label: 'Total Books', value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
+              StatCard(label: 'Reading', value: '$reading', icon: Icons.auto_stories_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
+              StatCard(label: 'Already Read', value: '$alreadyRead', icon: Icons.check_circle_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
+              StatCard(label: 'Wishlist', value: '$wishlist', icon: Icons.bookmark_rounded, color: cs.secondaryContainer, iconColor: cs.secondary),
+              StatCard(label: 'Favorites', value: '$favorite', icon: Icons.favorite_rounded, color: const Color(0xFFFFE8F0), iconColor: Colors.pink),
+              StatCard(label: 'Pages Read', value: '$pagesRead', icon: Icons.menu_book_rounded, color: const Color(0xFFE0F7FA), iconColor: const Color(0xFF00838F)),
+              StatCard(
                 label: 'Avg Rating',
                 value: avgRating.toStringAsFixed(1),
                 icon: Icons.star_rounded,
                 color: const Color(0xFFFFF8DC),
-                iconColor: const Color(0xFFE8A020),
+                iconColor: AppColors.starYellow,
                 suffix: '/ 5',
               ),
             ],
@@ -176,16 +178,16 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               mainAxisSpacing: 10,
               childAspectRatio: 1.6,
               children: [
-                _StatTile(label: 'Sessions', value: '$totalSessions', icon: Icons.timer_rounded, color: const Color(0xFFEDE7F6), iconColor: const Color(0xFF5E35B1)),
-                _StatTile(
+                StatCard(label: 'Sessions', value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
+                StatCard(
                   label: 'Total Time',
                   value: totalHours > 0 ? '${totalHours}h ${remainingMin}m' : '${totalMinutes}m',
                   icon: Icons.schedule_rounded,
                   color: const Color(0xFFE0F7FA),
                   iconColor: const Color(0xFF00838F),
                 ),
-                _StatTile(label: 'Pages This Week', value: '$weekPages', icon: Icons.trending_up_rounded, color: const Color(0xFFDCF5E4), iconColor: const Color(0xFF1E8040)),
-                _StatTile(label: 'Avg Session', value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: const Color(0xFFDCF0FF), iconColor: const Color(0xFF1A6FA8)),
+                StatCard(label: 'Pages This Week', value: '$weekPages', icon: Icons.trending_up_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
+                StatCard(label: 'Avg Session', value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
               ],
             ),
 
@@ -197,65 +199,6 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
         ],
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 3),
-    );
-  }
-}
-
-class _StatTile extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final Color iconColor;
-  final String? suffix;
-
-  const _StatTile({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    required this.iconColor,
-    this.suffix,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(icon, color: iconColor, size: 22),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    value,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: iconColor, height: 1.1),
-                  ),
-                  if (suffix != null) ...[
-                    const SizedBox(width: 4),
-                    Text(suffix!, style: TextStyle(fontSize: 11, color: iconColor.withValues(alpha: 0.7))),
-                  ],
-                ],
-              ),
-              Text(
-                label,
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: iconColor.withValues(alpha: 0.8)),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }
