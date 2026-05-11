@@ -6,6 +6,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
 import 'book_detail_page.dart';
+import '../utils/page_transitions.dart';
 
 class LibraryPage extends StatefulWidget {
   LibraryPage({super.key});
@@ -609,11 +610,14 @@ class _LibraryPageState extends State<LibraryPage> {
                                 contentPadding: EdgeInsets.all(
                                   smallScreen ? 10 : 12,
                                 ),
-                                leading: BookCoverWidget(
-                                  title: book.title,
-                                  coverUrl: book.coverUrl,
-                                  width: coverWidth,
-                                  height: coverHeight,
+                                leading: Hero(
+                                  tag: 'book-cover-${book.id}',
+                                  child: BookCoverWidget(
+                                    title: book.title,
+                                    coverUrl: book.coverUrl,
+                                    width: coverWidth,
+                                    height: coverHeight,
+                                  ),
                                 ),
                                 title: Text(
                                   book.title,
@@ -749,10 +753,8 @@ class _LibraryPageState extends State<LibraryPage> {
                                 onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return BookDetailPage(book: book);
-                                      },
+                                    SlidePageRoute(
+                                      page: BookDetailPage(book: book),
                                     ),
                                   );
                                 },
