@@ -358,21 +358,26 @@ class _BookCard extends StatelessWidget {
     return Dismissible(
       key: Key(book.id),
       direction: DismissDirection.startToEnd,
-      background: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.redAccent.shade100,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 24),
-        child: const Row(
-          children: [
-            Icon(Icons.delete_outline_rounded, color: Colors.red),
-            SizedBox(width: 8),
-            Text('Delete', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
-          ],
-        ),
+      background: Builder(
+        builder: (context) {
+          final cs = Theme.of(context).colorScheme;
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              color: cs.errorContainer,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 24),
+            child: Row(
+              children: [
+                Icon(Icons.delete_outline_rounded, color: cs.error),
+                const SizedBox(width: 8),
+                Text('Delete', style: TextStyle(color: cs.error, fontWeight: FontWeight.w600)),
+              ],
+            ),
+          );
+        },
       ),
       confirmDismiss: (_) async {
         onDelete();

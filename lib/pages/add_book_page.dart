@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/firestore_service.dart';
 import '../services/google_books_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 
 class AddBookPage extends StatefulWidget {
@@ -111,7 +112,7 @@ class _AddBookPageState extends State<AddBookPage> {
         SnackBar(
           content: Text(
               '"${result.title}" partially filled. Please enter $missing manually.'),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.wishlistAmber,
           duration: const Duration(seconds: 4),
         ),
       );
@@ -119,7 +120,7 @@ class _AddBookPageState extends State<AddBookPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('"${result.title}" filled in automatically.'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.completedGreen,
         ),
       );
     }
@@ -459,7 +460,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -486,10 +487,12 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
             ),
             if (_loading) const LinearProgressIndicator(),
             if (!_loading && _results.isEmpty && _controller.text.isNotEmpty)
-              const Padding(
-                padding: EdgeInsets.all(24),
-                child: Text('No results found.',
-                    style: TextStyle(color: Colors.grey)),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  'No results found.',
+                  style: TextStyle(color: Theme.of(context).colorScheme.outline),
+                ),
               ),
             Flexible(
               child: ListView.builder(

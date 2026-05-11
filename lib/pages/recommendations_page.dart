@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/recommended_books.dart';
 import '../models/book.dart';
 import '../services/firestore_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
@@ -220,10 +221,7 @@ class RecommendationsPage extends StatelessWidget {
                       const SizedBox(height: 5),
                       Text(
                         '${book.rating} ★',
-                        style: const TextStyle(
-                          color: Colors.deepOrange,
-                          fontSize: 15,
-                        ),
+                        style: const TextStyle(color: AppColors.starYellow, fontSize: 15),
                       ),
                     ],
                   ),
