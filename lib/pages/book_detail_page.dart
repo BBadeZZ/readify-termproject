@@ -6,6 +6,7 @@ import '../services/firestore_service.dart';
 import '../services/settings_service.dart';
 import '../widgets/book_cover_widget.dart';
 import 'edit_book_page.dart';
+import '../utils/page_transitions.dart';
 
 class BookDetailPage extends StatefulWidget {
   final Book book;
@@ -237,9 +238,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
             onPressed: () async {
               final updatedBook = await Navigator.push<Book>(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => EditBookPage(book: book),
-                ),
+                SlidePageRoute(page: EditBookPage(book: book)),
               );
               if (updatedBook != null) {
                 setState(() {
@@ -268,11 +267,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
             ),
             child: Column(
               children: [
-                BookCoverWidget(
-                  title: book.title,
-                  coverUrl: book.coverUrl,
-                  width: 110,
-                  height: 155,
+                Hero(
+                  tag: 'book-cover-${book.id}',
+                  child: BookCoverWidget(
+                    title: book.title,
+                    coverUrl: book.coverUrl,
+                    width: 110,
+                    height: 155,
+                  ),
                 ),
                 const SizedBox(height: 14),
                 Text(

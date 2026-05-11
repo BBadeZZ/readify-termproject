@@ -85,11 +85,11 @@ class _AddBookPageState extends State<AddBookPage> {
   void _autoFill(GoogleBooksResult result) {
     setState(() {
       titleController.text = result.title;
-      authorController.text = result.author;
+      if (result.author.isNotEmpty) authorController.text = result.author;
       if (result.pageCount > 0) {
         totalPagesController.text = result.pageCount.toString();
       }
-      coverUrlController.text = result.coverUrl;
+      if (result.coverUrl.isNotEmpty) coverUrlController.text = result.coverUrl;
 
       final matched = genres.firstWhere(
         (g) => result.genre.toLowerCase().contains(g.toLowerCase()),
@@ -98,12 +98,31 @@ class _AddBookPageState extends State<AddBookPage> {
       selectedGenre = matched;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('"${result.title}" filled in automatically.'),
-        backgroundColor: Colors.green,
-      ),
-    );
+    final missingAuthor = result.author.isEmpty;
+    final missingPages = result.pageCount == 0;
+
+    if (missingAuthor || missingPages) {
+      final missing = [
+        if (missingAuthor) 'author',
+        if (missingPages) 'page count',
+      ].join(' and ');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              '"${result.title}" partially filled. Please enter $missing manually.'),
+          backgroundColor: Colors.orange,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('"${result.title}" filled in automatically.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
   }
 
   Future<void> _showBookSearchSheet() async {
@@ -115,7 +134,26 @@ class _AddBookPageState extends State<AddBookPage> {
       ),
       builder: (_) => const _BookSearchSheet(),
     );
-    if (result != null) _autoFill(result);
+    if (result == null) return;
+
+    // If Serper returned incomplete data, retry with Google Books using exact title
+    if (result.author.isEmpty || result.pageCount == 0) {
+      final retry = await GoogleBooksService.search(result.title);
+      if (retry.isNotEmpty) {
+        final better = retry.first;
+        final enriched = GoogleBooksResult(
+          title: result.title.isNotEmpty ? result.title : better.title,
+          author: result.author.isNotEmpty ? result.author : better.author,
+          pageCount: result.pageCount > 0 ? result.pageCount : better.pageCount,
+          coverUrl: result.coverUrl.isNotEmpty ? result.coverUrl : better.coverUrl,
+          genre: result.genre != 'Other' ? result.genre : better.genre,
+        );
+        _autoFill(enriched);
+        return;
+      }
+    }
+
+    _autoFill(result);
   }
 
   void saveBook() async {

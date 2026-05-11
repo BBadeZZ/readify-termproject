@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/firestore_service.dart';
@@ -5,6 +6,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
 import 'book_detail_page.dart';
+import '../utils/page_transitions.dart';
 
 class LibraryPage extends StatefulWidget {
   LibraryPage({super.key});
@@ -18,10 +20,14 @@ class _LibraryPageState extends State<LibraryPage> {
 
   String filter = 'All';
   String searchText = '';
+  String sortBy = 'Date Added';
   bool argsLoaded = false;
   String infoMessage = '';
+  Timer? _debounce;
 
   final TextEditingController searchController = TextEditingController();
+
+  static const _sortOptions = ['Date Added', 'Title', 'Author', 'Progress'];
 
   @override
   void didChangeDependencies() {
@@ -54,6 +60,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     searchController.dispose();
     super.dispose();
   }
@@ -81,12 +88,27 @@ class _LibraryPageState extends State<LibraryPage> {
     if (searchText.trim().isNotEmpty) {
       filteredBooks = filteredBooks.where((book) {
         final query = searchText.toLowerCase().trim();
-
         return book.title.toLowerCase().contains(query) ||
             book.author.toLowerCase().contains(query) ||
             book.genre.toLowerCase().contains(query) ||
-            book.status.toLowerCase().contains(query);
+            book.status.toLowerCase().contains(query) ||
+            book.note.toLowerCase().contains(query);
       }).toList();
+    }
+
+    // Sort
+    switch (sortBy) {
+      case 'Title':
+        filteredBooks.sort((a, b) => a.title.compareTo(b.title));
+        break;
+      case 'Author':
+        filteredBooks.sort((a, b) => a.author.compareTo(b.author));
+        break;
+      case 'Progress':
+        filteredBooks.sort((a, b) => b.progress.compareTo(a.progress));
+        break;
+      default: // Date Added
+        filteredBooks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     }
 
     return filteredBooks;
@@ -279,7 +301,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 border: Border.all(color: Colors.brown.shade200),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.brown.withOpacity(0.10),
+                    color: Colors.brown.withValues(alpha: 0.10),
                     blurRadius: 6,
                     offset: const Offset(0, 3),
                   ),
@@ -314,6 +336,29 @@ class _LibraryPageState extends State<LibraryPage> {
       drawer: const AppDrawer(currentPage: 'Library'),
       appBar: AppBar(
         title: Text(pageTitle()),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.sort),
+            tooltip: 'Sort by',
+            initialValue: sortBy,
+            onSelected: (value) => setState(() => sortBy = value),
+            itemBuilder: (_) => _sortOptions
+                .map((o) => PopupMenuItem(
+                      value: o,
+                      child: Row(
+                        children: [
+                          if (sortBy == o)
+                            const Icon(Icons.check,
+                                size: 18, color: Colors.brown),
+                          if (sortBy != o) const SizedBox(width: 18),
+                          const SizedBox(width: 8),
+                          Text(o),
+                        ],
+                      ),
+                    ))
+                .toList(),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -330,9 +375,12 @@ class _LibraryPageState extends State<LibraryPage> {
                 color: Colors.brown,
               ),
               onChanged: (value) {
-                setState(() {
-                  searchText = value;
-                  infoMessage = '';
+                _debounce?.cancel();
+                _debounce = Timer(const Duration(milliseconds: 300), () {
+                  setState(() {
+                    searchText = value;
+                    infoMessage = '';
+                  });
                 });
               },
               decoration: InputDecoration(
@@ -562,11 +610,14 @@ class _LibraryPageState extends State<LibraryPage> {
                                 contentPadding: EdgeInsets.all(
                                   smallScreen ? 10 : 12,
                                 ),
-                                leading: BookCoverWidget(
-                                  title: book.title,
-                                  coverUrl: book.coverUrl,
-                                  width: coverWidth,
-                                  height: coverHeight,
+                                leading: Hero(
+                                  tag: 'book-cover-${book.id}',
+                                  child: BookCoverWidget(
+                                    title: book.title,
+                                    coverUrl: book.coverUrl,
+                                    width: coverWidth,
+                                    height: coverHeight,
+                                  ),
                                 ),
                                 title: Text(
                                   book.title,
@@ -603,7 +654,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                             ),
                                             decoration: BoxDecoration(
                                               color: statusColor(book.status)
-                                                  .withOpacity(0.15),
+                                                  .withValues(alpha: 0.15),
                                               borderRadius:
                                               BorderRadius.circular(12),
                                             ),
@@ -702,10 +753,8 @@ class _LibraryPageState extends State<LibraryPage> {
                                 onTap: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return BookDetailPage(book: book);
-                                      },
+                                    SlidePageRoute(
+                                      page: BookDetailPage(book: book),
                                     ),
                                   );
                                 },
