@@ -710,4 +710,18 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profileStreakLabel => 'Günlük Seri';
+
+  @override
+  String get libraryDeleteConfirmTitle => 'Kitabı Sil';
+
+  @override
+  String libraryDeleteConfirmMsg(String title) {
+    return '\"$title\" kitabını silmek istediğine emin misin? Bu işlem geri alınamaz.';
+  }
+
+  @override
+  String get libraryDeleteConfirmYes => 'Sil';
+
+  @override
+  String get libraryDeleteConfirmNo => 'İptal';
 }

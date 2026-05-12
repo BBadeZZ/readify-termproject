@@ -417,8 +417,28 @@ class _BookCard extends StatelessWidget {
         },
       ),
       confirmDismiss: (_) async {
-        onDelete();
-        return false; // StreamBuilder handles visual removal after Firestore confirms
+        final l10n = AppLocalizations.of(context)!;
+        final cs = Theme.of(context).colorScheme;
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(l10n.libraryDeleteConfirmTitle),
+            content: Text(l10n.libraryDeleteConfirmMsg(book.title)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l10n.libraryDeleteConfirmNo),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: FilledButton.styleFrom(backgroundColor: cs.error, foregroundColor: cs.onError),
+                child: Text(l10n.libraryDeleteConfirmYes),
+              ),
+            ],
+          ),
+        );
+        if (confirmed == true) onDelete();
+        return false;
       },
       child: Card(
         child: InkWell(
@@ -504,19 +524,53 @@ class _BookCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                IconButton(
-                  onPressed: onFavorite,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-                  icon: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      book.favorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                      key: ValueKey(book.favorite),
-                      color: book.favorite ? Colors.pink : cs.outline,
-                      size: 22,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: onFavorite,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                      icon: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          book.favorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                          key: ValueKey(book.favorite),
+                          color: book.favorite ? Colors.pink : cs.outline,
+                          size: 22,
+                        ),
+                      ),
                     ),
-                  ),
+                    IconButton(
+                      onPressed: () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: Text(l10n.libraryDeleteConfirmTitle),
+                            content: Text(l10n.libraryDeleteConfirmMsg(book.title)),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: Text(l10n.libraryDeleteConfirmNo),
+                              ),
+                              FilledButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: cs.error,
+                                  foregroundColor: cs.onError,
+                                ),
+                                child: Text(l10n.libraryDeleteConfirmYes),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirmed == true) onDelete();
+                      },
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                      icon: Icon(Icons.delete_outline_rounded, color: cs.error.withValues(alpha: 0.7), size: 20),
+                    ),
+                  ],
                 ),
               ],
             ),

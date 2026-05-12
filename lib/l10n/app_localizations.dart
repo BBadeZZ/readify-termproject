@@ -1407,6 +1407,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Day Streak'**
   String get profileStreakLabel;
+
+  /// No description provided for @libraryDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Book'**
+  String get libraryDeleteConfirmTitle;
+
+  /// No description provided for @libraryDeleteConfirmMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{title}\"? This cannot be undone.'**
+  String libraryDeleteConfirmMsg(String title);
+
+  /// No description provided for @libraryDeleteConfirmYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get libraryDeleteConfirmYes;
+
+  /// No description provided for @libraryDeleteConfirmNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get libraryDeleteConfirmNo;
 }
 
 class _AppLocalizationsDelegate

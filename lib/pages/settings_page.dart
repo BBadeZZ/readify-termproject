@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../theme/theme_controller.dart';
 import '../services/settings_service.dart';
@@ -38,7 +39,35 @@ class _SettingsPageState extends State<SettingsPage> {
     return '$h:$m';
   }
 
+  Future<void> _toggleReminder(bool value) async {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => dailyReminder = value);
+    await settingsService.saveDailyReminder(value);
+    if (value) {
+      await NotificationService.scheduleDailyReminder(
+        reminderHour, reminderMinute,
+        title: l10n.settingsDailyReminder,
+        body: l10n.settingsDailyReminderSub,
+      );
+    } else {
+      await NotificationService.cancelAll();
+    }
+    final msg = kIsWeb
+        ? 'Notifications are only supported on mobile & desktop apps'
+        : value
+            ? 'Reminder set for $_reminderTimeLabel'
+            : 'Reminder cancelled';
+    messenger.showSnackBar(SnackBar(
+      content: Text(msg),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ));
+  }
+
   Future<void> _pickReminderTime() async {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: reminderHour, minute: reminderMinute),
@@ -49,8 +78,34 @@ class _SettingsPageState extends State<SettingsPage> {
         reminderMinute = picked.minute;
       });
       await settingsService.saveReminderTime(picked.hour, picked.minute);
-      await NotificationService.scheduleDailyReminder(picked.hour, picked.minute);
+      await NotificationService.scheduleDailyReminder(
+        picked.hour,
+        picked.minute,
+        title: l10n.settingsDailyReminder,
+        body: l10n.settingsDailyReminderSub,
+      );
+      final h = picked.hour.toString().padLeft(2, '0');
+      final m = picked.minute.toString().padLeft(2, '0');
+      messenger.showSnackBar(SnackBar(
+        content: Text('Reminder set for $h:$m'),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ));
     }
+  }
+
+  Future<void> _sendTest() async {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    await NotificationService.sendTestNotification(
+      title: l10n.settingsDailyReminder,
+      body: l10n.settingsDailyReminderSub,
+    );
+    messenger.showSnackBar(SnackBar(
+      content: const Text('Test notification sent!'),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ));
   }
 
   @override
@@ -137,20 +192,11 @@ class _SettingsPageState extends State<SettingsPage> {
             title: Text(l10n.settingsDailyReminder),
             subtitle: Text(l10n.settingsDailyReminderSub),
             value: dailyReminder,
-            onChanged: (value) async {
-              setState(() => dailyReminder = value);
-              await settingsService.saveDailyReminder(value);
-              if (value) {
-                await NotificationService.scheduleDailyReminder(
-                    reminderHour, reminderMinute);
-              } else {
-                await NotificationService.cancelAll();
-              }
-            },
+            onChanged: _toggleReminder,
           ),
 
-          // Reminder time picker — only visible when reminder is ON
-          if (dailyReminder)
+          // Reminder time picker + test button — only visible when reminder is ON
+          if (dailyReminder) ...[
             ListTile(
               leading: Icon(Icons.access_time, color: cs.primary),
               title: Text(l10n.settingsReminderTime),
@@ -158,6 +204,36 @@ class _SettingsPageState extends State<SettingsPage> {
               trailing: const Icon(Icons.chevron_right),
               onTap: _pickReminderTime,
             ),
+            if (!kIsWeb)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: OutlinedButton.icon(
+                  onPressed: _sendTest,
+                  icon: const Icon(Icons.notifications_active_outlined, size: 18),
+                  label: const Text('Send Test Notification'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: cs.primary,
+                    side: BorderSide(color: cs.primary.withValues(alpha: 0.5)),
+                  ),
+                ),
+              ),
+            if (kIsWeb)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, size: 14, color: cs.onSurface.withValues(alpha: 0.5)),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Notifications work on Android, iOS & desktop. Not supported in browser.',
+                        style: tt.bodySmall?.copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
 
           CheckboxListTile(
             title: Text(l10n.settingsHighlightFavorites),

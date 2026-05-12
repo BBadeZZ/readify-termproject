@@ -269,5 +269,12 @@
   "homeSave": "Kaydet",
   "analyticsHeatmap": "Okuma Aktivitesi",
   "profileAchievements": "Başarılar",
-  "profileStreakLabel": "Günlük Seri"
+  "profileStreakLabel": "Günlük Seri",
+  "libraryDeleteConfirmTitle": "Kitabı Sil",
+  "libraryDeleteConfirmMsg": "\"{title}\" kitabını silmek istediğine emin misin? Bu işlem geri alınamaz.",
+  "@libraryDeleteConfirmMsg": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "libraryDeleteConfirmYes": "Sil",
+  "libraryDeleteConfirmNo": "İptal"
 }

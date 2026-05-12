@@ -332,5 +332,12 @@
   "homeSave": "Save",
   "analyticsHeatmap": "Reading Activity",
   "profileAchievements": "Achievements",
-  "profileStreakLabel": "Day Streak"
+  "profileStreakLabel": "Day Streak",
+  "libraryDeleteConfirmTitle": "Delete Book",
+  "libraryDeleteConfirmMsg": "Are you sure you want to delete \"{title}\"? This cannot be undone.",
+  "@libraryDeleteConfirmMsg": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "libraryDeleteConfirmYes": "Delete",
+  "libraryDeleteConfirmNo": "Cancel"
 }

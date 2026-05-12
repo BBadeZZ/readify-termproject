@@ -708,4 +708,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileStreakLabel => 'يوم متتالي';
+
+  @override
+  String get libraryDeleteConfirmTitle => 'حذف الكتاب';
+
+  @override
+  String libraryDeleteConfirmMsg(String title) {
+    return 'هل أنت متأكد من حذف \"$title\"؟ لا يمكن التراجع عن هذا.';
+  }
+
+  @override
+  String get libraryDeleteConfirmYes => 'حذف';
+
+  @override
+  String get libraryDeleteConfirmNo => 'إلغاء';
 }

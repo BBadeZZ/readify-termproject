@@ -331,7 +331,6 @@ class _BookDetailPageState extends State<BookDetailPage> {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context)!;
-    final percent = (book.progress * 100).toInt();
 
     return Scaffold(
       appBar: AppBar(
@@ -462,32 +461,45 @@ class _BookDetailPageState extends State<BookDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(l10n.detailReadingProgress, style: tt.titleMedium),
-                    Text(
-                      '$percent%',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: cs.primary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: book.progress,
-                    minHeight: 10,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.pagesProgress(book.currentPage, book.totalPages),
-                  style: tt.bodyMedium,
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: book.progress),
+                  duration: const Duration(milliseconds: 700),
+                  curve: Curves.easeOut,
+                  builder: (context, animValue, _) {
+                    final animPercent = (animValue * 100).toInt();
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.detailReadingProgress, style: tt.titleMedium),
+                            Text(
+                              '$animPercent%',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: cs.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: LinearProgressIndicator(
+                            value: animValue,
+                            minHeight: 10,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.pagesProgress(book.currentPage, book.totalPages),
+                          style: tt.bodyMedium,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),

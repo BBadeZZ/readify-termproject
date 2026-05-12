@@ -39,15 +39,20 @@ class NotificationService {
     }
   }
 
-  static Future<void> scheduleDailyReminder(int hour, int minute) async {
+  static Future<void> scheduleDailyReminder(
+    int hour,
+    int minute, {
+    String title = 'Time to Read!',
+    String body = 'Keep up with your daily reading goal.',
+  }) async {
     if (!_isSupported) return;
 
     await _plugin.cancel(0);
 
     await _plugin.zonedSchedule(
       0,
-      'Time to Read!',
-      'Keep up with your daily reading goal.',
+      title,
+      body,
       _nextInstanceOf(hour, minute),
       const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -67,6 +72,31 @@ class NotificationService {
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
+
+  static Future<void> sendTestNotification({
+    String title = 'Readify',
+    String body = 'Your daily reading reminder is working!',
+  }) async {
+    if (!_isSupported) return;
+    await _plugin.show(
+      99,
+      title,
+      body,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'daily_reminder',
+          'Daily Reading Reminder',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+        ),
+        iOS: DarwinNotificationDetails(),
+        macOS: DarwinNotificationDetails(),
+      ),
+    );
+  }
+
+  static bool get isSupported => _isSupported;
 
   static Future<void> cancelAll() async {
     if (!_isSupported) return;

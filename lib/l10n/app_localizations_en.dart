@@ -712,4 +712,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileStreakLabel => 'Day Streak';
+
+  @override
+  String get libraryDeleteConfirmTitle => 'Delete Book';
+
+  @override
+  String libraryDeleteConfirmMsg(String title) {
+    return 'Are you sure you want to delete \"$title\"? This cannot be undone.';
+  }
+
+  @override
+  String get libraryDeleteConfirmYes => 'Delete';
+
+  @override
+  String get libraryDeleteConfirmNo => 'Cancel';
 }

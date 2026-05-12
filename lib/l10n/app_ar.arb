@@ -269,5 +269,12 @@
   "homeSave": "حفظ",
   "analyticsHeatmap": "نشاط القراءة",
   "profileAchievements": "الإنجازات",
-  "profileStreakLabel": "يوم متتالي"
+  "profileStreakLabel": "يوم متتالي",
+  "libraryDeleteConfirmTitle": "حذف الكتاب",
+  "libraryDeleteConfirmMsg": "هل أنت متأكد من حذف \"{title}\"؟ لا يمكن التراجع عن هذا.",
+  "@libraryDeleteConfirmMsg": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "libraryDeleteConfirmYes": "حذف",
+  "libraryDeleteConfirmNo": "إلغاء"
 }
