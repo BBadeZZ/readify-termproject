@@ -467,6 +467,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'عنوان الكتاب';
+  @override
+  String get fieldGenre => 'النوع الأدبي';
 
   @override
   String get fieldAuthor => 'المؤلف';

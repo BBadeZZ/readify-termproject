@@ -467,6 +467,8 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'Kitap Başlığı';
+  @override
+  String get fieldGenre => 'Tür';
 
   @override
   String get fieldAuthor => 'Yazar';

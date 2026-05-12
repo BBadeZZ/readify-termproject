@@ -159,6 +159,7 @@
   "addBookSearchCardTitle": "البحث للملء التلقائي",
   "addBookSearchCardSub": "ابحث بالعنوان أو المؤلف — يملأ النموذج تلقائياً",
   "fieldBookTitle": "عنوان الكتاب",
+  "fieldGenre": "النوع الأدبي",
   "fieldAuthor": "المؤلف",
   "fieldCoverUrlOptional": "رابط الغلاف (اختياري)",
   "fieldCoverUrl": "رابط الغلاف",

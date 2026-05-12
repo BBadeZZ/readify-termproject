@@ -981,6 +981,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Book Title'**
   String get fieldBookTitle;
+  String get fieldGenre;
 
   /// No description provided for @fieldAuthor.
   ///

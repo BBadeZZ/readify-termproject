@@ -184,6 +184,7 @@
   "addBookSearchCardTitle": "Search to auto-fill",
   "addBookSearchCardSub": "Find by title or author — fills form automatically",
   "fieldBookTitle": "Book Title",
+  "fieldGenre": "Genre",
   "fieldAuthor": "Author",
   "fieldCoverUrlOptional": "Cover URL (optional)",
   "fieldCoverUrl": "Cover URL",

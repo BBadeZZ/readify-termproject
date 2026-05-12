@@ -159,6 +159,7 @@
   "addBookSearchCardTitle": "Otomatik doldur",
   "addBookSearchCardSub": "Başlık veya yazara göre ara — formu otomatik doldurur",
   "fieldBookTitle": "Kitap Başlığı",
+  "fieldGenre": "Tür",
   "fieldAuthor": "Yazar",
   "fieldCoverUrlOptional": "Kapak URL'i (isteğe bağlı)",
   "fieldCoverUrl": "Kapak URL'i",

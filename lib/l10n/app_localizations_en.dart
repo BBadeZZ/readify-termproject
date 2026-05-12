@@ -470,6 +470,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'Book Title';
+  @override
+  String get fieldGenre => 'Genre';
 
   @override
   String get fieldAuthor => 'Author';
