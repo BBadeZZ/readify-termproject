@@ -3,6 +3,7 @@ import '../models/book.dart';
 import '../models/reading_session.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
+import '../services/settings_service.dart';
 import '../utils/streak_utils.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
@@ -162,7 +163,9 @@ class HomePage extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+              _DailyGoalCard(sessions: sessionsSnapshot.data ?? []),
+              const SizedBox(height: 12),
               _StreakBanner(streak: streak),
               const SizedBox(height: 16),
 
@@ -256,6 +259,81 @@ class HomePage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 0),
+    );
+  }
+}
+
+class _DailyGoalCard extends StatelessWidget {
+  final List<ReadingSession> sessions;
+
+  const _DailyGoalCard({required this.sessions});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
+    final goal = settingsService.dailyGoal.toInt();
+    final today = DateTime.now();
+    final todayPages = sessions
+        .where((s) =>
+            s.startedAt.year == today.year &&
+            s.startedAt.month == today.month &&
+            s.startedAt.day == today.day)
+        .fold(0, (sum, s) => sum + s.pagesRead);
+    final progress = (todayPages / goal).clamp(0.0, 1.0);
+    final done = todayPages >= goal;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: done ? AppColors.completedGreenContainer : cs.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: done
+              ? AppColors.completedGreen.withValues(alpha: 0.35)
+              : cs.outlineVariant,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                done ? Icons.check_circle_rounded : Icons.track_changes_rounded,
+                color: done ? AppColors.completedGreen : cs.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                done ? l10n.homeGoalReached : l10n.homeGoalTitle,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: done ? AppColors.completedGreen : cs.onSurface,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                l10n.homeGoalProgress(todayPages, goal),
+                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: cs.surfaceContainerHighest,
+              valueColor: AlwaysStoppedAnimation(
+                done ? AppColors.completedGreen : cs.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

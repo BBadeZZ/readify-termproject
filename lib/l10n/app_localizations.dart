@@ -568,6 +568,10 @@ abstract class AppLocalizations {
   /// **'Tap to view your reading history'**
   String get homeViewHistory;
 
+  String get homeGoalTitle;
+  String get homeGoalReached;
+  String homeGoalProgress(int done, int goal);
+
   /// No description provided for @libraryTitle.
   ///
   /// In en, this message translates to:

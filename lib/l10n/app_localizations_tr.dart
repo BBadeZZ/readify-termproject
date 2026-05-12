@@ -253,6 +253,15 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeViewHistory => 'Okuma geçmişinizi görmek için dokunun';
 
   @override
+  String get homeGoalTitle => 'Bugünkü Hedef';
+
+  @override
+  String get homeGoalReached => 'Hedefe ulaştın! 🎉';
+
+  @override
+  String homeGoalProgress(int done, int goal) => '$done / $goal sayfa';
+
+  @override
   String get libraryTitle => 'Kütüphanem';
 
   @override

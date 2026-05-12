@@ -255,6 +255,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeViewHistory => 'Tap to view your reading history';
 
   @override
+  String get homeGoalTitle => "Today's Goal";
+
+  @override
+  String get homeGoalReached => 'Goal reached! 🎉';
+
+  @override
+  String homeGoalProgress(int done, int goal) => '$done / $goal pages';
+
+  @override
   String get libraryTitle => 'My Library';
 
   @override

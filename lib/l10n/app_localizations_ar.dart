@@ -253,6 +253,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeViewHistory => 'اضغط لعرض سجل قراءتك';
 
   @override
+  String get homeGoalTitle => 'هدف اليوم';
+
+  @override
+  String get homeGoalReached => 'تحقق الهدف! 🎉';
+
+  @override
+  String homeGoalProgress(int done, int goal) => '$done / $goal صفحة';
+
+  @override
   String get libraryTitle => 'مكتبتي';
 
   @override
