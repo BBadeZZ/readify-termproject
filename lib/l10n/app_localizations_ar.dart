@@ -259,7 +259,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeGoalReached => 'تحقق الهدف! 🎉';
 
   @override
-  String homeGoalProgress(int done, int goal) => '$done / $goal صفحة';
+  String homeGoalProgress(int done, int goal) {
+    return '$done / $goal صفحة';
+  }
 
   @override
   String get libraryTitle => 'مكتبتي';
@@ -384,6 +386,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get analyticsAvgSession => 'متوسط الجلسة';
+
+  @override
+  String get analyticsWeeklyChart => 'آخر 7 أيام';
 
   @override
   String get profileTitle => 'ملفي الشخصي';

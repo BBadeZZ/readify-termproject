@@ -91,6 +91,16 @@
   "homeBooksAlreadyRead": "{count} kitap okundu",
   "homeViewHistory": "Okuma geçmişinizi görmek için dokunun",
 
+  "homeGoalTitle": "Bugünkü Hedef",
+  "homeGoalReached": "Hedefe ulaştın! 🎉",
+  "homeGoalProgress": "{done} / {goal} sayfa",
+  "@homeGoalProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "goal": { "type": "int" }
+    }
+  },
+
   "libraryTitle": "Kütüphanem",
   "librarySearchHint": "Başlık, yazar, tür ara…",
   "libraryFilterAll": "Tümü",
@@ -136,6 +146,7 @@
   "analyticsTotalTime": "Toplam Süre",
   "analyticsPagesThisWeek": "Bu Hafta Sayfa",
   "analyticsAvgSession": "Ort. Seans",
+  "analyticsWeeklyChart": "Son 7 Gün",
 
   "profileTitle": "Profilim",
   "profileFavoriteGenre": "Favori tür: {genre}",

@@ -96,6 +96,16 @@
   },
   "homeViewHistory": "Tap to view your reading history",
 
+  "homeGoalTitle": "Today's Goal",
+  "homeGoalReached": "Goal reached! 🎉",
+  "homeGoalProgress": "{done} / {goal} pages",
+  "@homeGoalProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "goal": { "type": "int" }
+    }
+  },
+
   "libraryTitle": "My Library",
   "librarySearchHint": "Search title, author, genre…",
   "libraryFilterAll": "All",
@@ -151,6 +161,7 @@
   "analyticsTotalTime": "Total Time",
   "analyticsPagesThisWeek": "Pages This Week",
   "analyticsAvgSession": "Avg Session",
+  "analyticsWeeklyChart": "Last 7 Days",
 
   "profileTitle": "My Profile",
   "profileFavoriteGenre": "Favorite genre: {genre}",

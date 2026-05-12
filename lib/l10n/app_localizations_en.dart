@@ -255,13 +255,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeViewHistory => 'Tap to view your reading history';
 
   @override
-  String get homeGoalTitle => "Today's Goal";
+  String get homeGoalTitle => 'Today\'s Goal';
 
   @override
   String get homeGoalReached => 'Goal reached! 🎉';
 
   @override
-  String homeGoalProgress(int done, int goal) => '$done / $goal pages';
+  String homeGoalProgress(int done, int goal) {
+    return '$done / $goal pages';
+  }
 
   @override
   String get libraryTitle => 'My Library';
@@ -387,6 +389,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analyticsAvgSession => 'Avg Session';
+
+  @override
+  String get analyticsWeeklyChart => 'Last 7 Days';
 
   @override
   String get profileTitle => 'My Profile';

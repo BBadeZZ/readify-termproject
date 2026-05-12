@@ -91,6 +91,16 @@
   "homeBooksAlreadyRead": "تمت قراءة {count} كتاب",
   "homeViewHistory": "اضغط لعرض سجل قراءتك",
 
+  "homeGoalTitle": "هدف اليوم",
+  "homeGoalReached": "تحقق الهدف! 🎉",
+  "homeGoalProgress": "{done} / {goal} صفحة",
+  "@homeGoalProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "goal": { "type": "int" }
+    }
+  },
+
   "libraryTitle": "مكتبتي",
   "librarySearchHint": "البحث بالعنوان أو المؤلف أو النوع…",
   "libraryFilterAll": "الكل",
@@ -136,6 +146,7 @@
   "analyticsTotalTime": "الوقت الإجمالي",
   "analyticsPagesThisWeek": "صفحات هذا الأسبوع",
   "analyticsAvgSession": "متوسط الجلسة",
+  "analyticsWeeklyChart": "آخر 7 أيام",
 
   "profileTitle": "ملفي الشخصي",
   "profileFavoriteGenre": "النوع المفضل: {genre}",

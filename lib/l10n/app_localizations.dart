@@ -568,8 +568,22 @@ abstract class AppLocalizations {
   /// **'Tap to view your reading history'**
   String get homeViewHistory;
 
+  /// No description provided for @homeGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Goal'**
   String get homeGoalTitle;
+
+  /// No description provided for @homeGoalReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal reached! 🎉'**
   String get homeGoalReached;
+
+  /// No description provided for @homeGoalProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} / {goal} pages'**
   String homeGoalProgress(int done, int goal);
 
   /// No description provided for @libraryTitle.
@@ -805,6 +819,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Avg Session'**
   String get analyticsAvgSession;
+
+  /// No description provided for @analyticsWeeklyChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 Days'**
+  String get analyticsWeeklyChart;
 
   /// No description provided for @profileTitle.
   ///
