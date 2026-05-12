@@ -92,6 +92,12 @@
   "librarySortTitle": "Başlık",
   "librarySortAuthor": "Yazar",
   "librarySortProgress": "İlerleme",
+  "libraryBooksCount": "{count} kitap",
+  "@libraryBooksCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "libraryEmptyFavorites": "Henüz favori yok.\nHerhangi bir kitabın kalp ikonuna dokunun.",
   "libraryEmptyReading": "Şu an hiçbir şey okunmuyor.",
   "libraryEmptyWishlist": "İstek listeniz boş.",

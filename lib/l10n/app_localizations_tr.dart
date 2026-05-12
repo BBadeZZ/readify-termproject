@@ -269,6 +269,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get librarySortProgress => 'İlerleme';
 
   @override
+  String libraryBooksCount(int count) => '$count kitap';
+
+  @override
   String get libraryEmptyFavorites =>
       'Henüz favori yok.\nHerhangi bir kitabın kalp ikonuna dokunun.';
 

@@ -399,7 +399,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 const SizedBox(width: 8),
                 _InfoPill(
                   icon: Icons.circle,
-                  label: book.status,
+                  label: AppColors.localizeStatus(book.status, l10n),
                   color: AppColors.forStatus(book.status).withValues(alpha: 0.15),
                   textColor: AppColors.forStatus(book.status),
                 ),

@@ -97,6 +97,12 @@
   "librarySortTitle": "Title",
   "librarySortAuthor": "Author",
   "librarySortProgress": "Progress",
+  "libraryBooksCount": "{count} books",
+  "@libraryBooksCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "libraryEmptyFavorites": "No favorites yet.\nTap the heart icon on any book.",
   "libraryEmptyReading": "Not reading anything right now.",
   "libraryEmptyWishlist": "Your wishlist is empty.",

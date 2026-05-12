@@ -269,6 +269,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get librarySortProgress => 'التقدم';
 
   @override
+  String libraryBooksCount(int count) => '$count كتاب';
+
+  @override
   String get libraryEmptyFavorites =>
       'لا توجد مفضلات بعد.\nاضغط على أيقونة القلب في أي كتاب.';
 

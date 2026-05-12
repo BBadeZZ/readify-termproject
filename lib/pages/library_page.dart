@@ -224,7 +224,7 @@ class _LibraryPageState extends State<LibraryPage> {
                       child: Row(
                         children: [
                           Text(
-                            '${books.length} book${books.length == 1 ? '' : 's'}',
+                            l10n.libraryBooksCount(books.length),
                             style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const Spacer(),
@@ -390,6 +390,7 @@ class _BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Dismissible(
       key: Key(book.id),
@@ -409,7 +410,7 @@ class _BookCard extends StatelessWidget {
               children: [
                 Icon(Icons.delete_outline_rounded, color: cs.error),
                 const SizedBox(width: 8),
-                Text('Delete', style: TextStyle(color: cs.error, fontWeight: FontWeight.w600)),
+                Text(AppLocalizations.of(context)!.libraryDelete, style: TextStyle(color: cs.error, fontWeight: FontWeight.w600)),
               ],
             ),
           );
@@ -460,7 +461,7 @@ class _BookCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              book.status,
+                              AppColors.localizeStatus(book.status, l10n),
                               style: TextStyle(color: statusColor, fontWeight: FontWeight.w600, fontSize: 11),
                             ),
                           ),

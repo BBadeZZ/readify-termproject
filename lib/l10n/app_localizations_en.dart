@@ -271,6 +271,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get librarySortProgress => 'Progress';
 
   @override
+  String libraryBooksCount(int count) => count == 1 ? '1 book' : '$count books';
+
+  @override
   String get libraryEmptyFavorites =>
       'No favorites yet.\nTap the heart icon on any book.';
 

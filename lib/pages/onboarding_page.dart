@@ -68,10 +68,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     _slides = _buildSlides(cs, l10n);
-    final slide = _slides[_currentPage];
 
     return Scaffold(
-      backgroundColor: slide.bgColor,
       body: SafeArea(
         child: Column(
           children: [

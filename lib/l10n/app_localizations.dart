@@ -608,6 +608,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'No favorites yet.\nTap the heart icon on any book.'**
+  String libraryBooksCount(int count);
   String get libraryEmptyFavorites;
 
   /// No description provided for @libraryEmptyReading.

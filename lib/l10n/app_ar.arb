@@ -92,6 +92,12 @@
   "librarySortTitle": "العنوان",
   "librarySortAuthor": "المؤلف",
   "librarySortProgress": "التقدم",
+  "libraryBooksCount": "{count} كتاب",
+  "@libraryBooksCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "libraryEmptyFavorites": "لا توجد مفضلات بعد.\nاضغط على أيقونة القلب في أي كتاب.",
   "libraryEmptyReading": "لا تقرأ شيئاً الآن.",
   "libraryEmptyWishlist": "قائمة أمنياتك فارغة.",
