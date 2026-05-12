@@ -204,5 +204,35 @@
   "detailProgressSaved": "İlerleme kaydedildi.",
   "detailErrProgress": "İlerleme kaydedilemedi. Lütfen tekrar deneyin.",
   "detailErrFavorite": "Favori güncellenemedi.",
-  "detailErrRating": "Puan kaydedilemedi."
+  "detailErrRating": "Puan kaydedilemedi.",
+
+  "recsTitle": "Kitap Önerileri",
+  "recsAllRead": "Tüm önerilen kitapları zaten okudunuz 💛",
+  "recsAuthor": "Yazar: {name}",
+  "@recsAuthor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "recsGenre": "Tür: {genre}",
+  "@recsGenre": {
+    "placeholders": {
+      "genre": { "type": "String" }
+    }
+  },
+  "recsPages": "Sayfa: {count}",
+  "@recsPages": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recsRating": "Puan: {rating}",
+  "@recsRating": {
+    "placeholders": {
+      "rating": { "type": "String" }
+    }
+  },
+  "recsClose": "Kapat",
+  "recsAddBook": "Bu Kitabı Ekle",
+  "recsAddFavorite": "Favorilere Ekle"
 }

@@ -616,4 +616,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get detailErrRating => 'فشل حفظ التقييم.';
+
+  @override
+  String get recsTitle => 'توصيات الكتب';
+
+  @override
+  String get recsAllRead => 'لقد قرأت جميع الكتب الموصى بها 💛';
+
+  @override
+  String recsAuthor(String name) => 'المؤلف: $name';
+
+  @override
+  String recsGenre(String genre) => 'النوع: $genre';
+
+  @override
+  String recsPages(int count) => 'الصفحات: $count';
+
+  @override
+  String recsRating(String rating) => 'التقييم: $rating';
+
+  @override
+  String get recsClose => 'إغلاق';
+
+  @override
+  String get recsAddBook => 'أضف هذا الكتاب';
+
+  @override
+  String get recsAddFavorite => 'أضف إلى المفضلة';
 }

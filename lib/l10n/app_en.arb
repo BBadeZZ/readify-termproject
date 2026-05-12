@@ -267,5 +267,35 @@
   "detailProgressSaved": "Progress saved.",
   "detailErrProgress": "Failed to save progress. Please try again.",
   "detailErrFavorite": "Failed to update favorite.",
-  "detailErrRating": "Failed to save rating."
+  "detailErrRating": "Failed to save rating.",
+
+  "recsTitle": "Book Recommendations",
+  "recsAllRead": "You've already read all recommended books 💛",
+  "recsAuthor": "Author: {name}",
+  "@recsAuthor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "recsGenre": "Genre: {genre}",
+  "@recsGenre": {
+    "placeholders": {
+      "genre": { "type": "String" }
+    }
+  },
+  "recsPages": "Pages: {count}",
+  "@recsPages": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recsRating": "Rating: {rating}",
+  "@recsRating": {
+    "placeholders": {
+      "rating": { "type": "String" }
+    }
+  },
+  "recsClose": "Close",
+  "recsAddBook": "Add This Book",
+  "recsAddFavorite": "Add to Favorites"
 }

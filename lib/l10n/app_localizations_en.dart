@@ -620,4 +620,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailErrRating => 'Failed to save rating.';
+
+  @override
+  String get recsTitle => 'Book Recommendations';
+
+  @override
+  String get recsAllRead => 'You\'ve already read all recommended books 💛';
+
+  @override
+  String recsAuthor(String name) => 'Author: $name';
+
+  @override
+  String recsGenre(String genre) => 'Genre: $genre';
+
+  @override
+  String recsPages(int count) => 'Pages: $count';
+
+  @override
+  String recsRating(String rating) => 'Rating: $rating';
+
+  @override
+  String get recsClose => 'Close';
+
+  @override
+  String get recsAddBook => 'Add This Book';
+
+  @override
+  String get recsAddFavorite => 'Add to Favorites';
 }

@@ -204,5 +204,35 @@
   "detailProgressSaved": "تم حفظ التقدم.",
   "detailErrProgress": "فشل حفظ التقدم. حاول مجدداً.",
   "detailErrFavorite": "فشل تحديث المفضلة.",
-  "detailErrRating": "فشل حفظ التقييم."
+  "detailErrRating": "فشل حفظ التقييم.",
+
+  "recsTitle": "توصيات الكتب",
+  "recsAllRead": "لقد قرأت جميع الكتب الموصى بها 💛",
+  "recsAuthor": "المؤلف: {name}",
+  "@recsAuthor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "recsGenre": "النوع: {genre}",
+  "@recsGenre": {
+    "placeholders": {
+      "genre": { "type": "String" }
+    }
+  },
+  "recsPages": "الصفحات: {count}",
+  "@recsPages": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recsRating": "التقييم: {rating}",
+  "@recsRating": {
+    "placeholders": {
+      "rating": { "type": "String" }
+    }
+  },
+  "recsClose": "إغلاق",
+  "recsAddBook": "أضف هذا الكتاب",
+  "recsAddFavorite": "أضف إلى المفضلة"
 }

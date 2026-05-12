@@ -618,4 +618,31 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get detailErrRating => 'Puan kaydedilemedi.';
+
+  @override
+  String get recsTitle => 'Kitap Önerileri';
+
+  @override
+  String get recsAllRead => 'Tüm önerilen kitapları zaten okudunuz 💛';
+
+  @override
+  String recsAuthor(String name) => 'Yazar: $name';
+
+  @override
+  String recsGenre(String genre) => 'Tür: $genre';
+
+  @override
+  String recsPages(int count) => 'Sayfa: $count';
+
+  @override
+  String recsRating(String rating) => 'Puan: $rating';
+
+  @override
+  String get recsClose => 'Kapat';
+
+  @override
+  String get recsAddBook => 'Bu Kitabı Ekle';
+
+  @override
+  String get recsAddFavorite => 'Favorilere Ekle';
 }

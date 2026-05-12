@@ -1251,6 +1251,16 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to save rating.'**
   String get detailErrRating;
+
+  String get recsTitle;
+  String get recsAllRead;
+  String recsAuthor(String name);
+  String recsGenre(String genre);
+  String recsPages(int count);
+  String recsRating(String rating);
+  String get recsClose;
+  String get recsAddBook;
+  String get recsAddFavorite;
 }
 
 class _AppLocalizationsDelegate
