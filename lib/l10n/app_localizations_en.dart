@@ -194,6 +194,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.';
 
   @override
+  String streakDays(int days) {
+    return '$days day streak';
+  }
+
+  @override
+  String get streakStart => 'Start your streak today!';
+
+  @override
   String get homeGreetMorning => 'Good morning';
 
   @override
@@ -271,7 +279,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get librarySortProgress => 'Progress';
 
   @override
-  String libraryBooksCount(int count) => count == 1 ? '1 book' : '$count books';
+  String libraryBooksCount(int count) {
+    return '$count books';
+  }
 
   @override
   String get libraryEmptyFavorites =>
@@ -464,6 +474,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'Book Title';
+
   @override
   String get fieldGenre => 'Genre';
 
@@ -624,16 +635,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recsAllRead => 'You\'ve already read all recommended books 💛';
 
   @override
-  String recsAuthor(String name) => 'Author: $name';
+  String recsAuthor(String name) {
+    return 'Author: $name';
+  }
 
   @override
-  String recsGenre(String genre) => 'Genre: $genre';
+  String recsGenre(String genre) {
+    return 'Genre: $genre';
+  }
 
   @override
-  String recsPages(int count) => 'Pages: $count';
+  String recsPages(int count) {
+    return 'Pages: $count';
+  }
 
   @override
-  String recsRating(String rating) => 'Rating: $rating';
+  String recsRating(String rating) {
+    return 'Rating: $rating';
+  }
 
   @override
   String get recsClose => 'Close';

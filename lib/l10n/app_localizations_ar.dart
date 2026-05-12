@@ -192,6 +192,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'ابحث في ملايين الكتب بنقرة واحدة.\nيتم ملء العنوان والمؤلف والغلاف وعدد الصفحات تلقائياً.';
 
   @override
+  String streakDays(int days) {
+    return 'سلسلة $days أيام';
+  }
+
+  @override
+  String get streakStart => 'ابدأ سلسلتك اليوم!';
+
+  @override
   String get homeGreetMorning => 'صباح الخير';
 
   @override
@@ -269,7 +277,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get librarySortProgress => 'التقدم';
 
   @override
-  String libraryBooksCount(int count) => '$count كتاب';
+  String libraryBooksCount(int count) {
+    return '$count كتاب';
+  }
 
   @override
   String get libraryEmptyFavorites =>
@@ -461,6 +471,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'عنوان الكتاب';
+
   @override
   String get fieldGenre => 'النوع الأدبي';
 
@@ -620,16 +631,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recsAllRead => 'لقد قرأت جميع الكتب الموصى بها 💛';
 
   @override
-  String recsAuthor(String name) => 'المؤلف: $name';
+  String recsAuthor(String name) {
+    return 'المؤلف: $name';
+  }
 
   @override
-  String recsGenre(String genre) => 'النوع: $genre';
+  String recsGenre(String genre) {
+    return 'النوع: $genre';
+  }
 
   @override
-  String recsPages(int count) => 'الصفحات: $count';
+  String recsPages(int count) {
+    return 'الصفحات: $count';
+  }
 
   @override
-  String recsRating(String rating) => 'التقييم: $rating';
+  String recsRating(String rating) {
+    return 'التقييم: $rating';
+  }
 
   @override
   String get recsClose => 'إغلاق';

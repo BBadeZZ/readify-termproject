@@ -66,6 +66,13 @@
   "onboarding3Title": "Discover Books Instantly",
   "onboarding3Desc": "Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.",
 
+  "streakDays": "{days} day streak",
+  "@streakDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "streakStart": "Start your streak today!",
   "homeGreetMorning": "Good morning",
   "homeGreetAfternoon": "Good afternoon",
   "homeGreetEvening": "Good evening",

@@ -192,6 +192,14 @@ class AppLocalizationsTr extends AppLocalizations {
       'Tek dokunuşla milyonlarca kitabı arayın.\nBaşlık, yazar, kapak ve sayfa sayısı otomatik dolar.';
 
   @override
+  String streakDays(int days) {
+    return '$days günlük seri';
+  }
+
+  @override
+  String get streakStart => 'Bugün okumaya başla!';
+
+  @override
   String get homeGreetMorning => 'Günaydın';
 
   @override
@@ -269,7 +277,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get librarySortProgress => 'İlerleme';
 
   @override
-  String libraryBooksCount(int count) => '$count kitap';
+  String libraryBooksCount(int count) {
+    return '$count kitap';
+  }
 
   @override
   String get libraryEmptyFavorites =>
@@ -461,6 +471,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'Kitap Başlığı';
+
   @override
   String get fieldGenre => 'Tür';
 
@@ -622,16 +633,24 @@ class AppLocalizationsTr extends AppLocalizations {
   String get recsAllRead => 'Tüm önerilen kitapları zaten okudunuz 💛';
 
   @override
-  String recsAuthor(String name) => 'Yazar: $name';
+  String recsAuthor(String name) {
+    return 'Yazar: $name';
+  }
 
   @override
-  String recsGenre(String genre) => 'Tür: $genre';
+  String recsGenre(String genre) {
+    return 'Tür: $genre';
+  }
 
   @override
-  String recsPages(int count) => 'Sayfa: $count';
+  String recsPages(int count) {
+    return 'Sayfa: $count';
+  }
 
   @override
-  String recsRating(String rating) => 'Puan: $rating';
+  String recsRating(String rating) {
+    return 'Puan: $rating';
+  }
 
   @override
   String get recsClose => 'Kapat';

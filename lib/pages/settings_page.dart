@@ -69,7 +69,11 @@ class _SettingsPageState extends State<SettingsPage> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: cs.primaryContainer,
+              gradient: LinearGradient(
+                colors: [cs.primaryContainer, cs.secondaryContainer],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(18),
             ),
             child: Column(

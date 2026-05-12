@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/reading_session.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
+import '../utils/streak_utils.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
@@ -52,9 +54,13 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: StreamBuilder<List<Book>>(
-        stream: firestoreService.getBooks(),
-        builder: (context, snapshot) {
+      body: StreamBuilder<List<ReadingSession>>(
+        stream: firestoreService.getSessions(),
+        builder: (context, sessionsSnapshot) {
+          final streak = calculateStreak(sessionsSnapshot.data ?? []);
+          return StreamBuilder<List<Book>>(
+            stream: firestoreService.getBooks(),
+            builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -119,7 +125,7 @@ class HomePage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 1.55,
+                childAspectRatio: 1.25,
                 children: [
                   StatCard(
                     label: l10n.homeTotalBooks,
@@ -156,7 +162,9 @@ class HomePage extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 16),
+              _StreakBanner(streak: streak),
+              const SizedBox(height: 16),
 
               if (reading.isNotEmpty) ...[
                 Row(
@@ -244,8 +252,44 @@ class HomePage extends StatelessWidget {
             ],
           );
         },
+      );
+        },
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 0),
+    );
+  }
+}
+
+class _StreakBanner extends StatelessWidget {
+  final int streak;
+
+  const _StreakBanner({required this.streak});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final label = streak > 0 ? l10n.streakDays(streak) : l10n.streakStart;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.starYellowContainer,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.starYellow.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Text('🔥', style: TextStyle(fontSize: 22)),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              color: AppColors.starYellow,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

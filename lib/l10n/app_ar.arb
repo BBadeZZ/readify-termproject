@@ -66,6 +66,13 @@
   "onboarding3Title": "اكتشف الكتب فوراً",
   "onboarding3Desc": "ابحث في ملايين الكتب بنقرة واحدة.\nيتم ملء العنوان والمؤلف والغلاف وعدد الصفحات تلقائياً.",
 
+  "streakDays": "سلسلة {days} أيام",
+  "@streakDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "streakStart": "ابدأ سلسلتك اليوم!",
   "homeGreetMorning": "صباح الخير",
   "homeGreetAfternoon": "مساء الخير",
   "homeGreetEvening": "مساء الخير",

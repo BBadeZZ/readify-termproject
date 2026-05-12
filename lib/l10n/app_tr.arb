@@ -66,6 +66,13 @@
   "onboarding3Title": "Kitapları Anında Keşfet",
   "onboarding3Desc": "Tek dokunuşla milyonlarca kitabı arayın.\nBaşlık, yazar, kapak ve sayfa sayısı otomatik dolar.",
 
+  "streakDays": "{days} günlük seri",
+  "@streakDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "streakStart": "Bugün okumaya başla!",
   "homeGreetMorning": "Günaydın",
   "homeGreetAfternoon": "İyi öğleler",
   "homeGreetEvening": "İyi akşamlar",
