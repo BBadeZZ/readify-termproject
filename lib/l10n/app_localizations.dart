@@ -1335,6 +1335,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add to Favorites'**
   String get recsAddFavorite;
+
+  /// No description provided for @analyticsGenreBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre Breakdown'**
+  String get analyticsGenreBreakdown;
+
+  /// No description provided for @detailSessionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Sessions'**
+  String get detailSessionHistory;
+
+  /// No description provided for @detailNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get detailNotes;
+
+  /// No description provided for @detailAddNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note...'**
+  String get detailAddNote;
+
+  /// No description provided for @detailNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your note here'**
+  String get detailNoteHint;
+
+  /// No description provided for @detailNoteSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get detailNoteSave;
+
+  /// No description provided for @homeUpdatePage.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Page'**
+  String get homeUpdatePage;
+
+  /// No description provided for @homeCurrentPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Current page'**
+  String get homeCurrentPage;
+
+  /// No description provided for @homeSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get homeSave;
 }
 
 class _AppLocalizationsDelegate

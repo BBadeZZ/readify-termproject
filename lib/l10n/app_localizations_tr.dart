@@ -674,4 +674,31 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get recsAddFavorite => 'Favorilere Ekle';
+
+  @override
+  String get analyticsGenreBreakdown => 'Tür Dağılımı';
+
+  @override
+  String get detailSessionHistory => 'Okuma Seansları';
+
+  @override
+  String get detailNotes => 'Notlar';
+
+  @override
+  String get detailAddNote => 'Not ekle...';
+
+  @override
+  String get detailNoteHint => 'Notunuzu buraya yazın';
+
+  @override
+  String get detailNoteSave => 'Kaydet';
+
+  @override
+  String get homeUpdatePage => 'Sayfa Güncelle';
+
+  @override
+  String get homeCurrentPage => 'Mevcut sayfa';
+
+  @override
+  String get homeSave => 'Kaydet';
 }

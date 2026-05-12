@@ -62,6 +62,19 @@ class HomePage extends StatelessWidget {
           return StreamBuilder<List<Book>>(
             stream: firestoreService.getBooks(),
             builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.cloud_off_rounded, size: 52, color: Theme.of(context).colorScheme.error),
+                  const SizedBox(height: 12),
+                  Text(AppLocalizations.of(context)!.librarySomethingWrong,
+                      style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                ],
+              ),
+            );
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }

@@ -676,4 +676,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recsAddFavorite => 'Add to Favorites';
+
+  @override
+  String get analyticsGenreBreakdown => 'Genre Breakdown';
+
+  @override
+  String get detailSessionHistory => 'Reading Sessions';
+
+  @override
+  String get detailNotes => 'Notes';
+
+  @override
+  String get detailAddNote => 'Add a note...';
+
+  @override
+  String get detailNoteHint => 'Write your note here';
+
+  @override
+  String get detailNoteSave => 'Save';
+
+  @override
+  String get homeUpdatePage => 'Update Page';
+
+  @override
+  String get homeCurrentPage => 'Current page';
+
+  @override
+  String get homeSave => 'Save';
 }

@@ -256,5 +256,15 @@
   },
   "recsClose": "Kapat",
   "recsAddBook": "Bu Kitabı Ekle",
-  "recsAddFavorite": "Favorilere Ekle"
+  "recsAddFavorite": "Favorilere Ekle",
+
+  "analyticsGenreBreakdown": "Tür Dağılımı",
+  "detailSessionHistory": "Okuma Seansları",
+  "detailNotes": "Notlar",
+  "detailAddNote": "Not ekle...",
+  "detailNoteHint": "Notunuzu buraya yazın",
+  "detailNoteSave": "Kaydet",
+  "homeUpdatePage": "Sayfa Güncelle",
+  "homeCurrentPage": "Mevcut sayfa",
+  "homeSave": "Kaydet"
 }

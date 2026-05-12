@@ -31,6 +31,10 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Duration _elapsed = Duration.zero;
   Timer? _ticker;
 
+  List<ReadingSession> _sessions = [];
+  StreamSubscription<List<ReadingSession>>? _sessionsSub;
+  final TextEditingController _newNoteController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -38,13 +42,19 @@ class _BookDetailPageState extends State<BookDetailPage> {
     pageController = TextEditingController(text: book.currentPage.toString());
     noteController = TextEditingController(text: book.note);
     _restoreActiveSession();
+    _sessionsSub = firestoreService.getSessions().listen(
+      (all) { if (mounted) setState(() => _sessions = all.where((s) => s.bookId == book.id).toList()..sort((a, b) => b.startedAt.compareTo(a.startedAt))); },
+      onError: (_) {},
+    );
   }
 
   @override
   void dispose() {
     _ticker?.cancel();
+    _sessionsSub?.cancel();
     pageController.dispose();
     noteController.dispose();
+    _newNoteController.dispose();
     super.dispose();
   }
 
@@ -291,6 +301,31 @@ class _BookDetailPageState extends State<BookDetailPage> {
     }
   }
 
+  void _addNote() async {
+    final text = _newNoteController.text.trim();
+    if (text.isEmpty) return;
+    final updated = List<String>.from(book.notes)..add(text);
+    setState(() { book = book.copyWith(notes: updated); });
+    _newNoteController.clear();
+    try {
+      await firestoreService.updateBook(book);
+    } catch (_) {
+      final rollback = List<String>.from(book.notes)..removeLast();
+      setState(() { book = book.copyWith(notes: rollback); });
+    }
+  }
+
+  void _deleteNote(int index) async {
+    final previous = List<String>.from(book.notes);
+    final updated = List<String>.from(book.notes)..removeAt(index);
+    setState(() { book = book.copyWith(notes: updated); });
+    try {
+      await firestoreService.updateBook(book);
+    } catch (_) {
+      setState(() { book = book.copyWith(notes: previous); });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -529,6 +564,158 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
+
+          const SizedBox(height: 24),
+          _buildSessionHistory(l10n, tt, cs),
+
+          const SizedBox(height: 24),
+          _buildNotesSection(l10n, tt, cs),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSessionHistory(AppLocalizations l10n, TextTheme tt, ColorScheme cs) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.history_rounded, size: 18, color: cs.primary),
+              const SizedBox(width: 8),
+              Text(l10n.detailSessionHistory, style: tt.titleMedium),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (_sessions.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Center(
+                child: Text(
+                  l10n.analyticsNoSessions,
+                  textAlign: TextAlign.center,
+                  style: tt.bodyMedium?.copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
+                ),
+              ),
+            )
+          else
+            ...(_sessions.take(5).map((s) {
+              final date = '${s.startedAt.day}.${s.startedAt.month.toString().padLeft(2, '0')}.${s.startedAt.year}';
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: cs.primaryContainer,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(Icons.menu_book_rounded, size: 16, color: cs.onPrimaryContainer),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(date, style: tt.bodySmall?.copyWith(color: cs.onSurface.withValues(alpha: 0.6))),
+                          Text('${s.durationMinutes} min · ${s.pagesRead} pages', style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            })),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotesSection(AppLocalizations l10n, TextTheme tt, ColorScheme cs) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.sticky_note_2_outlined, size: 18, color: cs.primary),
+              const SizedBox(width: 8),
+              Text(l10n.detailNotes, style: tt.titleMedium),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (book.notes.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                l10n.detailAddNote,
+                style: tt.bodyMedium?.copyWith(color: cs.onSurface.withValues(alpha: 0.45)),
+              ),
+            )
+          else
+            ...book.notes.asMap().entries.map((entry) {
+              final i = entry.key;
+              final note = entry.value;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: Text(note, style: tt.bodyMedium)),
+                    GestureDetector(
+                      onTap: () => _deleteNote(i),
+                      child: Icon(Icons.close_rounded, size: 16, color: cs.onSurface.withValues(alpha: 0.45)),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _newNoteController,
+                  maxLines: 2,
+                  minLines: 1,
+                  decoration: InputDecoration(
+                    hintText: l10n.detailNoteHint,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              FilledButton(
+                onPressed: _addNote,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(l10n.detailNoteSave),
+              ),
+            ],
+          ),
         ],
       ),
     );

@@ -256,5 +256,15 @@
   },
   "recsClose": "إغلاق",
   "recsAddBook": "أضف هذا الكتاب",
-  "recsAddFavorite": "أضف إلى المفضلة"
+  "recsAddFavorite": "أضف إلى المفضلة",
+
+  "analyticsGenreBreakdown": "توزيع الأنواع",
+  "detailSessionHistory": "جلسات القراءة",
+  "detailNotes": "ملاحظات",
+  "detailAddNote": "أضف ملاحظة...",
+  "detailNoteHint": "اكتب ملاحظتك هنا",
+  "detailNoteSave": "حفظ",
+  "homeUpdatePage": "تحديث الصفحة",
+  "homeCurrentPage": "الصفحة الحالية",
+  "homeSave": "حفظ"
 }

@@ -319,5 +319,15 @@
   },
   "recsClose": "Close",
   "recsAddBook": "Add This Book",
-  "recsAddFavorite": "Add to Favorites"
+  "recsAddFavorite": "Add to Favorites",
+
+  "analyticsGenreBreakdown": "Genre Breakdown",
+  "detailSessionHistory": "Reading Sessions",
+  "detailNotes": "Notes",
+  "detailAddNote": "Add a note...",
+  "detailNoteHint": "Write your note here",
+  "detailNoteSave": "Save",
+  "homeUpdatePage": "Update Page",
+  "homeCurrentPage": "Current page",
+  "homeSave": "Save"
 }

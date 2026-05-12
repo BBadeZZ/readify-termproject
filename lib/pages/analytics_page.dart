@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/book.dart';
@@ -22,6 +23,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   List<Book> _books = [];
   List<ReadingSession> _sessions = [];
   bool _loading = true;
+  bool _hasError = false;
 
   StreamSubscription? _booksSub;
   StreamSubscription? _sessionsSub;
@@ -29,12 +31,22 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   @override
   void initState() {
     super.initState();
-    _booksSub = firestoreService.getBooks().listen((books) {
-      if (mounted) setState(() { _books = books; _loading = false; });
-    });
-    _sessionsSub = firestoreService.getSessions().listen((sessions) {
-      if (mounted) setState(() => _sessions = sessions);
-    });
+    _booksSub = firestoreService.getBooks().listen(
+      (books) {
+        if (mounted) setState(() { _books = books; _loading = false; });
+      },
+      onError: (_) {
+        if (mounted) setState(() { _hasError = true; _loading = false; });
+      },
+    );
+    _sessionsSub = firestoreService.getSessions().listen(
+      (sessions) {
+        if (mounted) setState(() => _sessions = sessions);
+      },
+      onError: (_) {
+        if (mounted) setState(() => _hasError = true);
+      },
+    );
   }
 
   @override
@@ -56,6 +68,24 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
         drawer: const AppDrawer(currentPage: 'Analytics'),
         appBar: AppBar(title: Text(l10n.analyticsTitle)),
         body: const Center(child: CircularProgressIndicator()),
+        bottomNavigationBar: const AppBottomNav(currentIndex: 3),
+      );
+    }
+
+    if (_hasError) {
+      return Scaffold(
+        drawer: const AppDrawer(currentPage: 'Analytics'),
+        appBar: AppBar(title: Text(l10n.analyticsTitle)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.cloud_off_rounded, size: 52, color: cs.error),
+              const SizedBox(height: 12),
+              Text(l10n.librarySomethingWrong, style: TextStyle(color: cs.error)),
+            ],
+          ),
+        ),
         bottomNavigationBar: const AppBottomNav(currentIndex: 3),
       );
     }
@@ -121,6 +151,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           _WeeklyChart(sessions: _sessions),
 
           const SizedBox(height: 20),
+          if (_books.isNotEmpty) ...[
+            _GenreChart(books: _books),
+            const SizedBox(height: 20),
+          ],
 
           Container(
             padding: const EdgeInsets.all(18),
@@ -203,6 +237,127 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
       bottomNavigationBar: const AppBottomNav(currentIndex: 3),
     );
   }
+}
+
+class _GenreChart extends StatelessWidget {
+  final List<Book> books;
+  const _GenreChart({required this.books});
+
+  static const _palette = [
+    AppColors.readingBlue,
+    AppColors.completedGreen,
+    AppColors.starYellow,
+    AppColors.sessionPurple,
+    AppColors.pagesTeal,
+    AppColors.suggestionsPurple,
+    AppColors.wishlistAmber,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+
+    final counts = <String, int>{};
+    for (final b in books) {
+      final g = b.genre.trim().isEmpty ? '–' : b.genre;
+      counts[g] = (counts[g] ?? 0) + 1;
+    }
+    final sorted = counts.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final total = books.length;
+    final slices = sorted.map((e) => e.value / total).toList();
+    final colors = List.generate(sorted.length, (i) => _palette[i % _palette.length]);
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.analyticsGenreBreakdown, style: tt.titleMedium),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              SizedBox(
+                width: 110,
+                height: 110,
+                child: CustomPaint(painter: _DonutPainter(slices: slices, colors: colors)),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: sorted.take(6).toList().asMap().entries.map((entry) {
+                    final color = colors[entry.key];
+                    final genre = entry.value.key;
+                    final count = entry.value.value;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 9, height: 9,
+                            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(genre, style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis),
+                          ),
+                          Text('$count', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color)),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DonutPainter extends CustomPainter {
+  final List<double> slices;
+  final List<Color> colors;
+  const _DonutPainter({required this.slices, required this.colors});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final outerR = math.min(cx, cy);
+    final strokeW = outerR * 0.42;
+    final arcR = outerR - strokeW / 2;
+    final rect = Rect.fromCircle(center: Offset(cx, cy), radius: arcR);
+    const gap = 0.05;
+    double angle = -math.pi / 2;
+
+    for (int i = 0; i < slices.length; i++) {
+      final sweep = slices[i] * 2 * math.pi - gap;
+      canvas.drawArc(
+        rect,
+        angle + gap / 2,
+        sweep.clamp(0.01, 2 * math.pi),
+        false,
+        Paint()
+          ..color = colors[i]
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeW
+          ..strokeCap = StrokeCap.butt,
+      );
+      angle += slices[i] * 2 * math.pi;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DonutPainter old) => old.slices != slices;
 }
 
 class _WeeklyChart extends StatelessWidget {

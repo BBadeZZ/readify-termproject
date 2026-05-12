@@ -672,4 +672,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recsAddFavorite => 'أضف إلى المفضلة';
+
+  @override
+  String get analyticsGenreBreakdown => 'توزيع الأنواع';
+
+  @override
+  String get detailSessionHistory => 'جلسات القراءة';
+
+  @override
+  String get detailNotes => 'ملاحظات';
+
+  @override
+  String get detailAddNote => 'أضف ملاحظة...';
+
+  @override
+  String get detailNoteHint => 'اكتب ملاحظتك هنا';
+
+  @override
+  String get detailNoteSave => 'حفظ';
+
+  @override
+  String get homeUpdatePage => 'تحديث الصفحة';
+
+  @override
+  String get homeCurrentPage => 'الصفحة الحالية';
+
+  @override
+  String get homeSave => 'حفظ';
 }
