@@ -149,6 +149,10 @@
   "settingsReminderTime": "Hatırlatma Saati",
   "settingsHighlightFavorites": "Favori Kitapları Vurgula",
   "settingsDailyGoal": "Günlük Okuma Hedefi: {count} sayfa",
+  "settingsAppearance": "Görünüm",
+  "settingsBrightnessLight": "Açık",
+  "settingsBrightnessDark": "Koyu",
+  "settingsBrightnessSystem": "Sistem",
   "settingsLanguage": "Dil",
 
   "addBookTitle": "Kitap Ekle",

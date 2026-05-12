@@ -53,7 +53,9 @@ class ReadifyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Readify',
           debugShowCheckedModeBanner: false,
-          theme: themeController.currentTheme,
+          theme: themeController.lightTheme,
+          darkTheme: themeController.darkTheme,
+          themeMode: themeController.themeMode,
           locale: localeProvider.locale,
           localizationsDelegates: const [
             AppLocalizations.delegate,

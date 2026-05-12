@@ -28,7 +28,6 @@ class _WelcomePageState extends State<WelcomePage> {
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: cs.primaryContainer,
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -37,10 +36,10 @@ class _WelcomePageState extends State<WelcomePage> {
             decoration: BoxDecoration(
               color: cs.surface,
               borderRadius: BorderRadius.circular(28),
-              boxShadow: const [
-                BoxShadow(blurRadius: 14, color: Colors.black12, offset: Offset(0, 6)),
+              boxShadow: [
+                BoxShadow(blurRadius: 20, color: cs.primary.withValues(alpha: 0.08), offset: const Offset(0, 6)),
               ],
-              border: Border.all(color: cs.outlineVariant, width: 2),
+              border: Border.all(color: cs.outlineVariant, width: 1.5),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

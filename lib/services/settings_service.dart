@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsService {
   static const _keyTheme = 'theme_type';
+  static const _keyThemeBrightness = 'theme_brightness';
   static const _keyDailyReminder = 'daily_reminder';
   static const _keyShowFavorites = 'show_favorites';
   static const _keyDailyGoal = 'daily_goal';
@@ -17,6 +18,9 @@ class SettingsService {
 
   String get themeType => _prefs.getString(_keyTheme) ?? 'softGold';
   Future<void> saveTheme(String value) => _prefs.setString(_keyTheme, value);
+
+  String get themeBrightness => _prefs.getString(_keyThemeBrightness) ?? 'system';
+  Future<void> saveThemeBrightness(String value) => _prefs.setString(_keyThemeBrightness, value);
 
   bool get dailyReminder => _prefs.getBool(_keyDailyReminder) ?? true;
   Future<void> saveDailyReminder(bool value) =>

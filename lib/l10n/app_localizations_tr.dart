@@ -441,6 +441,18 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearance => 'Görünüm';
+
+  @override
+  String get settingsBrightnessLight => 'Açık';
+
+  @override
+  String get settingsBrightnessDark => 'Koyu';
+
+  @override
+  String get settingsBrightnessSystem => 'Sistem';
+
+  @override
   String get settingsLanguage => 'Dil';
 
   @override

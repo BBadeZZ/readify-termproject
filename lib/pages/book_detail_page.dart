@@ -90,6 +90,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       return;
     }
 
+    if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
     final endedAt = DateTime.now();
     final durationMinutes = _elapsed.inMinutes;

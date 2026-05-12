@@ -444,6 +444,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsBrightnessLight => 'Light';
+
+  @override
+  String get settingsBrightnessDark => 'Dark';
+
+  @override
+  String get settingsBrightnessSystem => 'System';
+
+  @override
   String get settingsLanguage => 'Language';
 
   @override

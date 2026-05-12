@@ -928,6 +928,30 @@ abstract class AppLocalizations {
   /// **'Daily Reading Goal: {count} pages'**
   String settingsDailyGoal(int count);
 
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsBrightnessLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsBrightnessLight;
+
+  /// No description provided for @settingsBrightnessDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsBrightnessDark;
+
+  /// No description provided for @settingsBrightnessSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsBrightnessSystem;
+
   /// No description provided for @settingsLanguage.
   ///
   /// In en, this message translates to:

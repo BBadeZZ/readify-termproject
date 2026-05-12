@@ -149,6 +149,10 @@
   "settingsReminderTime": "وقت التذكير",
   "settingsHighlightFavorites": "إبراز الكتب المفضلة",
   "settingsDailyGoal": "هدف القراءة اليومي: {count} صفحة",
+  "settingsAppearance": "المظهر",
+  "settingsBrightnessLight": "فاتح",
+  "settingsBrightnessDark": "داكن",
+  "settingsBrightnessSystem": "النظام",
   "settingsLanguage": "اللغة",
 
   "addBookTitle": "إضافة كتاب",

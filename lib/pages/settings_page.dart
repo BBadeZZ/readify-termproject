@@ -95,25 +95,36 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const SizedBox(height: 20),
 
-          // Theme
-          Text(l10n.settingsTheme, style: tt.titleLarge),
-          RadioGroup<AppThemeType>(
-            groupValue: themeController.themeType,
-            onChanged: (value) {
-              setState(() => themeController.setTheme(value!));
+          // Appearance (brightness)
+          Text(l10n.settingsAppearance, style: tt.titleLarge),
+          const SizedBox(height: 10),
+          SegmentedButton<ThemeBrightness>(
+            selected: {themeController.brightness},
+            onSelectionChanged: (selection) {
+              setState(() => themeController.setBrightness(selection.first));
             },
-            child: Column(
-              children: [
-                RadioListTile<AppThemeType>(
-                  title: Text(l10n.settingsSoftGold),
-                  value: AppThemeType.softGold,
-                ),
-                RadioListTile<AppThemeType>(
-                  title: Text(l10n.settingsSoftPink),
-                  value: AppThemeType.softPink,
-                ),
-              ],
+            showSelectedIcon: false,
+            style: SegmentedButton.styleFrom(
+              selectedBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              selectedForegroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
+            segments: [
+              ButtonSegment(
+                value: ThemeBrightness.light,
+                icon: const Icon(Icons.light_mode_rounded, size: 18),
+                label: Text(l10n.settingsBrightnessLight),
+              ),
+              ButtonSegment(
+                value: ThemeBrightness.system,
+                icon: const Icon(Icons.brightness_auto_rounded, size: 18),
+                label: Text(l10n.settingsBrightnessSystem),
+              ),
+              ButtonSegment(
+                value: ThemeBrightness.dark,
+                icon: const Icon(Icons.dark_mode_rounded, size: 18),
+                label: Text(l10n.settingsBrightnessDark),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
 

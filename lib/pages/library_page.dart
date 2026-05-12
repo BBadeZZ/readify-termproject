@@ -55,10 +55,10 @@ class _LibraryPageState extends State<LibraryPage> {
 
   List<Book> applyFilter(List<Book> books) {
     List<Book> result = books;
-    if (filter == 'Reading') result = result.where((b) => b.status == 'Reading').toList();
-    else if (filter == 'Wishlist') result = result.where((b) => b.status == 'Wishlist').toList();
-    else if (filter == 'Already Read') result = result.where((b) => b.status == 'Already Read').toList();
-    else if (filter == 'Favorites') result = result.where((b) => b.favorite).toList();
+    if (filter == 'Reading') { result = result.where((b) => b.status == 'Reading').toList(); }
+    else if (filter == 'Wishlist') { result = result.where((b) => b.status == 'Wishlist').toList(); }
+    else if (filter == 'Already Read') { result = result.where((b) => b.status == 'Already Read').toList(); }
+    else if (filter == 'Favorites') { result = result.where((b) => b.favorite).toList(); }
 
     if (searchText.trim().isNotEmpty) {
       final q = searchText.toLowerCase().trim();
