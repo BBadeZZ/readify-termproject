@@ -6,6 +6,7 @@ import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
+import '../l10n/app_localizations.dart';
 
 class RecommendationsPage extends StatelessWidget {
   const RecommendationsPage({super.key});
@@ -59,6 +60,7 @@ class RecommendationsPage extends StatelessWidget {
       context: context,
       builder: (context) {
         final cs = Theme.of(context).colorScheme;
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
           title: Text(
             book.title,
@@ -75,22 +77,13 @@ class RecommendationsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Author: ${book.author}',
+                  l10n.recsAuthor(book.author),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: cs.primary),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Genre: ${book.genre}',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Pages: ${book.pages}',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Rating: ${book.rating}',
-                  style: const TextStyle(fontSize: 16),
-                ),
+                Text(l10n.recsGenre(book.genre), style: const TextStyle(fontSize: 16)),
+                Text(l10n.recsPages(book.pages), style: const TextStyle(fontSize: 16)),
+                Text(l10n.recsRating(book.rating.toString()), style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 12),
                 Text(
                   book.description,
@@ -103,29 +96,17 @@ class RecommendationsPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+              child: Text(l10n.recsClose),
             ),
             ElevatedButton.icon(
-              onPressed: () {
-                sendBookToAddPage(
-                  context,
-                  book,
-                  favorite: false,
-                );
-              },
+              onPressed: () => sendBookToAddPage(context, book, favorite: false),
               icon: const Icon(Icons.add),
-              label: const Text('Add This Book'),
+              label: Text(l10n.recsAddBook),
             ),
             ElevatedButton.icon(
-              onPressed: () {
-                sendBookToAddPage(
-                  context,
-                  book,
-                  favorite: true,
-                );
-              },
+              onPressed: () => sendBookToAddPage(context, book, favorite: true),
               icon: const Icon(Icons.favorite),
-              label: const Text('Add to Favorites'),
+              label: Text(l10n.recsAddFavorite),
             ),
           ],
         );
@@ -137,7 +118,7 @@ class RecommendationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Recommendations'),
-      appBar: AppBar(title: const Text('Book Recommendations')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.recsTitle)),
       body: StreamBuilder<List<Book>>(
         stream: firestoreService.getBooks(),
         builder: (context, snapshot) {
@@ -156,13 +137,14 @@ class RecommendationsPage extends StatelessWidget {
           }).toList();
 
           final cs = Theme.of(context).colorScheme;
+          final l10n = AppLocalizations.of(context)!;
 
           if (visibleRecommendations.isEmpty) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
-                  'You have already read all recommended books 💛',
+                  l10n.recsAllRead,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, color: cs.primary, fontWeight: FontWeight.bold),
                 ),
@@ -190,8 +172,8 @@ class RecommendationsPage extends StatelessWidget {
                     color: cs.surface,
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: cs.outlineVariant, width: 2),
-                    boxShadow: const [
-                      BoxShadow(blurRadius: 6, color: Colors.black12, offset: Offset(0, 4)),
+                    boxShadow: [
+                      BoxShadow(blurRadius: 6, color: cs.primary.withValues(alpha: 0.08), offset: const Offset(0, 4)),
                     ],
                   ),
                   child: Column(

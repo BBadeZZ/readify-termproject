@@ -194,6 +194,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.';
 
   @override
+  String streakDays(int days) {
+    return '$days day streak';
+  }
+
+  @override
+  String get streakStart => 'Start your streak today!';
+
+  @override
   String get homeGreetMorning => 'Good morning';
 
   @override
@@ -247,6 +255,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeViewHistory => 'Tap to view your reading history';
 
   @override
+  String get homeGoalTitle => 'Today\'s Goal';
+
+  @override
+  String get homeGoalReached => 'Goal reached! 🎉';
+
+  @override
+  String homeGoalProgress(int done, int goal) {
+    return '$done / $goal pages';
+  }
+
+  @override
   String get libraryTitle => 'My Library';
 
   @override
@@ -269,6 +288,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get librarySortProgress => 'Progress';
+
+  @override
+  String libraryBooksCount(int count) {
+    return '$count books';
+  }
 
   @override
   String get libraryEmptyFavorites =>
@@ -367,6 +391,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analyticsAvgSession => 'Avg Session';
 
   @override
+  String get analyticsWeeklyChart => 'Last 7 Days';
+
+  @override
   String get profileTitle => 'My Profile';
 
   @override
@@ -418,15 +445,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
-  String get settingsTheme => 'Theme Selection';
-
-  @override
-  String get settingsSoftGold => 'Soft Gold Theme';
-
-  @override
-  String get settingsSoftPink => 'Soft Pink Theme';
-
-  @override
   String get settingsDailyReminder => 'Daily Reading Reminder';
 
   @override
@@ -444,6 +462,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsBrightnessLight => 'Light';
+
+  @override
+  String get settingsBrightnessDark => 'Dark';
+
+  @override
+  String get settingsBrightnessSystem => 'System';
+
+  @override
   String get settingsLanguage => 'Language';
 
   @override
@@ -458,6 +488,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'Book Title';
+
+  @override
+  String get fieldGenre => 'Genre';
 
   @override
   String get fieldAuthor => 'Author';
@@ -608,4 +641,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailErrRating => 'Failed to save rating.';
+
+  @override
+  String get recsTitle => 'Book Recommendations';
+
+  @override
+  String get recsAllRead => 'You\'ve already read all recommended books 💛';
+
+  @override
+  String recsAuthor(String name) {
+    return 'Author: $name';
+  }
+
+  @override
+  String recsGenre(String genre) {
+    return 'Genre: $genre';
+  }
+
+  @override
+  String recsPages(int count) {
+    return 'Pages: $count';
+  }
+
+  @override
+  String recsRating(String rating) {
+    return 'Rating: $rating';
+  }
+
+  @override
+  String get recsClose => 'Close';
+
+  @override
+  String get recsAddBook => 'Add This Book';
+
+  @override
+  String get recsAddFavorite => 'Add to Favorites';
 }

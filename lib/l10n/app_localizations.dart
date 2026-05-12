@@ -454,6 +454,18 @@ abstract class AppLocalizations {
   /// **'Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.'**
   String get onboarding3Desc;
 
+  /// No description provided for @streakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} day streak'**
+  String streakDays(int days);
+
+  /// No description provided for @streakStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your streak today!'**
+  String get streakStart;
+
   /// No description provided for @homeGreetMorning.
   ///
   /// In en, this message translates to:
@@ -556,6 +568,24 @@ abstract class AppLocalizations {
   /// **'Tap to view your reading history'**
   String get homeViewHistory;
 
+  /// No description provided for @homeGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Goal'**
+  String get homeGoalTitle;
+
+  /// No description provided for @homeGoalReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal reached! 🎉'**
+  String get homeGoalReached;
+
+  /// No description provided for @homeGoalProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} / {goal} pages'**
+  String homeGoalProgress(int done, int goal);
+
   /// No description provided for @libraryTitle.
   ///
   /// In en, this message translates to:
@@ -603,6 +633,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Progress'**
   String get librarySortProgress;
+
+  /// No description provided for @libraryBooksCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} books'**
+  String libraryBooksCount(int count);
 
   /// No description provided for @libraryEmptyFavorites.
   ///
@@ -784,6 +820,12 @@ abstract class AppLocalizations {
   /// **'Avg Session'**
   String get analyticsAvgSession;
 
+  /// No description provided for @analyticsWeeklyChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 Days'**
+  String get analyticsWeeklyChart;
+
   /// No description provided for @profileTitle.
   ///
   /// In en, this message translates to:
@@ -880,24 +922,6 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settingsTitle;
 
-  /// No description provided for @settingsTheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Theme Selection'**
-  String get settingsTheme;
-
-  /// No description provided for @settingsSoftGold.
-  ///
-  /// In en, this message translates to:
-  /// **'Soft Gold Theme'**
-  String get settingsSoftGold;
-
-  /// No description provided for @settingsSoftPink.
-  ///
-  /// In en, this message translates to:
-  /// **'Soft Pink Theme'**
-  String get settingsSoftPink;
-
   /// No description provided for @settingsDailyReminder.
   ///
   /// In en, this message translates to:
@@ -928,6 +952,30 @@ abstract class AppLocalizations {
   /// **'Daily Reading Goal: {count} pages'**
   String settingsDailyGoal(int count);
 
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsBrightnessLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsBrightnessLight;
+
+  /// No description provided for @settingsBrightnessDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsBrightnessDark;
+
+  /// No description provided for @settingsBrightnessSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsBrightnessSystem;
+
   /// No description provided for @settingsLanguage.
   ///
   /// In en, this message translates to:
@@ -957,6 +1005,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Book Title'**
   String get fieldBookTitle;
+
+  /// No description provided for @fieldGenre.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre'**
+  String get fieldGenre;
 
   /// No description provided for @fieldAuthor.
   ///
@@ -1227,6 +1281,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to save rating.'**
   String get detailErrRating;
+
+  /// No description provided for @recsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Recommendations'**
+  String get recsTitle;
+
+  /// No description provided for @recsAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already read all recommended books 💛'**
+  String get recsAllRead;
+
+  /// No description provided for @recsAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Author: {name}'**
+  String recsAuthor(String name);
+
+  /// No description provided for @recsGenre.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre: {genre}'**
+  String recsGenre(String genre);
+
+  /// No description provided for @recsPages.
+  ///
+  /// In en, this message translates to:
+  /// **'Pages: {count}'**
+  String recsPages(int count);
+
+  /// No description provided for @recsRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating: {rating}'**
+  String recsRating(String rating);
+
+  /// No description provided for @recsClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get recsClose;
+
+  /// No description provided for @recsAddBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Add This Book'**
+  String get recsAddBook;
+
+  /// No description provided for @recsAddFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Favorites'**
+  String get recsAddFavorite;
 }
 
 class _AppLocalizationsDelegate

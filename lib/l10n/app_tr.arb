@@ -66,6 +66,13 @@
   "onboarding3Title": "Kitapları Anında Keşfet",
   "onboarding3Desc": "Tek dokunuşla milyonlarca kitabı arayın.\nBaşlık, yazar, kapak ve sayfa sayısı otomatik dolar.",
 
+  "streakDays": "{days} günlük seri",
+  "@streakDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "streakStart": "Bugün okumaya başla!",
   "homeGreetMorning": "Günaydın",
   "homeGreetAfternoon": "İyi öğleler",
   "homeGreetEvening": "İyi akşamlar",
@@ -84,6 +91,16 @@
   "homeBooksAlreadyRead": "{count} kitap okundu",
   "homeViewHistory": "Okuma geçmişinizi görmek için dokunun",
 
+  "homeGoalTitle": "Bugünkü Hedef",
+  "homeGoalReached": "Hedefe ulaştın! 🎉",
+  "homeGoalProgress": "{done} / {goal} sayfa",
+  "@homeGoalProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "goal": { "type": "int" }
+    }
+  },
+
   "libraryTitle": "Kütüphanem",
   "librarySearchHint": "Başlık, yazar, tür ara…",
   "libraryFilterAll": "Tümü",
@@ -92,6 +109,12 @@
   "librarySortTitle": "Başlık",
   "librarySortAuthor": "Yazar",
   "librarySortProgress": "İlerleme",
+  "libraryBooksCount": "{count} kitap",
+  "@libraryBooksCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "libraryEmptyFavorites": "Henüz favori yok.\nHerhangi bir kitabın kalp ikonuna dokunun.",
   "libraryEmptyReading": "Şu an hiçbir şey okunmuyor.",
   "libraryEmptyWishlist": "İstek listeniz boş.",
@@ -123,6 +146,7 @@
   "analyticsTotalTime": "Toplam Süre",
   "analyticsPagesThisWeek": "Bu Hafta Sayfa",
   "analyticsAvgSession": "Ort. Seans",
+  "analyticsWeeklyChart": "Son 7 Gün",
 
   "profileTitle": "Profilim",
   "profileFavoriteGenre": "Favori tür: {genre}",
@@ -141,20 +165,22 @@
   "profileNoSessions": "Henüz okuma seansı yok.\nBir kitap aç ve okumaya başla!",
 
   "settingsTitle": "Ayarlar",
-  "settingsTheme": "Tema Seçimi",
-  "settingsSoftGold": "Yumuşak Altın Tema",
-  "settingsSoftPink": "Yumuşak Pembe Tema",
   "settingsDailyReminder": "Günlük Okuma Hatırlatıcısı",
   "settingsDailyReminderSub": "Günlük bildirim al",
   "settingsReminderTime": "Hatırlatma Saati",
   "settingsHighlightFavorites": "Favori Kitapları Vurgula",
   "settingsDailyGoal": "Günlük Okuma Hedefi: {count} sayfa",
+  "settingsAppearance": "Görünüm",
+  "settingsBrightnessLight": "Açık",
+  "settingsBrightnessDark": "Koyu",
+  "settingsBrightnessSystem": "Sistem",
   "settingsLanguage": "Dil",
 
   "addBookTitle": "Kitap Ekle",
   "addBookSearchCardTitle": "Otomatik doldur",
   "addBookSearchCardSub": "Başlık veya yazara göre ara — formu otomatik doldurur",
   "fieldBookTitle": "Kitap Başlığı",
+  "fieldGenre": "Tür",
   "fieldAuthor": "Yazar",
   "fieldCoverUrlOptional": "Kapak URL'i (isteğe bağlı)",
   "fieldCoverUrl": "Kapak URL'i",
@@ -200,5 +226,35 @@
   "detailProgressSaved": "İlerleme kaydedildi.",
   "detailErrProgress": "İlerleme kaydedilemedi. Lütfen tekrar deneyin.",
   "detailErrFavorite": "Favori güncellenemedi.",
-  "detailErrRating": "Puan kaydedilemedi."
+  "detailErrRating": "Puan kaydedilemedi.",
+
+  "recsTitle": "Kitap Önerileri",
+  "recsAllRead": "Tüm önerilen kitapları zaten okudunuz 💛",
+  "recsAuthor": "Yazar: {name}",
+  "@recsAuthor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "recsGenre": "Tür: {genre}",
+  "@recsGenre": {
+    "placeholders": {
+      "genre": { "type": "String" }
+    }
+  },
+  "recsPages": "Sayfa: {count}",
+  "@recsPages": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recsRating": "Puan: {rating}",
+  "@recsRating": {
+    "placeholders": {
+      "rating": { "type": "String" }
+    }
+  },
+  "recsClose": "Kapat",
+  "recsAddBook": "Bu Kitabı Ekle",
+  "recsAddFavorite": "Favorilere Ekle"
 }

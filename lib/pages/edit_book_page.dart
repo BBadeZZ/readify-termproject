@@ -231,28 +231,20 @@ class _EditBookPageState extends State<EditBookPage> {
           ),
           Container(
             margin: const EdgeInsets.only(bottom: 14),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              border: Border.all(color: cs.outline),
-              borderRadius: BorderRadius.circular(16),
-              color: cs.surface,
-            ),
-            child: DropdownButton<String>(
-              value: selectedGenre,
-              isExpanded: true,
-              underline: const SizedBox(),
-              style: TextStyle(fontSize: 17, color: cs.onSurface),
-              items: genres.map((genre) {
-                return DropdownMenuItem<String>(
-                  value: genre,
-                  child: Text(genre),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedGenre = value!;
-                });
-              },
+            child: InputDecorator(
+              decoration: InputDecoration(
+                labelText: l10n.fieldGenre,
+                prefixIcon: Icon(Icons.category_outlined, color: cs.primary),
+              ),
+              child: DropdownButton<String>(
+                value: selectedGenre,
+                isExpanded: true,
+                underline: const SizedBox(),
+                items: genres
+                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                    .toList(),
+                onChanged: (value) => setState(() => selectedGenre = value!),
+              ),
             ),
           ),
           Text(

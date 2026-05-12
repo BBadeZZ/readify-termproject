@@ -107,9 +107,9 @@ class _AddBookPageState extends State<AddBookPage> {
 
     if (missingAuthor || missingPages) {
       final missing = [
-        if (missingAuthor) 'author',
-        if (missingPages) 'page count',
-      ].join(' and ');
+        if (missingAuthor) l10n.fieldAuthor,
+        if (missingPages) l10n.fieldTotalPages,
+      ].join(' / ');
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -316,21 +316,20 @@ class _AddBookPageState extends State<AddBookPage> {
           // Genre dropdown
           Container(
             margin: const EdgeInsets.only(bottom: 14),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              border: Border.all(color: cs.outline),
-              borderRadius: BorderRadius.circular(16),
-              color: cs.surface,
-            ),
-            child: DropdownButton<String>(
-              value: selectedGenre,
-              isExpanded: true,
-              underline: const SizedBox(),
-              style: TextStyle(fontSize: 17, color: cs.onSurface),
-              items: genres
-                  .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                  .toList(),
-              onChanged: (value) => setState(() => selectedGenre = value!),
+            child: InputDecorator(
+              decoration: InputDecoration(
+                labelText: l10n.fieldGenre,
+                prefixIcon: Icon(Icons.category_outlined, color: cs.primary),
+              ),
+              child: DropdownButton<String>(
+                value: selectedGenre,
+                isExpanded: true,
+                underline: const SizedBox(),
+                items: genres
+                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                    .toList(),
+                onChanged: (value) => setState(() => selectedGenre = value!),
+              ),
             ),
           ),
 
@@ -534,7 +533,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      '${r.author}${r.pageCount > 0 ? ' • ${r.pageCount} pages' : ''}',
+                      '${r.author}${r.pageCount > 0 ? ' • ${l10n.detailPages(r.pageCount)}' : ''}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

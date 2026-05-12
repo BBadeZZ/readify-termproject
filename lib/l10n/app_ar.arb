@@ -66,6 +66,13 @@
   "onboarding3Title": "اكتشف الكتب فوراً",
   "onboarding3Desc": "ابحث في ملايين الكتب بنقرة واحدة.\nيتم ملء العنوان والمؤلف والغلاف وعدد الصفحات تلقائياً.",
 
+  "streakDays": "سلسلة {days} أيام",
+  "@streakDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "streakStart": "ابدأ سلسلتك اليوم!",
   "homeGreetMorning": "صباح الخير",
   "homeGreetAfternoon": "مساء الخير",
   "homeGreetEvening": "مساء الخير",
@@ -84,6 +91,16 @@
   "homeBooksAlreadyRead": "تمت قراءة {count} كتاب",
   "homeViewHistory": "اضغط لعرض سجل قراءتك",
 
+  "homeGoalTitle": "هدف اليوم",
+  "homeGoalReached": "تحقق الهدف! 🎉",
+  "homeGoalProgress": "{done} / {goal} صفحة",
+  "@homeGoalProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "goal": { "type": "int" }
+    }
+  },
+
   "libraryTitle": "مكتبتي",
   "librarySearchHint": "البحث بالعنوان أو المؤلف أو النوع…",
   "libraryFilterAll": "الكل",
@@ -92,6 +109,12 @@
   "librarySortTitle": "العنوان",
   "librarySortAuthor": "المؤلف",
   "librarySortProgress": "التقدم",
+  "libraryBooksCount": "{count} كتاب",
+  "@libraryBooksCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "libraryEmptyFavorites": "لا توجد مفضلات بعد.\nاضغط على أيقونة القلب في أي كتاب.",
   "libraryEmptyReading": "لا تقرأ شيئاً الآن.",
   "libraryEmptyWishlist": "قائمة أمنياتك فارغة.",
@@ -123,6 +146,7 @@
   "analyticsTotalTime": "الوقت الإجمالي",
   "analyticsPagesThisWeek": "صفحات هذا الأسبوع",
   "analyticsAvgSession": "متوسط الجلسة",
+  "analyticsWeeklyChart": "آخر 7 أيام",
 
   "profileTitle": "ملفي الشخصي",
   "profileFavoriteGenre": "النوع المفضل: {genre}",
@@ -141,20 +165,22 @@
   "profileNoSessions": "لا توجد جلسات قراءة بعد.\nافتح كتاباً وابدأ القراءة!",
 
   "settingsTitle": "الإعدادات",
-  "settingsTheme": "اختيار السمة",
-  "settingsSoftGold": "سمة الذهب الناعم",
-  "settingsSoftPink": "سمة الوردي الناعم",
   "settingsDailyReminder": "تذكير القراءة اليومي",
   "settingsDailyReminderSub": "تلقّ إشعاراً يومياً",
   "settingsReminderTime": "وقت التذكير",
   "settingsHighlightFavorites": "إبراز الكتب المفضلة",
   "settingsDailyGoal": "هدف القراءة اليومي: {count} صفحة",
+  "settingsAppearance": "المظهر",
+  "settingsBrightnessLight": "فاتح",
+  "settingsBrightnessDark": "داكن",
+  "settingsBrightnessSystem": "النظام",
   "settingsLanguage": "اللغة",
 
   "addBookTitle": "إضافة كتاب",
   "addBookSearchCardTitle": "البحث للملء التلقائي",
   "addBookSearchCardSub": "ابحث بالعنوان أو المؤلف — يملأ النموذج تلقائياً",
   "fieldBookTitle": "عنوان الكتاب",
+  "fieldGenre": "النوع الأدبي",
   "fieldAuthor": "المؤلف",
   "fieldCoverUrlOptional": "رابط الغلاف (اختياري)",
   "fieldCoverUrl": "رابط الغلاف",
@@ -200,5 +226,35 @@
   "detailProgressSaved": "تم حفظ التقدم.",
   "detailErrProgress": "فشل حفظ التقدم. حاول مجدداً.",
   "detailErrFavorite": "فشل تحديث المفضلة.",
-  "detailErrRating": "فشل حفظ التقييم."
+  "detailErrRating": "فشل حفظ التقييم.",
+
+  "recsTitle": "توصيات الكتب",
+  "recsAllRead": "لقد قرأت جميع الكتب الموصى بها 💛",
+  "recsAuthor": "المؤلف: {name}",
+  "@recsAuthor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "recsGenre": "النوع: {genre}",
+  "@recsGenre": {
+    "placeholders": {
+      "genre": { "type": "String" }
+    }
+  },
+  "recsPages": "الصفحات: {count}",
+  "@recsPages": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recsRating": "التقييم: {rating}",
+  "@recsRating": {
+    "placeholders": {
+      "rating": { "type": "String" }
+    }
+  },
+  "recsClose": "إغلاق",
+  "recsAddBook": "أضف هذا الكتاب",
+  "recsAddFavorite": "أضف إلى المفضلة"
 }

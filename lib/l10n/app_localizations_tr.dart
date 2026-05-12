@@ -192,6 +192,14 @@ class AppLocalizationsTr extends AppLocalizations {
       'Tek dokunuşla milyonlarca kitabı arayın.\nBaşlık, yazar, kapak ve sayfa sayısı otomatik dolar.';
 
   @override
+  String streakDays(int days) {
+    return '$days günlük seri';
+  }
+
+  @override
+  String get streakStart => 'Bugün okumaya başla!';
+
+  @override
   String get homeGreetMorning => 'Günaydın';
 
   @override
@@ -245,6 +253,17 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeViewHistory => 'Okuma geçmişinizi görmek için dokunun';
 
   @override
+  String get homeGoalTitle => 'Bugünkü Hedef';
+
+  @override
+  String get homeGoalReached => 'Hedefe ulaştın! 🎉';
+
+  @override
+  String homeGoalProgress(int done, int goal) {
+    return '$done / $goal sayfa';
+  }
+
+  @override
   String get libraryTitle => 'Kütüphanem';
 
   @override
@@ -267,6 +286,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get librarySortProgress => 'İlerleme';
+
+  @override
+  String libraryBooksCount(int count) {
+    return '$count kitap';
+  }
 
   @override
   String get libraryEmptyFavorites =>
@@ -364,6 +388,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get analyticsAvgSession => 'Ort. Seans';
 
   @override
+  String get analyticsWeeklyChart => 'Son 7 Gün';
+
+  @override
   String get profileTitle => 'Profilim';
 
   @override
@@ -415,15 +442,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsTitle => 'Ayarlar';
 
   @override
-  String get settingsTheme => 'Tema Seçimi';
-
-  @override
-  String get settingsSoftGold => 'Yumuşak Altın Tema';
-
-  @override
-  String get settingsSoftPink => 'Yumuşak Pembe Tema';
-
-  @override
   String get settingsDailyReminder => 'Günlük Okuma Hatırlatıcısı';
 
   @override
@@ -441,6 +459,18 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearance => 'Görünüm';
+
+  @override
+  String get settingsBrightnessLight => 'Açık';
+
+  @override
+  String get settingsBrightnessDark => 'Koyu';
+
+  @override
+  String get settingsBrightnessSystem => 'Sistem';
+
+  @override
   String get settingsLanguage => 'Dil';
 
   @override
@@ -455,6 +485,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'Kitap Başlığı';
+
+  @override
+  String get fieldGenre => 'Tür';
 
   @override
   String get fieldAuthor => 'Yazar';
@@ -606,4 +639,39 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get detailErrRating => 'Puan kaydedilemedi.';
+
+  @override
+  String get recsTitle => 'Kitap Önerileri';
+
+  @override
+  String get recsAllRead => 'Tüm önerilen kitapları zaten okudunuz 💛';
+
+  @override
+  String recsAuthor(String name) {
+    return 'Yazar: $name';
+  }
+
+  @override
+  String recsGenre(String genre) {
+    return 'Tür: $genre';
+  }
+
+  @override
+  String recsPages(int count) {
+    return 'Sayfa: $count';
+  }
+
+  @override
+  String recsRating(String rating) {
+    return 'Puan: $rating';
+  }
+
+  @override
+  String get recsClose => 'Kapat';
+
+  @override
+  String get recsAddBook => 'Bu Kitabı Ekle';
+
+  @override
+  String get recsAddFavorite => 'Favorilere Ekle';
 }

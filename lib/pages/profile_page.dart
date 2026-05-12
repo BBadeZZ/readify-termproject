@@ -90,7 +90,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
                   decoration: BoxDecoration(
-                    color: cs.primaryContainer,
+                    gradient: LinearGradient(
+                      colors: [cs.primaryContainer, cs.secondaryContainer],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(

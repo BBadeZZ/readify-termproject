@@ -1,11 +1,11 @@
 {
-    "name": "termproject",
-    "short_name": "termproject",
+    "name": "Readify",
+    "short_name": "Readify",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFF0EE",
+    "theme_color": "#C2606A",
+    "description": "Smart book tracking and reading analytics app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

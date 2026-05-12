@@ -64,7 +64,6 @@ class _RegisterPageState extends State<RegisterPage> {
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: cs.primaryContainer,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -73,8 +72,8 @@ class _RegisterPageState extends State<RegisterPage> {
             decoration: BoxDecoration(
               color: cs.surface,
               borderRadius: BorderRadius.circular(28),
-              boxShadow: const [
-                BoxShadow(blurRadius: 14, color: Colors.black12, offset: Offset(0, 6)),
+              boxShadow: [
+                BoxShadow(blurRadius: 14, color: cs.primary.withValues(alpha: 0.08), offset: const Offset(0, 6)),
               ],
               border: Border.all(color: cs.outlineVariant, width: 2),
             ),
@@ -209,7 +208,7 @@ class _RegisterPageState extends State<RegisterPage> {
       labelStyle: TextStyle(color: cs.primary),
       prefixIcon: Icon(icon, color: cs.primary),
       filled: true,
-      fillColor: cs.primaryContainer.withValues(alpha: 0.4),
+      fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.5),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(color: cs.outlineVariant),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/book.dart';
 import '../models/reading_session.dart';
 import '../services/firestore_service.dart';
@@ -97,7 +98,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             physics: const NeverScrollableScrollPhysics(),
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            childAspectRatio: 1.6,
+            childAspectRatio: 1.25,
             children: [
               StatCard(label: l10n.analyticsTotalBooks, value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
               StatCard(label: l10n.analyticsReading, value: '$reading', icon: Icons.auto_stories_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
@@ -116,7 +117,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
+          _WeeklyChart(sessions: _sessions),
+
+          const SizedBox(height: 20),
 
           Container(
             padding: const EdgeInsets.all(18),
@@ -174,7 +178,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               physics: const NeverScrollableScrollPhysics(),
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              childAspectRatio: 1.6,
+              childAspectRatio: 1.25,
               children: [
                 StatCard(label: l10n.analyticsSessions, value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
                 StatCard(
@@ -201,6 +205,110 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   }
 }
 
+class _WeeklyChart extends StatelessWidget {
+  final List<ReadingSession> sessions;
+  const _WeeklyChart({required this.sessions});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final days = List.generate(7, (i) {
+      final date = today.subtract(Duration(days: 6 - i));
+      final pages = sessions
+          .where((s) =>
+              s.startedAt.year == date.year &&
+              s.startedAt.month == date.month &&
+              s.startedAt.day == date.day)
+          .fold(0, (sum, s) => sum + s.pagesRead);
+      return (date: date, pages: pages);
+    });
+
+    final maxPages = days.fold(0, (m, d) => d.pages > m ? d.pages : m);
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(l10n.analyticsWeeklyChart, style: tt.titleMedium),
+              if (maxPages > 0)
+                Text(
+                  '$maxPages p max',
+                  style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
+                ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            height: 124,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: days.map((d) {
+                final isToday = d.date == today;
+                final ratio = maxPages == 0 ? 0.0 : d.pages / maxPages;
+                final barH = d.pages == 0 ? 4.0 : (ratio * 72).clamp(6.0, 72.0);
+                final label = DateFormat.E(locale).format(d.date);
+                return Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (d.pages > 0)
+                        Text(
+                          '${d.pages}',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: isToday ? cs.primary : cs.onSurfaceVariant,
+                          ),
+                        ),
+                      const SizedBox(height: 3),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 600),
+                        curve: Curves.easeOut,
+                        height: barH,
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: isToday
+                              ? cs.primary
+                              : cs.primaryContainer,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                          color: isToday ? cs.primary : cs.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SessionCard extends StatelessWidget {
   final ReadingSession session;
 
@@ -209,8 +317,10 @@ class _SessionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final s = session;
-    final date = '${s.startedAt.day}/${s.startedAt.month}/${s.startedAt.year}';
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final date = DateFormat.yMd(locale).format(s.startedAt);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -237,7 +347,7 @@ class _SessionCard extends StatelessWidget {
               children: [
                 Text(s.bookTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14), overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
-                Text('$date  ·  ${s.durationMinutes}m  ·  ${s.pagesRead} pages',
+                Text('$date  ·  ${s.durationMinutes}m  ·  ${l10n.detailPages(s.pagesRead)}',
                     style: TextStyle(fontSize: 12, color: cs.onSurface.withValues(alpha: 0.6))),
               ],
             ),

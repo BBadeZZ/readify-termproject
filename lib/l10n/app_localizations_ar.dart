@@ -192,6 +192,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'ابحث في ملايين الكتب بنقرة واحدة.\nيتم ملء العنوان والمؤلف والغلاف وعدد الصفحات تلقائياً.';
 
   @override
+  String streakDays(int days) {
+    return 'سلسلة $days أيام';
+  }
+
+  @override
+  String get streakStart => 'ابدأ سلسلتك اليوم!';
+
+  @override
   String get homeGreetMorning => 'صباح الخير';
 
   @override
@@ -245,6 +253,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeViewHistory => 'اضغط لعرض سجل قراءتك';
 
   @override
+  String get homeGoalTitle => 'هدف اليوم';
+
+  @override
+  String get homeGoalReached => 'تحقق الهدف! 🎉';
+
+  @override
+  String homeGoalProgress(int done, int goal) {
+    return '$done / $goal صفحة';
+  }
+
+  @override
   String get libraryTitle => 'مكتبتي';
 
   @override
@@ -267,6 +286,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get librarySortProgress => 'التقدم';
+
+  @override
+  String libraryBooksCount(int count) {
+    return '$count كتاب';
+  }
 
   @override
   String get libraryEmptyFavorites =>
@@ -364,6 +388,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get analyticsAvgSession => 'متوسط الجلسة';
 
   @override
+  String get analyticsWeeklyChart => 'آخر 7 أيام';
+
+  @override
   String get profileTitle => 'ملفي الشخصي';
 
   @override
@@ -415,15 +442,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsTitle => 'الإعدادات';
 
   @override
-  String get settingsTheme => 'اختيار السمة';
-
-  @override
-  String get settingsSoftGold => 'سمة الذهب الناعم';
-
-  @override
-  String get settingsSoftPink => 'سمة الوردي الناعم';
-
-  @override
   String get settingsDailyReminder => 'تذكير القراءة اليومي';
 
   @override
@@ -441,6 +459,18 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearance => 'المظهر';
+
+  @override
+  String get settingsBrightnessLight => 'فاتح';
+
+  @override
+  String get settingsBrightnessDark => 'داكن';
+
+  @override
+  String get settingsBrightnessSystem => 'النظام';
+
+  @override
   String get settingsLanguage => 'اللغة';
 
   @override
@@ -455,6 +485,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fieldBookTitle => 'عنوان الكتاب';
+
+  @override
+  String get fieldGenre => 'النوع الأدبي';
 
   @override
   String get fieldAuthor => 'المؤلف';
@@ -604,4 +637,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get detailErrRating => 'فشل حفظ التقييم.';
+
+  @override
+  String get recsTitle => 'توصيات الكتب';
+
+  @override
+  String get recsAllRead => 'لقد قرأت جميع الكتب الموصى بها 💛';
+
+  @override
+  String recsAuthor(String name) {
+    return 'المؤلف: $name';
+  }
+
+  @override
+  String recsGenre(String genre) {
+    return 'النوع: $genre';
+  }
+
+  @override
+  String recsPages(int count) {
+    return 'الصفحات: $count';
+  }
+
+  @override
+  String recsRating(String rating) {
+    return 'التقييم: $rating';
+  }
+
+  @override
+  String get recsClose => 'إغلاق';
+
+  @override
+  String get recsAddBook => 'أضف هذا الكتاب';
+
+  @override
+  String get recsAddFavorite => 'أضف إلى المفضلة';
 }

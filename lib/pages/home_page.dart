@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/reading_session.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
+import '../services/settings_service.dart';
+import '../utils/streak_utils.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
@@ -52,14 +55,50 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: StreamBuilder<List<Book>>(
-        stream: firestoreService.getBooks(),
-        builder: (context, snapshot) {
+      body: StreamBuilder<List<ReadingSession>>(
+        stream: firestoreService.getSessions(),
+        builder: (context, sessionsSnapshot) {
+          final streak = calculateStreak(sessionsSnapshot.data ?? []);
+          return StreamBuilder<List<Book>>(
+            stream: firestoreService.getBooks(),
+            builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
 
           final books = snapshot.data!;
+
+          if (books.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.auto_stories_rounded, size: 80, color: Theme.of(context).colorScheme.primaryContainer),
+                    const SizedBox(height: 20),
+                    Text(
+                      l10n.homeAddBook,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.libraryEmptyDefault,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 28),
+                    ElevatedButton.icon(
+                      onPressed: () => Navigator.pushNamed(context, '/add'),
+                      icon: const Icon(Icons.add_rounded),
+                      label: Text(l10n.homeAddBook),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           final totalBooks = books.length;
           final reading = books.where((b) => b.status == 'Reading').toList();
           final alreadyRead = books.where((b) => b.status == 'Already Read').length;
@@ -87,7 +126,7 @@ class HomePage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 1.55,
+                childAspectRatio: 1.25,
                 children: [
                   StatCard(
                     label: l10n.homeTotalBooks,
@@ -124,7 +163,11 @@ class HomePage extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 12),
+              _DailyGoalCard(sessions: sessionsSnapshot.data ?? []),
+              const SizedBox(height: 12),
+              _StreakBanner(streak: streak),
+              const SizedBox(height: 16),
 
               if (reading.isNotEmpty) ...[
                 Row(
@@ -212,8 +255,119 @@ class HomePage extends StatelessWidget {
             ],
           );
         },
+      );
+        },
       ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 0),
+    );
+  }
+}
+
+class _DailyGoalCard extends StatelessWidget {
+  final List<ReadingSession> sessions;
+
+  const _DailyGoalCard({required this.sessions});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
+    final goal = settingsService.dailyGoal.toInt();
+    final today = DateTime.now();
+    final todayPages = sessions
+        .where((s) =>
+            s.startedAt.year == today.year &&
+            s.startedAt.month == today.month &&
+            s.startedAt.day == today.day)
+        .fold(0, (sum, s) => sum + s.pagesRead);
+    final progress = (todayPages / goal).clamp(0.0, 1.0);
+    final done = todayPages >= goal;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: done ? AppColors.completedGreenContainer : cs.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: done
+              ? AppColors.completedGreen.withValues(alpha: 0.35)
+              : cs.outlineVariant,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                done ? Icons.check_circle_rounded : Icons.track_changes_rounded,
+                color: done ? AppColors.completedGreen : cs.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                done ? l10n.homeGoalReached : l10n.homeGoalTitle,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: done ? AppColors.completedGreen : cs.onSurface,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                l10n.homeGoalProgress(todayPages, goal),
+                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: cs.surfaceContainerHighest,
+              valueColor: AlwaysStoppedAnimation(
+                done ? AppColors.completedGreen : cs.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StreakBanner extends StatelessWidget {
+  final int streak;
+
+  const _StreakBanner({required this.streak});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final label = streak > 0 ? l10n.streakDays(streak) : l10n.streakStart;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.starYellowContainer,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.starYellow.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Text('🔥', style: TextStyle(fontSize: 22)),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              color: AppColors.starYellow,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -265,7 +419,7 @@ class _ReadingBookCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: book.progress,
                       minHeight: 5,
-                      backgroundColor: cs.primaryContainer,
+                      backgroundColor: cs.surfaceContainerHighest,
                       color: cs.primary,
                     ),
                   ),

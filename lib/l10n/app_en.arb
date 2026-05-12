@@ -66,6 +66,13 @@
   "onboarding3Title": "Discover Books Instantly",
   "onboarding3Desc": "Search millions of books with one tap.\nTitle, author, cover and page count fill automatically.",
 
+  "streakDays": "{days} day streak",
+  "@streakDays": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "streakStart": "Start your streak today!",
   "homeGreetMorning": "Good morning",
   "homeGreetAfternoon": "Good afternoon",
   "homeGreetEvening": "Good evening",
@@ -89,6 +96,16 @@
   },
   "homeViewHistory": "Tap to view your reading history",
 
+  "homeGoalTitle": "Today's Goal",
+  "homeGoalReached": "Goal reached! 🎉",
+  "homeGoalProgress": "{done} / {goal} pages",
+  "@homeGoalProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "goal": { "type": "int" }
+    }
+  },
+
   "libraryTitle": "My Library",
   "librarySearchHint": "Search title, author, genre…",
   "libraryFilterAll": "All",
@@ -97,6 +114,12 @@
   "librarySortTitle": "Title",
   "librarySortAuthor": "Author",
   "librarySortProgress": "Progress",
+  "libraryBooksCount": "{count} books",
+  "@libraryBooksCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "libraryEmptyFavorites": "No favorites yet.\nTap the heart icon on any book.",
   "libraryEmptyReading": "Not reading anything right now.",
   "libraryEmptyWishlist": "Your wishlist is empty.",
@@ -138,6 +161,7 @@
   "analyticsTotalTime": "Total Time",
   "analyticsPagesThisWeek": "Pages This Week",
   "analyticsAvgSession": "Avg Session",
+  "analyticsWeeklyChart": "Last 7 Days",
 
   "profileTitle": "My Profile",
   "profileFavoriteGenre": "Favorite genre: {genre}",
@@ -161,9 +185,6 @@
   "profileNoSessions": "No reading sessions yet.\nOpen a book and start reading!",
 
   "settingsTitle": "Settings",
-  "settingsTheme": "Theme Selection",
-  "settingsSoftGold": "Soft Gold Theme",
-  "settingsSoftPink": "Soft Pink Theme",
   "settingsDailyReminder": "Daily Reading Reminder",
   "settingsDailyReminderSub": "Receive a daily push notification",
   "settingsReminderTime": "Reminder Time",
@@ -174,12 +195,17 @@
       "count": { "type": "int" }
     }
   },
+  "settingsAppearance": "Appearance",
+  "settingsBrightnessLight": "Light",
+  "settingsBrightnessDark": "Dark",
+  "settingsBrightnessSystem": "System",
   "settingsLanguage": "Language",
 
   "addBookTitle": "Add Book",
   "addBookSearchCardTitle": "Search to auto-fill",
   "addBookSearchCardSub": "Find by title or author — fills form automatically",
   "fieldBookTitle": "Book Title",
+  "fieldGenre": "Genre",
   "fieldAuthor": "Author",
   "fieldCoverUrlOptional": "Cover URL (optional)",
   "fieldCoverUrl": "Cover URL",
@@ -263,5 +289,35 @@
   "detailProgressSaved": "Progress saved.",
   "detailErrProgress": "Failed to save progress. Please try again.",
   "detailErrFavorite": "Failed to update favorite.",
-  "detailErrRating": "Failed to save rating."
+  "detailErrRating": "Failed to save rating.",
+
+  "recsTitle": "Book Recommendations",
+  "recsAllRead": "You've already read all recommended books 💛",
+  "recsAuthor": "Author: {name}",
+  "@recsAuthor": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "recsGenre": "Genre: {genre}",
+  "@recsGenre": {
+    "placeholders": {
+      "genre": { "type": "String" }
+    }
+  },
+  "recsPages": "Pages: {count}",
+  "@recsPages": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recsRating": "Rating: {rating}",
+  "@recsRating": {
+    "placeholders": {
+      "rating": { "type": "String" }
+    }
+  },
+  "recsClose": "Close",
+  "recsAddBook": "Add This Book",
+  "recsAddFavorite": "Add to Favorites"
 }
