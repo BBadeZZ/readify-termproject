@@ -167,9 +167,6 @@
   "profileNoSessions": "No reading sessions yet.\nOpen a book and start reading!",
 
   "settingsTitle": "Settings",
-  "settingsTheme": "Theme Selection",
-  "settingsSoftGold": "Soft Gold Theme",
-  "settingsSoftPink": "Soft Pink Theme",
   "settingsDailyReminder": "Daily Reading Reminder",
   "settingsDailyReminderSub": "Receive a daily push notification",
   "settingsReminderTime": "Reminder Time",

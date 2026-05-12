@@ -147,9 +147,6 @@
   "profileNoSessions": "لا توجد جلسات قراءة بعد.\nافتح كتاباً وابدأ القراءة!",
 
   "settingsTitle": "الإعدادات",
-  "settingsTheme": "اختيار السمة",
-  "settingsSoftGold": "سمة الذهب الناعم",
-  "settingsSoftPink": "سمة الوردي الناعم",
   "settingsDailyReminder": "تذكير القراءة اليومي",
   "settingsDailyReminderSub": "تلقّ إشعاراً يومياً",
   "settingsReminderTime": "وقت التذكير",

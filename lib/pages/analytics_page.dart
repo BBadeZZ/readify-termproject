@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/book.dart';
 import '../models/reading_session.dart';
 import '../services/firestore_service.dart';
@@ -209,8 +210,10 @@ class _SessionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final s = session;
-    final date = '${s.startedAt.day}/${s.startedAt.month}/${s.startedAt.year}';
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final date = DateFormat.yMd(locale).format(s.startedAt);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -237,7 +240,7 @@ class _SessionCard extends StatelessWidget {
               children: [
                 Text(s.bookTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14), overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
-                Text('$date  ·  ${s.durationMinutes}m  ·  ${s.pagesRead} pages',
+                Text('$date  ·  ${s.durationMinutes}m  ·  ${l10n.detailPages(s.pagesRead)}',
                     style: TextStyle(fontSize: 12, color: cs.onSurface.withValues(alpha: 0.6))),
               ],
             ),

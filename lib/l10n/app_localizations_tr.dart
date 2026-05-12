@@ -418,15 +418,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsTitle => 'Ayarlar';
 
   @override
-  String get settingsTheme => 'Tema Seçimi';
-
-  @override
-  String get settingsSoftGold => 'Yumuşak Altın Tema';
-
-  @override
-  String get settingsSoftPink => 'Yumuşak Pembe Tema';
-
-  @override
   String get settingsDailyReminder => 'Günlük Okuma Hatırlatıcısı';
 
   @override

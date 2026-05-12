@@ -881,24 +881,6 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settingsTitle;
 
-  /// No description provided for @settingsTheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Theme Selection'**
-  String get settingsTheme;
-
-  /// No description provided for @settingsSoftGold.
-  ///
-  /// In en, this message translates to:
-  /// **'Soft Gold Theme'**
-  String get settingsSoftGold;
-
-  /// No description provided for @settingsSoftPink.
-  ///
-  /// In en, this message translates to:
-  /// **'Soft Pink Theme'**
-  String get settingsSoftPink;
-
   /// No description provided for @settingsDailyReminder.
   ///
   /// In en, this message translates to:

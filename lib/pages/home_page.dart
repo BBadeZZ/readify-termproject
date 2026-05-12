@@ -60,6 +60,38 @@ class HomePage extends StatelessWidget {
           }
 
           final books = snapshot.data!;
+
+          if (books.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.auto_stories_rounded, size: 80, color: Theme.of(context).colorScheme.primaryContainer),
+                    const SizedBox(height: 20),
+                    Text(
+                      l10n.homeAddBook,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.libraryEmptyDefault,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 28),
+                    ElevatedButton.icon(
+                      onPressed: () => Navigator.pushNamed(context, '/add'),
+                      icon: const Icon(Icons.add_rounded),
+                      label: Text(l10n.homeAddBook),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           final totalBooks = books.length;
           final reading = books.where((b) => b.status == 'Reading').toList();
           final alreadyRead = books.where((b) => b.status == 'Already Read').length;
@@ -265,7 +297,7 @@ class _ReadingBookCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: book.progress,
                       minHeight: 5,
-                      backgroundColor: cs.primaryContainer,
+                      backgroundColor: cs.surfaceContainerHighest,
                       color: cs.primary,
                     ),
                   ),

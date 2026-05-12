@@ -418,15 +418,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsTitle => 'الإعدادات';
 
   @override
-  String get settingsTheme => 'اختيار السمة';
-
-  @override
-  String get settingsSoftGold => 'سمة الذهب الناعم';
-
-  @override
-  String get settingsSoftPink => 'سمة الوردي الناعم';
-
-  @override
   String get settingsDailyReminder => 'تذكير القراءة اليومي';
 
   @override

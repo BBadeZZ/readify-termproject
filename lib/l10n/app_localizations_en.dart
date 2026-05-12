@@ -421,15 +421,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
-  String get settingsTheme => 'Theme Selection';
-
-  @override
-  String get settingsSoftGold => 'Soft Gold Theme';
-
-  @override
-  String get settingsSoftPink => 'Soft Pink Theme';
-
-  @override
   String get settingsDailyReminder => 'Daily Reading Reminder';
 
   @override
