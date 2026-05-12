@@ -30,6 +30,78 @@ class HomePage extends StatelessWidget {
     return name.split(' ').first;
   }
 
+  void _showQuickPageSheet(BuildContext context, Book book) {
+    final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
+    final controller = TextEditingController(text: book.currentPage.toString());
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36, height: 4,
+                decoration: BoxDecoration(color: cs.outlineVariant, borderRadius: BorderRadius.circular(2)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(l10n.homeUpdatePage, style: Theme.of(ctx).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(
+              book.title,
+              style: Theme.of(ctx).textTheme.bodySmall?.copyWith(color: cs.onSurface.withValues(alpha: 0.6)),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: l10n.homeCurrentPage,
+                hintText: '1 – ${book.totalPages}',
+                prefixIcon: const Icon(Icons.bookmark_outline_rounded),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () async {
+                  int newPage = int.tryParse(controller.text) ?? book.currentPage;
+                  newPage = newPage.clamp(0, book.totalPages);
+                  Navigator.pop(ctx);
+                  final updated = book.copyWith(
+                    currentPage: newPage,
+                    status: newPage >= book.totalPages
+                        ? 'Already Read'
+                        : newPage > 0
+                            ? 'Reading'
+                            : book.status,
+                  );
+                  try {
+                    await firestoreService.updateBook(updated);
+                  } catch (_) {}
+                },
+                child: Text(l10n.homeSave),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -208,6 +280,7 @@ class HomePage extends StatelessWidget {
                           context,
                           SlidePageRoute(page: BookDetailPage(book: book)),
                         ),
+                        onLongPress: () => _showQuickPageSheet(context, book),
                       );
                     },
                   ),
@@ -388,8 +461,9 @@ class _StreakBanner extends StatelessWidget {
 class _ReadingBookCard extends StatelessWidget {
   final Book book;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
-  const _ReadingBookCard({required this.book, required this.onTap});
+  const _ReadingBookCard({required this.book, required this.onTap, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -398,6 +472,7 @@ class _ReadingBookCard extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
+      onLongPress: onLongPress,
       borderRadius: BorderRadius.circular(18),
       child: Container(
         width: 150,

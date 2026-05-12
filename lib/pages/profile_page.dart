@@ -5,6 +5,7 @@ import '../models/reading_session.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
 import '../theme/app_colors.dart';
+import '../utils/streak_utils.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/stat_card.dart';
@@ -69,6 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final favorites = _books.where((b) => b.favorite).length;
     final totalPages = _books.fold(0, (s, b) => s + b.currentPage);
     final favoriteGenre = _favoriteGenre();
+    final streak = calculateStreak(_sessions);
 
     final totalSessions = _sessions.length;
     final totalMinutes = _sessions.fold(0, (s, e) => s + e.durationMinutes);
@@ -119,30 +121,57 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: cs.onPrimaryContainer.withValues(alpha: 0.75),
                         ),
                       ),
-                      if (favoriteGenre != '—') ...[
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: cs.surface,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.favorite, size: 16, color: Colors.pinkAccent),
-                              const SizedBox(width: 6),
-                              Text(
-                                l10n.profileFavoriteGenre(favoriteGenre),
-                                style: tt.bodySmall?.copyWith(
-                                  color: cs.onPrimaryContainer,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (favoriteGenre != '—')
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: cs.surface,
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                            ],
-                          ),
-                        ),
-                      ],
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.favorite, size: 14, color: Colors.pinkAccent),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    l10n.profileFavoriteGenre(favoriteGenre),
+                                    style: tt.bodySmall?.copyWith(
+                                      color: cs.onPrimaryContainer,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (favoriteGenre != '—' && streak > 0) const SizedBox(width: 8),
+                          if (streak > 0)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: cs.surface,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text('🔥', style: TextStyle(fontSize: 13)),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    '$streak ${l10n.profileStreakLabel}',
+                                    style: tt.bodySmall?.copyWith(
+                                      color: cs.onPrimaryContainer,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -156,7 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   crossAxisCount: 2,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 1.6,
+                  childAspectRatio: 1.25,
                   children: [
                     StatCard(label: l10n.profileTotalBooks, value: '$totalBooks', icon: Icons.book_rounded, color: cs.primaryContainer, iconColor: cs.primary),
                     StatCard(label: l10n.profileFinished, value: '$finished', icon: Icons.check_circle_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
@@ -165,6 +194,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     StatCard(label: l10n.profileFavorites, value: '$favorites', icon: Icons.favorite_rounded, color: AppColors.favoritesContainer, iconColor: Colors.pink),
                     StatCard(label: l10n.profilePagesRead, value: '$totalPages', icon: Icons.menu_book_rounded, color: AppColors.pagesTealContainer, iconColor: AppColors.pagesTeal),
                   ],
+                ),
+
+                const SizedBox(height: 24),
+                Text(l10n.profileAchievements, style: tt.titleLarge),
+                const SizedBox(height: 12),
+                _AchievementsRow(
+                  books: _books,
+                  sessions: _sessions,
+                  totalPages: totalPages,
+                  streak: streak,
                 ),
 
                 const SizedBox(height: 24),
@@ -194,17 +233,27 @@ class _ProfilePageState extends State<ProfilePage> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
-                    childAspectRatio: 1.6,
+                    childAspectRatio: 1.25,
                     children: [
                       StatCard(label: l10n.profileSessions, value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
                       StatCard(
                         label: l10n.profileTotalTime,
-                        value: totalHours > 0 ? '${totalHours}h ${remMin}m' : '${totalMinutes}m',
+                        value: totalHours > 0
+                            ? '${totalHours}h ${remMin}m'
+                            : totalMinutes > 0
+                                ? '${totalMinutes}m'
+                                : '< 1m',
                         icon: Icons.schedule_rounded,
                         color: AppColors.pagesTealContainer,
                         iconColor: AppColors.pagesTeal,
                       ),
-                      StatCard(label: l10n.profileAvgSession, value: '${avgSession}m', icon: Icons.bar_chart_rounded, color: AppColors.readingBlueContainer, iconColor: AppColors.readingBlue),
+                      StatCard(
+                        label: l10n.profileAvgSession,
+                        value: avgSession > 0 ? '${avgSession}m' : '< 1m',
+                        icon: Icons.bar_chart_rounded,
+                        color: AppColors.readingBlueContainer,
+                        iconColor: AppColors.readingBlue,
+                      ),
                       StatCard(label: l10n.profilePagesInSessions, value: '$sessionPages', icon: Icons.trending_up_rounded, color: AppColors.completedGreenContainer, iconColor: AppColors.completedGreen),
                     ],
                   ),
@@ -212,6 +261,94 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 4),
+    );
+  }
+}
+
+class _AchievementsRow extends StatelessWidget {
+  final List<Book> books;
+  final List<ReadingSession> sessions;
+  final int totalPages;
+  final int streak;
+
+  const _AchievementsRow({
+    required this.books,
+    required this.sessions,
+    required this.totalPages,
+    required this.streak,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
+    final finished = books.where((b) => b.status == 'Already Read').length;
+    final favorites = books.where((b) => b.favorite).length;
+    final maxSessionPages = sessions.isEmpty ? 0 : sessions.map((s) => s.pagesRead).reduce((a, b) => a > b ? a : b);
+    final maxSessionMin = sessions.isEmpty ? 0 : sessions.map((s) => s.durationMinutes).reduce((a, b) => a > b ? a : b);
+    final hasHighRating = books.any((b) => b.rating >= 4);
+
+    final badges = [
+      (emoji: '📚', label: 'First Book',    unlocked: books.isNotEmpty),
+      (emoji: '🎯', label: '5 Books',       unlocked: books.length >= 5),
+      (emoji: '🏆', label: '10 Books',      unlocked: books.length >= 10),
+      (emoji: '✅', label: 'First Finish',  unlocked: finished >= 1),
+      (emoji: '❤️', label: 'Collector',     unlocked: favorites >= 5),
+      (emoji: '💯', label: '100 Pages',     unlocked: totalPages >= 100),
+      (emoji: '📖', label: '1000 Pages',    unlocked: totalPages >= 1000),
+      (emoji: '⚡', label: 'Speed Reader',  unlocked: maxSessionPages >= 50),
+      (emoji: '⏱️', label: 'Marathoner',   unlocked: maxSessionMin >= 60),
+      (emoji: '🔥', label: '7-Day Streak',  unlocked: streak >= 7),
+      (emoji: '⭐', label: 'Critic',        unlocked: hasHighRating),
+    ];
+
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: badges.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (_, i) {
+          final b = badges[i];
+          return Opacity(
+            opacity: b.unlocked ? 1.0 : 0.35,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                width: 76,
+                decoration: BoxDecoration(
+                  color: b.unlocked ? cs.primaryContainer : cs.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(16),
+                  border: b.unlocked ? Border.all(color: cs.primary.withValues(alpha: 0.4)) : null,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(b.emoji, style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        b.label,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: tt.labelSmall?.copyWith(
+                          fontSize: 9,
+                          height: 1.15,
+                          fontWeight: b.unlocked ? FontWeight.bold : FontWeight.normal,
+                          color: b.unlocked ? cs.onPrimaryContainer : cs.onSurface.withValues(alpha: 0.5),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

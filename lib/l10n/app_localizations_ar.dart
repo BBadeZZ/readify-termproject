@@ -699,4 +699,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeSave => 'حفظ';
+
+  @override
+  String get analyticsHeatmap => 'نشاط القراءة';
+
+  @override
+  String get profileAchievements => 'الإنجازات';
+
+  @override
+  String get profileStreakLabel => 'يوم متتالي';
 }

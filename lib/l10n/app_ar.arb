@@ -266,5 +266,8 @@
   "detailNoteSave": "حفظ",
   "homeUpdatePage": "تحديث الصفحة",
   "homeCurrentPage": "الصفحة الحالية",
-  "homeSave": "حفظ"
+  "homeSave": "حفظ",
+  "analyticsHeatmap": "نشاط القراءة",
+  "profileAchievements": "الإنجازات",
+  "profileStreakLabel": "يوم متتالي"
 }

@@ -701,4 +701,13 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get homeSave => 'Kaydet';
+
+  @override
+  String get analyticsHeatmap => 'Okuma Aktivitesi';
+
+  @override
+  String get profileAchievements => 'Başarılar';
+
+  @override
+  String get profileStreakLabel => 'Günlük Seri';
 }

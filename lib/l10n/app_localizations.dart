@@ -1389,6 +1389,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get homeSave;
+
+  /// No description provided for @analyticsHeatmap.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Activity'**
+  String get analyticsHeatmap;
+
+  /// No description provided for @profileAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get profileAchievements;
+
+  /// No description provided for @profileStreakLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Day Streak'**
+  String get profileStreakLabel;
 }
 
 class _AppLocalizationsDelegate

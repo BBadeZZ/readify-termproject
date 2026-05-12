@@ -703,4 +703,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeSave => 'Save';
+
+  @override
+  String get analyticsHeatmap => 'Reading Activity';
+
+  @override
+  String get profileAchievements => 'Achievements';
+
+  @override
+  String get profileStreakLabel => 'Day Streak';
 }

@@ -156,6 +156,9 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             const SizedBox(height: 20),
           ],
 
+          _ReadingHeatmap(sessions: _sessions),
+          const SizedBox(height: 20),
+
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
@@ -217,7 +220,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 StatCard(label: l10n.analyticsSessions, value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
                 StatCard(
                   label: l10n.analyticsTotalTime,
-                  value: totalHours > 0 ? '${totalHours}h ${remainingMin}m' : '${totalMinutes}m',
+                  value: totalHours > 0 ? '${totalHours}h ${remainingMin}m' : totalMinutes > 0 ? '${totalMinutes}m' : '< 1m',
                   icon: Icons.schedule_rounded,
                   color: AppColors.pagesTealContainer,
                   iconColor: AppColors.pagesTeal,
@@ -517,6 +520,140 @@ class _SessionCard extends StatelessWidget {
               '+${s.pagesRead}p',
               style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF5E35B1), fontSize: 13),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReadingHeatmap extends StatelessWidget {
+  final List<ReadingSession> sessions;
+  const _ReadingHeatmap({required this.sessions});
+
+  static const _cellSize = 11.0;
+  static const _gap = 2.0;
+
+  Color _cellColor(int pages, ColorScheme cs) {
+    if (pages == 0) return cs.surfaceContainerHighest;
+    if (pages <= 5) return cs.primary.withValues(alpha: 0.22);
+    if (pages <= 15) return cs.primary.withValues(alpha: 0.45);
+    if (pages <= 30) return cs.primary.withValues(alpha: 0.70);
+    return cs.primary;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    // Build day → pages map
+    final Map<String, int> dayPages = {};
+    for (final s in sessions) {
+      final key = '${s.startedAt.year}-${s.startedAt.month}-${s.startedAt.day}';
+      dayPages[key] = (dayPages[key] ?? 0) + s.pagesRead;
+    }
+
+    // 365 days ending today, oldest first
+    final days = List.generate(365, (i) => today.subtract(Duration(days: 364 - i)));
+
+    // Pad start so first column begins on Monday (weekday 1)
+    final leadingEmpty = (days.first.weekday - 1) % 7;
+    final allCells = <DateTime?>[...List.filled(leadingEmpty, null), ...days];
+    final numCols = (allCells.length / 7).ceil();
+
+    // Organize into week columns of 7 rows
+    final weeks = List.generate(numCols, (col) =>
+      List.generate(7, (row) {
+        final idx = col * 7 + row;
+        return idx < allCells.length ? allCells[idx] : null;
+      }),
+    );
+
+    String monthLabel(int col) {
+      final DateTime? first = weeks[col].firstWhere((d) => d != null, orElse: () => null);
+      if (first == null) return '';
+      if (col == 0) return DateFormat.MMM(locale).format(first);
+      final DateTime? prev = weeks[col - 1].firstWhere((d) => d != null, orElse: () => null);
+      if (prev == null || prev.month != first.month) return DateFormat.MMM(locale).format(first);
+      return '';
+    }
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.analyticsHeatmap, style: tt.titleMedium),
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Month labels
+                Row(
+                  children: List.generate(numCols, (col) => SizedBox(
+                    width: _cellSize + _gap,
+                    child: Text(
+                      monthLabel(col),
+                      style: TextStyle(fontSize: 8.5, color: cs.onSurfaceVariant, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.visible,
+                    ),
+                  )),
+                ),
+                const SizedBox(height: 3),
+                // Cell grid
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(numCols, (col) => Column(
+                    children: List.generate(7, (row) {
+                      final date = weeks[col][row];
+                      final pages = date == null ? 0 : (dayPages['${date.year}-${date.month}-${date.day}'] ?? 0);
+                      final isToday = date != null && date == today;
+                      return Container(
+                        width: _cellSize,
+                        height: _cellSize,
+                        margin: const EdgeInsets.only(right: _gap, bottom: _gap),
+                        decoration: BoxDecoration(
+                          color: date == null ? Colors.transparent : _cellColor(pages, cs),
+                          borderRadius: BorderRadius.circular(2),
+                          border: isToday ? Border.all(color: cs.primary, width: 1.5) : null,
+                        ),
+                      );
+                    }),
+                  )),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Legend
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text('Less', style: TextStyle(fontSize: 9, color: cs.onSurfaceVariant)),
+              const SizedBox(width: 4),
+              ...[0, 3, 10, 25, 50].map((p) => Container(
+                width: 11, height: 11,
+                margin: const EdgeInsets.only(left: 2),
+                decoration: BoxDecoration(
+                  color: _cellColor(p, cs),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              )),
+              const SizedBox(width: 4),
+              Text('More', style: TextStyle(fontSize: 9, color: cs.onSurfaceVariant)),
+            ],
           ),
         ],
       ),

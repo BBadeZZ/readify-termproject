@@ -329,5 +329,8 @@
   "detailNoteSave": "Save",
   "homeUpdatePage": "Update Page",
   "homeCurrentPage": "Current page",
-  "homeSave": "Save"
+  "homeSave": "Save",
+  "analyticsHeatmap": "Reading Activity",
+  "profileAchievements": "Achievements",
+  "profileStreakLabel": "Day Streak"
 }
