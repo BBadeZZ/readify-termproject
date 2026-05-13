@@ -18,11 +18,21 @@ class AuthService {
     await credential.user?.reload();
     final uid = credential.user?.uid;
     if (uid != null) {
-      await _db.collection('users').doc(uid).set({
-        'name': name,
-        'email': email,
-        'createdAt': DateTime.now().toIso8601String(),
-      });
+      final now = DateTime.now().toIso8601String();
+      await Future.wait([
+        _db.collection('users').doc(uid).set({
+          'name': name,
+          'email': email,
+          'createdAt': now,
+        }),
+        _db.collection('userProfiles').doc(uid).set({
+          'uid': uid,
+          'displayName': name,
+          'displayNameLower': name.toLowerCase(),
+          'email': email,
+          'createdAt': now,
+        }),
+      ]);
     }
   }
 

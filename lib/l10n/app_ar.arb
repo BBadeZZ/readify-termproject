@@ -276,5 +276,49 @@
     "placeholders": { "title": { "type": "String" } }
   },
   "libraryDeleteConfirmYes": "حذف",
-  "libraryDeleteConfirmNo": "إلغاء"
+  "libraryDeleteConfirmNo": "إلغاء",
+
+  "navSocial": "الشبكة",
+  "socialTitle": "الشبكة الاجتماعية",
+  "socialFriends": "الأصدقاء",
+  "socialSearch": "بحث",
+  "socialSearchHint": "البحث بالاسم أو البريد الإلكتروني...",
+  "socialAddFriend": "إضافة صديق",
+  "socialRequestSent": "تم إرسال الطلب",
+  "socialCancelRequest": "إلغاء الطلب",
+  "socialAccept": "قبول",
+  "socialDecline": "رفض",
+  "socialRemove": "إزالة",
+  "socialFriendRequests": "طلبات الصداقة",
+  "socialNoFriends": "لا أصدقاء بعد.\nابحث لإضافة شخص!",
+  "socialNoRequests": "لا طلبات معلقة.",
+  "socialViewLibrary": "عرض المكتبة",
+  "socialFriendLibrary": "مكتبة {name}",
+  "@socialFriendLibrary": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialBorrowBook": "استعر هذا الكتاب",
+  "socialBorrowRequests": "طلبات الاستعارة",
+  "socialIncoming": "واردة",
+  "socialOutgoing": "صادرة",
+  "socialBorrowSent": "تم إرسال طلب الاستعارة!",
+  "socialMarkReturned": "تحديد كمُعاد",
+  "socialNoBorrows": "لا طلبات استعارة.",
+  "socialAlreadyFriends": "صديق بالفعل",
+  "socialPending": "قيد الانتظار",
+  "socialAccepted": "مقبول",
+  "socialDeclined": "مرفوض",
+  "socialReturned": "تم الإعادة",
+  "socialEmptyLibrary": "المكتبة فارغة.",
+  "socialRequests": "الطلبات",
+  "socialRequestFrom": "{name} يريد الاستعارة",
+  "@socialRequestFrom": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialBorrowFrom": "استعر من {name}",
+  "@socialBorrowFrom": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialAddToLibrary": "أضف إلى مكتبتي",
+  "socialBookAdded": "تمت الإضافة إلى مكتبتك!"
 }

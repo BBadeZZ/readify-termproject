@@ -726,4 +726,112 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryDeleteConfirmNo => 'Cancel';
+
+  @override
+  String get navSocial => 'Social';
+
+  @override
+  String get socialTitle => 'Social Network';
+
+  @override
+  String get socialFriends => 'Friends';
+
+  @override
+  String get socialSearch => 'Search';
+
+  @override
+  String get socialSearchHint => 'Search by name or email...';
+
+  @override
+  String get socialAddFriend => 'Add Friend';
+
+  @override
+  String get socialRequestSent => 'Request Sent';
+
+  @override
+  String get socialCancelRequest => 'Cancel Request';
+
+  @override
+  String get socialAccept => 'Accept';
+
+  @override
+  String get socialDecline => 'Decline';
+
+  @override
+  String get socialRemove => 'Remove';
+
+  @override
+  String get socialFriendRequests => 'Friend Requests';
+
+  @override
+  String get socialNoFriends => 'No friends yet.\nSearch to find someone!';
+
+  @override
+  String get socialNoRequests => 'No pending requests.';
+
+  @override
+  String get socialViewLibrary => 'View Library';
+
+  @override
+  String socialFriendLibrary(String name) {
+    return '$name\'s Library';
+  }
+
+  @override
+  String get socialBorrowBook => 'Borrow This Book';
+
+  @override
+  String get socialBorrowRequests => 'Borrow Requests';
+
+  @override
+  String get socialIncoming => 'Incoming';
+
+  @override
+  String get socialOutgoing => 'Outgoing';
+
+  @override
+  String get socialBorrowSent => 'Borrow request sent!';
+
+  @override
+  String get socialMarkReturned => 'Mark as Returned';
+
+  @override
+  String get socialNoBorrows => 'No borrow requests.';
+
+  @override
+  String get socialAlreadyFriends => 'Already Friends';
+
+  @override
+  String get socialPending => 'Pending';
+
+  @override
+  String get socialAccepted => 'Accepted';
+
+  @override
+  String get socialDeclined => 'Declined';
+
+  @override
+  String get socialReturned => 'Returned';
+
+  @override
+  String get socialEmptyLibrary => 'This library is empty.';
+
+  @override
+  String get socialRequests => 'Requests';
+
+  @override
+  String socialRequestFrom(String name) {
+    return '$name wants to borrow';
+  }
+
+  @override
+  String socialBorrowFrom(String name) {
+    return 'Borrow from $name';
+  }
+
+  @override
+  String get socialAddToLibrary => 'Add to My Library';
+
+  @override
+  String get socialBookAdded => 'Added to your library!';
 }

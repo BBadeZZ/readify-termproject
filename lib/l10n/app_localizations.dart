@@ -1431,6 +1431,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get libraryDeleteConfirmNo;
+
+  /// No description provided for @navSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get navSocial;
+
+  /// No description provided for @socialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Network'**
+  String get socialTitle;
+
+  /// No description provided for @socialFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get socialFriends;
+
+  /// No description provided for @socialSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get socialSearch;
+
+  /// No description provided for @socialSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or email...'**
+  String get socialSearchHint;
+
+  /// No description provided for @socialAddFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Friend'**
+  String get socialAddFriend;
+
+  /// No description provided for @socialRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Sent'**
+  String get socialRequestSent;
+
+  /// No description provided for @socialCancelRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Request'**
+  String get socialCancelRequest;
+
+  /// No description provided for @socialAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get socialAccept;
+
+  /// No description provided for @socialDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get socialDecline;
+
+  /// No description provided for @socialRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get socialRemove;
+
+  /// No description provided for @socialFriendRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend Requests'**
+  String get socialFriendRequests;
+
+  /// No description provided for @socialNoFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'No friends yet.\nSearch to find someone!'**
+  String get socialNoFriends;
+
+  /// No description provided for @socialNoRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests.'**
+  String get socialNoRequests;
+
+  /// No description provided for @socialViewLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'View Library'**
+  String get socialViewLibrary;
+
+  /// No description provided for @socialFriendLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\'s Library'**
+  String socialFriendLibrary(String name);
+
+  /// No description provided for @socialBorrowBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow This Book'**
+  String get socialBorrowBook;
+
+  /// No description provided for @socialBorrowRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow Requests'**
+  String get socialBorrowRequests;
+
+  /// No description provided for @socialIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming'**
+  String get socialIncoming;
+
+  /// No description provided for @socialOutgoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Outgoing'**
+  String get socialOutgoing;
+
+  /// No description provided for @socialBorrowSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow request sent!'**
+  String get socialBorrowSent;
+
+  /// No description provided for @socialMarkReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Returned'**
+  String get socialMarkReturned;
+
+  /// No description provided for @socialNoBorrows.
+  ///
+  /// In en, this message translates to:
+  /// **'No borrow requests.'**
+  String get socialNoBorrows;
+
+  /// No description provided for @socialAlreadyFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Already Friends'**
+  String get socialAlreadyFriends;
+
+  /// No description provided for @socialPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get socialPending;
+
+  /// No description provided for @socialAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get socialAccepted;
+
+  /// No description provided for @socialDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get socialDeclined;
+
+  /// No description provided for @socialReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get socialReturned;
+
+  /// No description provided for @socialEmptyLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'This library is empty.'**
+  String get socialEmptyLibrary;
+
+  /// No description provided for @socialRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get socialRequests;
+
+  /// No description provided for @socialRequestFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} wants to borrow'**
+  String socialRequestFrom(String name);
+
+  /// No description provided for @socialBorrowFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow from {name}'**
+  String socialBorrowFrom(String name);
+
+  /// No description provided for @socialAddToLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to My Library'**
+  String get socialAddToLibrary;
+
+  /// No description provided for @socialBookAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your library!'**
+  String get socialBookAdded;
 }
 
 class _AppLocalizationsDelegate

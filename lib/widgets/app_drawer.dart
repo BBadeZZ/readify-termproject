@@ -67,6 +67,7 @@ class AppDrawer extends StatelessWidget {
                 _drawerItem(context, icon: Icons.library_books_outlined, label: AppLocalizations.of(context)!.navLibrary, route: '/library', selected: currentPage == 'Library'),
                 _drawerItem(context, icon: Icons.bar_chart_outlined, label: AppLocalizations.of(context)!.navAnalytics, route: '/analytics', selected: currentPage == 'Analytics'),
                 _drawerItem(context, icon: Icons.auto_awesome_outlined, label: AppLocalizations.of(context)!.navRecommendations, route: '/recommendations', selected: currentPage == 'Recommendations'),
+                _drawerItem(context, icon: Icons.people_rounded, label: AppLocalizations.of(context)!.navSocial, route: '/social', selected: currentPage == 'Social'),
                 _drawerItem(context, icon: Icons.settings_outlined, label: AppLocalizations.of(context)!.navSettings, route: '/settings', selected: currentPage == 'Settings'),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -722,4 +722,112 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get libraryDeleteConfirmNo => 'إلغاء';
+
+  @override
+  String get navSocial => 'الشبكة';
+
+  @override
+  String get socialTitle => 'الشبكة الاجتماعية';
+
+  @override
+  String get socialFriends => 'الأصدقاء';
+
+  @override
+  String get socialSearch => 'بحث';
+
+  @override
+  String get socialSearchHint => 'البحث بالاسم أو البريد الإلكتروني...';
+
+  @override
+  String get socialAddFriend => 'إضافة صديق';
+
+  @override
+  String get socialRequestSent => 'تم إرسال الطلب';
+
+  @override
+  String get socialCancelRequest => 'إلغاء الطلب';
+
+  @override
+  String get socialAccept => 'قبول';
+
+  @override
+  String get socialDecline => 'رفض';
+
+  @override
+  String get socialRemove => 'إزالة';
+
+  @override
+  String get socialFriendRequests => 'طلبات الصداقة';
+
+  @override
+  String get socialNoFriends => 'لا أصدقاء بعد.\nابحث لإضافة شخص!';
+
+  @override
+  String get socialNoRequests => 'لا طلبات معلقة.';
+
+  @override
+  String get socialViewLibrary => 'عرض المكتبة';
+
+  @override
+  String socialFriendLibrary(String name) {
+    return 'مكتبة $name';
+  }
+
+  @override
+  String get socialBorrowBook => 'استعر هذا الكتاب';
+
+  @override
+  String get socialBorrowRequests => 'طلبات الاستعارة';
+
+  @override
+  String get socialIncoming => 'واردة';
+
+  @override
+  String get socialOutgoing => 'صادرة';
+
+  @override
+  String get socialBorrowSent => 'تم إرسال طلب الاستعارة!';
+
+  @override
+  String get socialMarkReturned => 'تحديد كمُعاد';
+
+  @override
+  String get socialNoBorrows => 'لا طلبات استعارة.';
+
+  @override
+  String get socialAlreadyFriends => 'صديق بالفعل';
+
+  @override
+  String get socialPending => 'قيد الانتظار';
+
+  @override
+  String get socialAccepted => 'مقبول';
+
+  @override
+  String get socialDeclined => 'مرفوض';
+
+  @override
+  String get socialReturned => 'تم الإعادة';
+
+  @override
+  String get socialEmptyLibrary => 'المكتبة فارغة.';
+
+  @override
+  String get socialRequests => 'الطلبات';
+
+  @override
+  String socialRequestFrom(String name) {
+    return '$name يريد الاستعارة';
+  }
+
+  @override
+  String socialBorrowFrom(String name) {
+    return 'استعر من $name';
+  }
+
+  @override
+  String get socialAddToLibrary => 'أضف إلى مكتبتي';
+
+  @override
+  String get socialBookAdded => 'تمت الإضافة إلى مكتبتك!';
 }

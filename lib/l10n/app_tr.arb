@@ -276,5 +276,49 @@
     "placeholders": { "title": { "type": "String" } }
   },
   "libraryDeleteConfirmYes": "Sil",
-  "libraryDeleteConfirmNo": "İptal"
+  "libraryDeleteConfirmNo": "İptal",
+
+  "navSocial": "Sosyal",
+  "socialTitle": "Sosyal Ağ",
+  "socialFriends": "Arkadaşlar",
+  "socialSearch": "Ara",
+  "socialSearchHint": "İsim veya e-posta ile ara...",
+  "socialAddFriend": "Arkadaş Ekle",
+  "socialRequestSent": "İstek Gönderildi",
+  "socialCancelRequest": "İsteği İptal Et",
+  "socialAccept": "Kabul Et",
+  "socialDecline": "Reddet",
+  "socialRemove": "Çıkar",
+  "socialFriendRequests": "Arkadaşlık İstekleri",
+  "socialNoFriends": "Henüz arkadaş yok.\nArama yaparak birini ekle!",
+  "socialNoRequests": "Bekleyen istek yok.",
+  "socialViewLibrary": "Kütüphaneyi Gör",
+  "socialFriendLibrary": "{name} Kütüphanesi",
+  "@socialFriendLibrary": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialBorrowBook": "Bu Kitabı Ödünç Al",
+  "socialBorrowRequests": "Ödünç İstekleri",
+  "socialIncoming": "Gelen",
+  "socialOutgoing": "Giden",
+  "socialBorrowSent": "Ödünç isteği gönderildi!",
+  "socialMarkReturned": "İade Edildi",
+  "socialNoBorrows": "Ödünç isteği yok.",
+  "socialAlreadyFriends": "Zaten Arkadaşsınız",
+  "socialPending": "Bekliyor",
+  "socialAccepted": "Kabul Edildi",
+  "socialDeclined": "Reddedildi",
+  "socialReturned": "İade Edildi",
+  "socialEmptyLibrary": "Bu kütüphane boş.",
+  "socialRequests": "İstekler",
+  "socialRequestFrom": "{name} ödünç istiyor",
+  "@socialRequestFrom": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialBorrowFrom": "{name}'den ödünç al",
+  "@socialBorrowFrom": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialAddToLibrary": "Kütüphaneme Ekle",
+  "socialBookAdded": "Kütüphanenize eklendi!"
 }

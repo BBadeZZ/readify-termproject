@@ -724,4 +724,113 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get libraryDeleteConfirmNo => 'İptal';
+
+  @override
+  String get navSocial => 'Sosyal';
+
+  @override
+  String get socialTitle => 'Sosyal Ağ';
+
+  @override
+  String get socialFriends => 'Arkadaşlar';
+
+  @override
+  String get socialSearch => 'Ara';
+
+  @override
+  String get socialSearchHint => 'İsim veya e-posta ile ara...';
+
+  @override
+  String get socialAddFriend => 'Arkadaş Ekle';
+
+  @override
+  String get socialRequestSent => 'İstek Gönderildi';
+
+  @override
+  String get socialCancelRequest => 'İsteği İptal Et';
+
+  @override
+  String get socialAccept => 'Kabul Et';
+
+  @override
+  String get socialDecline => 'Reddet';
+
+  @override
+  String get socialRemove => 'Çıkar';
+
+  @override
+  String get socialFriendRequests => 'Arkadaşlık İstekleri';
+
+  @override
+  String get socialNoFriends =>
+      'Henüz arkadaş yok.\nArama yaparak birini ekle!';
+
+  @override
+  String get socialNoRequests => 'Bekleyen istek yok.';
+
+  @override
+  String get socialViewLibrary => 'Kütüphaneyi Gör';
+
+  @override
+  String socialFriendLibrary(String name) {
+    return '$name Kütüphanesi';
+  }
+
+  @override
+  String get socialBorrowBook => 'Bu Kitabı Ödünç Al';
+
+  @override
+  String get socialBorrowRequests => 'Ödünç İstekleri';
+
+  @override
+  String get socialIncoming => 'Gelen';
+
+  @override
+  String get socialOutgoing => 'Giden';
+
+  @override
+  String get socialBorrowSent => 'Ödünç isteği gönderildi!';
+
+  @override
+  String get socialMarkReturned => 'İade Edildi';
+
+  @override
+  String get socialNoBorrows => 'Ödünç isteği yok.';
+
+  @override
+  String get socialAlreadyFriends => 'Zaten Arkadaşsınız';
+
+  @override
+  String get socialPending => 'Bekliyor';
+
+  @override
+  String get socialAccepted => 'Kabul Edildi';
+
+  @override
+  String get socialDeclined => 'Reddedildi';
+
+  @override
+  String get socialReturned => 'İade Edildi';
+
+  @override
+  String get socialEmptyLibrary => 'Bu kütüphane boş.';
+
+  @override
+  String get socialRequests => 'İstekler';
+
+  @override
+  String socialRequestFrom(String name) {
+    return '$name ödünç istiyor';
+  }
+
+  @override
+  String socialBorrowFrom(String name) {
+    return '$name\'den ödünç al';
+  }
+
+  @override
+  String get socialAddToLibrary => 'Kütüphaneme Ekle';
+
+  @override
+  String get socialBookAdded => 'Kütüphanenize eklendi!';
 }

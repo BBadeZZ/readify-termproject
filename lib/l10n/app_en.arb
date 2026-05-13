@@ -339,5 +339,49 @@
     "placeholders": { "title": { "type": "String" } }
   },
   "libraryDeleteConfirmYes": "Delete",
-  "libraryDeleteConfirmNo": "Cancel"
+  "libraryDeleteConfirmNo": "Cancel",
+
+  "navSocial": "Social",
+  "socialTitle": "Social Network",
+  "socialFriends": "Friends",
+  "socialSearch": "Search",
+  "socialSearchHint": "Search by name or email...",
+  "socialAddFriend": "Add Friend",
+  "socialRequestSent": "Request Sent",
+  "socialCancelRequest": "Cancel Request",
+  "socialAccept": "Accept",
+  "socialDecline": "Decline",
+  "socialRemove": "Remove",
+  "socialFriendRequests": "Friend Requests",
+  "socialNoFriends": "No friends yet.\nSearch to find someone!",
+  "socialNoRequests": "No pending requests.",
+  "socialViewLibrary": "View Library",
+  "socialFriendLibrary": "{name}'s Library",
+  "@socialFriendLibrary": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialBorrowBook": "Borrow This Book",
+  "socialBorrowRequests": "Borrow Requests",
+  "socialIncoming": "Incoming",
+  "socialOutgoing": "Outgoing",
+  "socialBorrowSent": "Borrow request sent!",
+  "socialMarkReturned": "Mark as Returned",
+  "socialNoBorrows": "No borrow requests.",
+  "socialAlreadyFriends": "Already Friends",
+  "socialPending": "Pending",
+  "socialAccepted": "Accepted",
+  "socialDeclined": "Declined",
+  "socialReturned": "Returned",
+  "socialEmptyLibrary": "This library is empty.",
+  "socialRequests": "Requests",
+  "socialRequestFrom": "{name} wants to borrow",
+  "@socialRequestFrom": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialBorrowFrom": "Borrow from {name}",
+  "@socialBorrowFrom": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialAddToLibrary": "Add to My Library",
+  "socialBookAdded": "Added to your library!"
 }
