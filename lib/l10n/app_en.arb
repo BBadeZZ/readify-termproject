@@ -383,5 +383,53 @@
     "placeholders": { "name": { "type": "String" } }
   },
   "socialAddToLibrary": "Add to My Library",
-  "socialBookAdded": "Added to your library!"
+  "socialBookAdded": "Added to your library!",
+
+  "settingsReminderSet": "Reminder set for {time}",
+  "@settingsReminderSet": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "settingsReminderCancelled": "Reminder cancelled",
+  "settingsTestNotifSent": "Test notification sent!",
+  "settingsTestNotifBtn": "Send Test Notification",
+
+  "analyticsHeatmapLess": "Less",
+  "analyticsHeatmapMore": "More",
+  "analyticsWeeklyMax": "{pages} p max",
+  "@analyticsWeeklyMax": {
+    "placeholders": { "pages": { "type": "int" } }
+  },
+  "detailSessionFormat": "{min}m · {pages} pages",
+  "@detailSessionFormat": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "pages": { "type": "int" }
+    }
+  },
+
+  "loginForgotPassword": "Forgot Password?",
+  "loginResetPasswordTitle": "Reset Password",
+  "loginResetEmailHint": "Enter your email address",
+  "loginResetSend": "Send Reset Email",
+  "loginResetSent": "Password reset email sent to {email}",
+  "@loginResetSent": {
+    "placeholders": { "email": { "type": "String" } }
+  },
+  "loginResetErrEmpty": "Please enter your email address.",
+
+  "achieveFirstBook": "First Book",
+  "achieve5Books": "5 Books",
+  "achieve10Books": "10 Books",
+  "achieveFirstFinish": "First Finish",
+  "achieveCollector": "Collector",
+  "achieve100Pages": "100 Pages",
+  "achieve1000Pages": "1000 Pages",
+  "achieveSpeedReader": "Speed Reader",
+  "achieveMarathoner": "Marathoner",
+  "achieve7DayStreak": "7-Day Streak",
+  "achieveCritic": "Critic",
+
+  "settingsBiometricLock": "Biometric App Lock",
+  "settingsBiometricLockSub": "Lock app with fingerprint or face ID",
+  "settingsBiometricFailed": "Authentication failed. Try again."
 }

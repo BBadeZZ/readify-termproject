@@ -836,7 +836,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get socialBookAdded => 'Added to your library!';
 
   @override
-  String settingsReminderSet(String time) => 'Reminder set for $time';
+  String settingsReminderSet(String time) {
+    return 'Reminder set for $time';
+  }
 
   @override
   String get settingsReminderCancelled => 'Reminder cancelled';
@@ -854,10 +856,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analyticsHeatmapMore => 'More';
 
   @override
-  String analyticsWeeklyMax(int pages) => '$pages p max';
+  String analyticsWeeklyMax(int pages) {
+    return '$pages p max';
+  }
 
   @override
-  String detailSessionFormat(int min, int pages) => '${min}m · $pages pages';
+  String detailSessionFormat(int min, int pages) {
+    return '${min}m · $pages pages';
+  }
 
   @override
   String get loginForgotPassword => 'Forgot Password?';
@@ -872,7 +878,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginResetSend => 'Send Reset Email';
 
   @override
-  String loginResetSent(String email) => 'Password reset email sent to $email';
+  String loginResetSent(String email) {
+    return 'Password reset email sent to $email';
+  }
 
   @override
   String get loginResetErrEmpty => 'Please enter your email address.';
@@ -909,4 +917,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get achieveCritic => 'Critic';
+
+  @override
+  String get settingsBiometricLock => 'Biometric App Lock';
+
+  @override
+  String get settingsBiometricLockSub => 'Lock app with fingerprint or face ID';
+
+  @override
+  String get settingsBiometricFailed => 'Authentication failed. Try again.';
 }

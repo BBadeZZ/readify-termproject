@@ -1636,67 +1636,173 @@ abstract class AppLocalizations {
   /// **'Added to your library!'**
   String get socialBookAdded;
 
-  // ── Settings notifications ────────────────────────────────────────────────
-
-  /// Reminder set confirmation. e.g. "Reminder set for 08:30"
+  /// No description provided for @settingsReminderSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set for {time}'**
   String settingsReminderSet(String time);
 
-  /// Reminder was cancelled.
+  /// No description provided for @settingsReminderCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder cancelled'**
   String get settingsReminderCancelled;
 
-  /// Test notification was sent.
+  /// No description provided for @settingsTestNotifSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification sent!'**
   String get settingsTestNotifSent;
 
-  /// Button label to send a test notification.
+  /// No description provided for @settingsTestNotifBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Test Notification'**
   String get settingsTestNotifBtn;
 
-  // ── Analytics ─────────────────────────────────────────────────────────────
-
-  /// Heatmap legend: "Less"
+  /// No description provided for @analyticsHeatmapLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less'**
   String get analyticsHeatmapLess;
 
-  /// Heatmap legend: "More"
+  /// No description provided for @analyticsHeatmapMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
   String get analyticsHeatmapMore;
 
-  /// Weekly chart peak label. e.g. "32 p max"
+  /// No description provided for @analyticsWeeklyMax.
+  ///
+  /// In en, this message translates to:
+  /// **'{pages} p max'**
   String analyticsWeeklyMax(int pages);
 
-  /// Session history row format. e.g. "12 min · 25 pages"
+  /// No description provided for @detailSessionFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{min}m · {pages} pages'**
   String detailSessionFormat(int min, int pages);
 
-  // ── Login / Auth ──────────────────────────────────────────────────────────
-
-  /// "Forgot Password?" link on the login page.
+  /// No description provided for @loginForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
   String get loginForgotPassword;
 
-  /// Title of the reset-password dialog.
+  /// No description provided for @loginResetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
   String get loginResetPasswordTitle;
 
-  /// Hint inside the email field of the reset dialog.
+  /// No description provided for @loginResetEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address'**
   String get loginResetEmailHint;
 
-  /// Button label to send the reset email.
+  /// No description provided for @loginResetSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Email'**
   String get loginResetSend;
 
-  /// Success message after sending a reset email. e.g. "Reset email sent to user@example.com"
+  /// No description provided for @loginResetSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent to {email}'**
   String loginResetSent(String email);
 
-  /// Error shown when the reset email field is empty.
+  /// No description provided for @loginResetErrEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email address.'**
   String get loginResetErrEmpty;
 
-  // ── Achievement badges ────────────────────────────────────────────────────
-
+  /// No description provided for @achieveFirstBook.
+  ///
+  /// In en, this message translates to:
+  /// **'First Book'**
   String get achieveFirstBook;
+
+  /// No description provided for @achieve5Books.
+  ///
+  /// In en, this message translates to:
+  /// **'5 Books'**
   String get achieve5Books;
+
+  /// No description provided for @achieve10Books.
+  ///
+  /// In en, this message translates to:
+  /// **'10 Books'**
   String get achieve10Books;
+
+  /// No description provided for @achieveFirstFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'First Finish'**
   String get achieveFirstFinish;
+
+  /// No description provided for @achieveCollector.
+  ///
+  /// In en, this message translates to:
+  /// **'Collector'**
   String get achieveCollector;
+
+  /// No description provided for @achieve100Pages.
+  ///
+  /// In en, this message translates to:
+  /// **'100 Pages'**
   String get achieve100Pages;
+
+  /// No description provided for @achieve1000Pages.
+  ///
+  /// In en, this message translates to:
+  /// **'1000 Pages'**
   String get achieve1000Pages;
+
+  /// No description provided for @achieveSpeedReader.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed Reader'**
   String get achieveSpeedReader;
+
+  /// No description provided for @achieveMarathoner.
+  ///
+  /// In en, this message translates to:
+  /// **'Marathoner'**
   String get achieveMarathoner;
+
+  /// No description provided for @achieve7DayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'7-Day Streak'**
   String get achieve7DayStreak;
+
+  /// No description provided for @achieveCritic.
+  ///
+  /// In en, this message translates to:
+  /// **'Critic'**
   String get achieveCritic;
+
+  /// No description provided for @settingsBiometricLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric App Lock'**
+  String get settingsBiometricLock;
+
+  /// No description provided for @settingsBiometricLockSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock app with fingerprint or face ID'**
+  String get settingsBiometricLockSub;
+
+  /// No description provided for @settingsBiometricFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Try again.'**
+  String get settingsBiometricFailed;
 }
 
 class _AppLocalizationsDelegate

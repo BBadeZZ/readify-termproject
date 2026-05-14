@@ -832,7 +832,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get socialBookAdded => 'تمت الإضافة إلى مكتبتك!';
 
   @override
-  String settingsReminderSet(String time) => 'تم ضبط التذكير في $time';
+  String settingsReminderSet(String time) {
+    return 'تم ضبط التذكير في $time';
+  }
 
   @override
   String get settingsReminderCancelled => 'تم إلغاء التذكير';
@@ -850,10 +852,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get analyticsHeatmapMore => 'أكثر';
 
   @override
-  String analyticsWeeklyMax(int pages) => 'الحد الأقصى $pages ص';
+  String analyticsWeeklyMax(int pages) {
+    return 'الحد الأقصى $pages ص';
+  }
 
   @override
-  String detailSessionFormat(int min, int pages) => '${min}د · $pages صفحة';
+  String detailSessionFormat(int min, int pages) {
+    return '$minد · $pages صفحة';
+  }
 
   @override
   String get loginForgotPassword => 'نسيت كلمة المرور؟';
@@ -868,7 +874,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginResetSend => 'إرسال رابط إعادة التعيين';
 
   @override
-  String loginResetSent(String email) => 'تم إرسال رابط إعادة التعيين إلى $email';
+  String loginResetSent(String email) {
+    return 'تم إرسال رابط إعادة التعيين إلى $email';
+  }
 
   @override
   String get loginResetErrEmpty => 'يرجى إدخال عنوان بريدك الإلكتروني.';
@@ -905,4 +913,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get achieveCritic => 'ناقد';
+
+  @override
+  String get settingsBiometricLock => 'قفل بيومتري للتطبيق';
+
+  @override
+  String get settingsBiometricLockSub =>
+      'قفل التطبيق ببصمة الإصبع أو معرف الوجه';
+
+  @override
+  String get settingsBiometricFailed => 'فشل التحقق. حاول مجدداً.';
 }

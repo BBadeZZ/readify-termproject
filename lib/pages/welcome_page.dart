@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../services/biometric_service.dart';
 import '../services/settings_service.dart';
 import '../l10n/app_localizations.dart';
 
@@ -14,13 +15,23 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (authService.currentUser != null) {
-        Navigator.pushReplacementNamed(context, '/home');
-      } else if (!settingsService.onboardingDone) {
-        Navigator.pushReplacementNamed(context, '/onboarding');
+    WidgetsBinding.instance.addPostFrameCallback((_) => _handleAutoLogin());
+  }
+
+  Future<void> _handleAutoLogin() async {
+    if (authService.currentUser == null) {
+      if (!settingsService.onboardingDone) {
+        if (mounted) Navigator.pushReplacementNamed(context, '/onboarding');
       }
-    });
+      return;
+    }
+    if (settingsService.biometricLock) {
+      final l10n = AppLocalizations.of(context)!;
+      final authenticated = await biometricService
+          .authenticate(l10n.settingsBiometricLockSub);
+      if (!authenticated) return;
+    }
+    if (mounted) Navigator.pushReplacementNamed(context, '/home');
   }
 
   @override

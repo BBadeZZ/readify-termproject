@@ -4,6 +4,7 @@ import '../theme/theme_controller.dart';
 import '../services/settings_service.dart';
 import '../services/notification_service.dart';
 import '../services/locale_provider.dart';
+import '../services/biometric_service.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../services/auth_service.dart';
@@ -22,6 +23,8 @@ class _SettingsPageState extends State<SettingsPage> {
   late double dailyGoal;
   late int reminderHour;
   late int reminderMinute;
+  late bool biometricLock;
+  bool _biometricAvailable = false;
 
   @override
   void initState() {
@@ -31,6 +34,10 @@ class _SettingsPageState extends State<SettingsPage> {
     dailyGoal = settingsService.dailyGoal;
     reminderHour = settingsService.reminderHour;
     reminderMinute = settingsService.reminderMinute;
+    biometricLock = settingsService.biometricLock;
+    biometricService.isAvailable().then((available) {
+      if (mounted) setState(() => _biometricAvailable = available);
+    });
   }
 
   String get _reminderTimeLabel {
@@ -259,6 +266,34 @@ class _SettingsPageState extends State<SettingsPage> {
             onChanged: (value) => setState(() => dailyGoal = value),
             onChangeEnd: (value) => settingsService.saveDailyGoal(value),
           ),
+          const SizedBox(height: 10),
+
+          if (_biometricAvailable)
+            SwitchListTile(
+              title: Text(l10n.settingsBiometricLock),
+              subtitle: Text(l10n.settingsBiometricLockSub),
+              secondary: const Icon(Icons.fingerprint_rounded),
+              value: biometricLock,
+              onChanged: (value) async {
+                final messenger = ScaffoldMessenger.of(context);
+                final failedMsg = l10n.settingsBiometricFailed;
+                if (value) {
+                  final authenticated = await biometricService
+                      .authenticate(l10n.settingsBiometricLockSub);
+                  if (!authenticated) {
+                    messenger.showSnackBar(SnackBar(
+                      content: Text(failedMsg),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ));
+                    return;
+                  }
+                }
+                setState(() => biometricLock = value);
+                await settingsService.saveBiometricLock(value);
+              },
+            ),
           const SizedBox(height: 10),
 
           // Language

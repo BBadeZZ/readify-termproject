@@ -67,6 +67,12 @@ class SettingsService {
   Future<void> completeOnboarding() =>
       _prefs.setBool('onboarding_done', true);
 
+  // Biometric lock
+  static const _keyBiometricLock = 'biometric_lock';
+  bool get biometricLock => _prefs.getBool(_keyBiometricLock) ?? false;
+  Future<void> saveBiometricLock(bool value) =>
+      _prefs.setBool(_keyBiometricLock, value);
+
   // Language
   static const _keyLanguageCode = 'language_code';
   String get languageCode => _prefs.getString(_keyLanguageCode) ?? 'en';

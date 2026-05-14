@@ -320,5 +320,53 @@
     "placeholders": { "name": { "type": "String" } }
   },
   "socialAddToLibrary": "أضف إلى مكتبتي",
-  "socialBookAdded": "تمت الإضافة إلى مكتبتك!"
+  "socialBookAdded": "تمت الإضافة إلى مكتبتك!",
+
+  "settingsReminderSet": "تم ضبط التذكير في {time}",
+  "@settingsReminderSet": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "settingsReminderCancelled": "تم إلغاء التذكير",
+  "settingsTestNotifSent": "تم إرسال الإشعار التجريبي!",
+  "settingsTestNotifBtn": "إرسال إشعار تجريبي",
+
+  "analyticsHeatmapLess": "أقل",
+  "analyticsHeatmapMore": "أكثر",
+  "analyticsWeeklyMax": "الحد الأقصى {pages} ص",
+  "@analyticsWeeklyMax": {
+    "placeholders": { "pages": { "type": "int" } }
+  },
+  "detailSessionFormat": "{min}د · {pages} صفحة",
+  "@detailSessionFormat": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "pages": { "type": "int" }
+    }
+  },
+
+  "loginForgotPassword": "نسيت كلمة المرور؟",
+  "loginResetPasswordTitle": "إعادة تعيين كلمة المرور",
+  "loginResetEmailHint": "أدخل عنوان بريدك الإلكتروني",
+  "loginResetSend": "إرسال رابط إعادة التعيين",
+  "loginResetSent": "تم إرسال رابط إعادة التعيين إلى {email}",
+  "@loginResetSent": {
+    "placeholders": { "email": { "type": "String" } }
+  },
+  "loginResetErrEmpty": "يرجى إدخال عنوان بريدك الإلكتروني.",
+
+  "achieveFirstBook": "أول كتاب",
+  "achieve5Books": "5 كتب",
+  "achieve10Books": "10 كتب",
+  "achieveFirstFinish": "أول إنهاء",
+  "achieveCollector": "جامع",
+  "achieve100Pages": "100 صفحة",
+  "achieve1000Pages": "1000 صفحة",
+  "achieveSpeedReader": "قارئ سريع",
+  "achieveMarathoner": "عدّاء ماراثون",
+  "achieve7DayStreak": "سلسلة 7 أيام",
+  "achieveCritic": "ناقد",
+
+  "settingsBiometricLock": "قفل بيومتري للتطبيق",
+  "settingsBiometricLockSub": "قفل التطبيق ببصمة الإصبع أو معرف الوجه",
+  "settingsBiometricFailed": "فشل التحقق. حاول مجدداً."
 }

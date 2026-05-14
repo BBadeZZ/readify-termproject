@@ -835,7 +835,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get socialBookAdded => 'Kütüphanenize eklendi!';
 
   @override
-  String settingsReminderSet(String time) => '$time için hatırlatıcı kuruldu';
+  String settingsReminderSet(String time) {
+    return '$time için hatırlatıcı kuruldu';
+  }
 
   @override
   String get settingsReminderCancelled => 'Hatırlatıcı iptal edildi';
@@ -853,10 +855,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get analyticsHeatmapMore => 'Çok';
 
   @override
-  String analyticsWeeklyMax(int pages) => 'maks $pages s';
+  String analyticsWeeklyMax(int pages) {
+    return 'maks $pages s';
+  }
 
   @override
-  String detailSessionFormat(int min, int pages) => '${min}d · $pages sayfa';
+  String detailSessionFormat(int min, int pages) {
+    return '${min}d · $pages sayfa';
+  }
 
   @override
   String get loginForgotPassword => 'Şifremi Unuttum?';
@@ -871,7 +877,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get loginResetSend => 'Sıfırlama E-postası Gönder';
 
   @override
-  String loginResetSent(String email) => '$email adresine sıfırlama e-postası gönderildi';
+  String loginResetSent(String email) {
+    return '$email adresine sıfırlama e-postası gönderildi';
+  }
 
   @override
   String get loginResetErrEmpty => 'Lütfen e-posta adresinizi girin.';
@@ -908,4 +916,15 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get achieveCritic => 'Eleştirmen';
+
+  @override
+  String get settingsBiometricLock => 'Biyometrik Uygulama Kilidi';
+
+  @override
+  String get settingsBiometricLockSub =>
+      'Uygulamayı parmak izi veya yüzle kilitle';
+
+  @override
+  String get settingsBiometricFailed =>
+      'Kimlik doğrulama başarısız. Tekrar deneyin.';
 }
