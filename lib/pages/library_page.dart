@@ -39,7 +39,6 @@ class _LibraryPageState extends State<LibraryPage> {
       if (args != null && args['filter'] != null) {
         final incoming = args['filter'] as String;
         if (['All', BookStatus.reading, BookStatus.wishlist, BookStatus.alreadyRead, 'Pages Read', 'Favorite Books'].contains(incoming)) {
-          // Map legacy filter names to new ones
           filter = incoming == 'Favorite Books' ? 'Favorites' : incoming == 'Pages Read' ? 'All' : incoming;
         }
       }
@@ -79,7 +78,6 @@ class _LibraryPageState extends State<LibraryPage> {
     }
     return result;
   }
-
 
   String _emptyMessage(AppLocalizations l10n) {
     if (searchText.isNotEmpty) return l10n.libraryNoResults(searchText);
@@ -126,212 +124,259 @@ class _LibraryPageState extends State<LibraryPage> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Library'),
-      appBar: AppBar(
-        title: Text(l10n.libraryTitle),
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.sort_rounded),
-            initialValue: sortBy,
-            onSelected: (v) => setState(() => sortBy = v),
-            itemBuilder: (_) => _sortOptions.map((o) => PopupMenuItem(
-              value: o,
-              child: Row(children: [
-                Icon(sortBy == o ? Icons.check_rounded : null, size: 18, color: cs.primary),
-                const SizedBox(width: 8),
-                Text(_sortLabel(o, l10n)),
-              ]),
-            )).toList(),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: TextField(
-              controller: searchController,
-              onChanged: (value) {
-                _debounce?.cancel();
-                _debounce = Timer(const Duration(milliseconds: 300), () {
-                  setState(() => searchText = value);
-                });
-              },
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search_rounded, color: cs.primary),
-                suffixIcon: searchText.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.close_rounded),
-                        onPressed: () => setState(() {
-                          searchText = '';
-                          searchController.clear();
-                        }),
-                      )
-                    : null,
-                hintText: l10n.librarySearchHint,
-              ),
-            ),
-          ),
+      body: StreamBuilder<List<Book>>(
+        stream: firestoreService.getBooks(),
+        builder: (context, snapshot) {
+          final allBooks = snapshot.data ?? [];
+          final books = applyFilter(allBooks);
+          final favCount = allBooks.where((b) => b.favorite).length;
+          final readingCount = allBooks.where((b) => b.status == BookStatus.reading).length;
 
-          SizedBox(
-            height: 52,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              itemCount: _filters.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (context, index) {
-                final item = _filters[index];
-                final selected = filter == item;
-                return FilterChip(
-                  label: Text(_filterLabel(item, l10n)),
-                  selected: selected,
-                  onSelected: (_) => setState(() => filter = item),
-                  showCheckmark: false,
-                  avatar: selected ? Icon(Icons.check_rounded, size: 16, color: cs.onPrimaryContainer) : null,
-                );
-              },
-            ),
-          ),
-
-          // Book list
-          Expanded(
-            child: StreamBuilder<List<Book>>(
-              stream: firestoreService.getBooks(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text(l10n.librarySomethingWrong));
-                }
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final allBooks = snapshot.data!;
-                final books = applyFilter(allBooks);
-
-                // Summary bar
-                final favCount = allBooks.where((b) => b.favorite).length;
-                final readingCount = allBooks.where((b) => b.status == BookStatus.reading).length;
-
-                return Column(
-                  children: [
-                    // Summary row
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                      child: Row(
-                        children: [
-                          Text(
-                            l10n.libraryBooksCount(books.length),
-                            style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                          ),
-                          const Spacer(),
-                          _SummaryChip(icon: Icons.library_books_rounded, value: allBooks.length, color: cs.primary),
-                          const SizedBox(width: 6),
-                          _SummaryChip(icon: Icons.favorite_rounded, value: favCount, color: Colors.pink),
-                          const SizedBox(width: 6),
-                          _SummaryChip(icon: Icons.auto_stories_rounded, value: readingCount, color: AppColors.readingBlue),
-                        ],
+          return CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 96,
+                pinned: true,
+                leading: Builder(
+                  builder: (ctx) => IconButton(
+                    icon: const Icon(Icons.menu_rounded),
+                    onPressed: () => Scaffold.of(ctx).openDrawer(),
+                  ),
+                ),
+                actions: [
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.sort_rounded),
+                    initialValue: sortBy,
+                    onSelected: (v) => setState(() => sortBy = v),
+                    itemBuilder: (_) => _sortOptions.map((o) => PopupMenuItem(
+                      value: o,
+                      child: Row(children: [
+                        Icon(sortBy == o ? Icons.check_rounded : null, size: 18, color: cs.primary),
+                        const SizedBox(width: 8),
+                        Text(_sortLabel(o, l10n)),
+                      ]),
+                    )).toList(),
+                  ),
+                ],
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    l10n.libraryTitle,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  titlePadding: const EdgeInsetsDirectional.only(start: 72, bottom: 16),
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [cs.primaryContainer, cs.secondaryContainer],
                       ),
                     ),
-
-                    Expanded(
-                      child: books.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(_emptyIcon(), size: 72, color: cs.outlineVariant),
-                                  const SizedBox(height: 16),
-                                  Text(_emptyMessage(l10n), textAlign: TextAlign.center, style: tt.titleMedium?.copyWith(color: cs.outline)),
-                                ],
+                    child: snapshot.hasData
+                        ? Align(
+                            alignment: Alignment.bottomRight,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 16, bottom: 40),
+                              child: Text(
+                                l10n.libraryBooksCount(allBooks.length),
+                                style: tt.bodyMedium?.copyWith(
+                                  color: cs.onPrimaryContainer.withValues(alpha: 0.75),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ),
+                ),
+              ),
+
+              // Search bar
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: (value) {
+                      _debounce?.cancel();
+                      _debounce = Timer(const Duration(milliseconds: 300), () {
+                        setState(() => searchText = value);
+                      });
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search_rounded, color: cs.primary),
+                      suffixIcon: searchText.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.close_rounded),
+                              onPressed: () => setState(() {
+                                searchText = '';
+                                searchController.clear();
+                              }),
                             )
-                          : _BookAnimatedList(
-                              key: ValueKey('$filter|$sortBy|$searchText'),
-                              books: books,
-                              itemBuilder: (ctx, book) => _BookCard(
-                                book: book,
-                                statusColor: AppColors.forStatus(book.status),
-                                onTap: () => Navigator.push(ctx, SlidePageRoute(page: BookDetailPage(book: book))),
-                                onFavorite: () async {
-                                  final updated = book.copyWith(favorite: !book.favorite);
-                                  try {
-                                    await firestoreService.updateBook(updated);
-                                  } catch (e) {
-                                    if (ctx.mounted) {
-                                      ScaffoldMessenger.of(ctx).showSnackBar(
-                                        SnackBar(
-                                          content: Text(AppLocalizations.of(ctx)!.libraryErrFavorite),
-                                          backgroundColor: Theme.of(ctx).colorScheme.error,
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                },
-                                onDelete: () async {
-                                  final deletedBook = book;
-                                  try {
-                                    await firestoreService.deleteBook(deletedBook.id);
-                                  } catch (e) {
-                                    if (ctx.mounted) {
-                                      ScaffoldMessenger.of(ctx).showSnackBar(
-                                        SnackBar(
-                                          content: Text(AppLocalizations.of(ctx)!.libraryErrDelete),
-                                          backgroundColor: Theme.of(ctx).colorScheme.error,
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                        ),
-                                      );
-                                    }
-                                    return;
-                                  }
+                          : null,
+                      hintText: l10n.librarySearchHint,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Filter chips
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 52,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    itemCount: _filters.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      final item = _filters[index];
+                      final selected = filter == item;
+                      return FilterChip(
+                        label: Text(_filterLabel(item, l10n)),
+                        selected: selected,
+                        onSelected: (_) => setState(() => filter = item),
+                        showCheckmark: false,
+                        avatar: selected ? Icon(Icons.check_rounded, size: 16, color: cs.onPrimaryContainer) : null,
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              // Summary row
+              if (snapshot.hasData)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    child: Row(
+                      children: [
+                        Text(
+                          l10n.libraryBooksCount(books.length),
+                          style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        const Spacer(),
+                        _SummaryChip(icon: Icons.library_books_rounded, value: allBooks.length, color: cs.primary),
+                        const SizedBox(width: 6),
+                        _SummaryChip(icon: Icons.favorite_rounded, value: favCount, color: Colors.pink),
+                        const SizedBox(width: 6),
+                        _SummaryChip(icon: Icons.auto_stories_rounded, value: readingCount, color: AppColors.readingBlue),
+                      ],
+                    ),
+                  ),
+                ),
+
+              // Content: error / loading / empty / list
+              if (snapshot.hasError)
+                SliverFillRemaining(
+                  child: Center(child: Text(l10n.librarySomethingWrong)),
+                )
+              else if (!snapshot.hasData)
+                const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (books.isEmpty)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(_emptyIcon(), size: 72, color: cs.outlineVariant),
+                        const SizedBox(height: 16),
+                        Text(
+                          _emptyMessage(l10n),
+                          textAlign: TextAlign.center,
+                          style: tt.titleMedium?.copyWith(color: cs.outline),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else ...[
+                _BookAnimatedList(
+                  key: ValueKey('$filter|$sortBy|$searchText'),
+                  books: books,
+                  itemBuilder: (ctx, book) => _BookCard(
+                    book: book,
+                    statusColor: AppColors.forStatus(book.status),
+                    onTap: () => Navigator.push(ctx, SlidePageRoute(page: BookDetailPage(book: book))),
+                    onFavorite: () async {
+                      final updated = book.copyWith(favorite: !book.favorite);
+                      try {
+                        await firestoreService.updateBook(updated);
+                      } catch (e) {
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            SnackBar(
+                              content: Text(AppLocalizations.of(ctx)!.libraryErrFavorite),
+                              backgroundColor: Theme.of(ctx).colorScheme.error,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    onDelete: () async {
+                      final deletedBook = book;
+                      try {
+                        await firestoreService.deleteBook(deletedBook.id);
+                      } catch (e) {
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            SnackBar(
+                              content: Text(AppLocalizations.of(ctx)!.libraryErrDelete),
+                              backgroundColor: Theme.of(ctx).colorScheme.error,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          );
+                        }
+                        return;
+                      }
+                      if (ctx.mounted) {
+                        final l = AppLocalizations.of(ctx)!;
+                        ScaffoldMessenger.of(ctx).clearSnackBars();
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(
+                            content: Text(l.libraryDeleted(deletedBook.title)),
+                            duration: const Duration(seconds: 5),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            action: SnackBarAction(
+                              label: l.libraryUndo,
+                              onPressed: () async {
+                                try {
+                                  await firestoreService.addBook(deletedBook);
+                                } catch (e) {
                                   if (ctx.mounted) {
-                                    final l = AppLocalizations.of(ctx)!;
-                                    ScaffoldMessenger.of(ctx).clearSnackBars();
                                     ScaffoldMessenger.of(ctx).showSnackBar(
                                       SnackBar(
-                                        content: Text(l.libraryDeleted(deletedBook.title)),
-                                        duration: const Duration(seconds: 5),
+                                        content: Text(AppLocalizations.of(ctx)!.libraryErrRestore),
+                                        backgroundColor: Theme.of(ctx).colorScheme.error,
                                         behavior: SnackBarBehavior.floating,
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                        action: SnackBarAction(
-                                          label: l.libraryUndo,
-                                          onPressed: () async {
-                                            try {
-                                              await firestoreService.addBook(deletedBook);
-                                            } catch (e) {
-                                              if (ctx.mounted) {
-                                                ScaffoldMessenger.of(ctx).showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(AppLocalizations.of(ctx)!.libraryErrRestore),
-                                                    backgroundColor: Theme.of(ctx).colorScheme.error,
-                                                    behavior: SnackBarBehavior.floating,
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                                  ),
-                                                );
-                                              }
-                                            }
-                                          },
-                                        ),
                                       ),
                                     );
                                   }
-                                },
-                              ),
+                                }
+                              },
                             ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+                const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+              ],
+            ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.pushNamed(context, '/add'),
@@ -380,7 +425,7 @@ class _BookAnimatedList extends StatefulWidget {
 }
 
 class _BookAnimatedListState extends State<_BookAnimatedList> {
-  final _listKey = GlobalKey<AnimatedListState>();
+  final _listKey = GlobalKey<SliverAnimatedListState>();
   late List<Book> _books;
 
   @override
@@ -425,18 +470,20 @@ class _BookAnimatedListState extends State<_BookAnimatedList> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedList(
-      key: _listKey,
+    return SliverPadding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-      initialItemCount: _books.length,
-      itemBuilder: (ctx, index, animation) => SlideTransition(
-        position: animation.drive(
-          Tween(begin: const Offset(0.15, 0), end: Offset.zero)
-              .chain(CurveTween(curve: Curves.easeOutCubic)),
-        ),
-        child: FadeTransition(
-          opacity: animation,
-          child: widget.itemBuilder(ctx, _books[index]),
+      sliver: SliverAnimatedList(
+        key: _listKey,
+        initialItemCount: _books.length,
+        itemBuilder: (ctx, index, animation) => SlideTransition(
+          position: animation.drive(
+            Tween(begin: const Offset(0.15, 0), end: Offset.zero)
+                .chain(CurveTween(curve: Curves.easeOutCubic)),
+          ),
+          child: FadeTransition(
+            opacity: animation,
+            child: widget.itemBuilder(ctx, _books[index]),
+          ),
         ),
       ),
     );
