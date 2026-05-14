@@ -830,4 +830,79 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get socialBookAdded => 'تمت الإضافة إلى مكتبتك!';
+
+  @override
+  String settingsReminderSet(String time) => 'تم ضبط التذكير في $time';
+
+  @override
+  String get settingsReminderCancelled => 'تم إلغاء التذكير';
+
+  @override
+  String get settingsTestNotifSent => 'تم إرسال الإشعار التجريبي!';
+
+  @override
+  String get settingsTestNotifBtn => 'إرسال إشعار تجريبي';
+
+  @override
+  String get analyticsHeatmapLess => 'أقل';
+
+  @override
+  String get analyticsHeatmapMore => 'أكثر';
+
+  @override
+  String analyticsWeeklyMax(int pages) => 'الحد الأقصى $pages ص';
+
+  @override
+  String detailSessionFormat(int min, int pages) => '${min}د · $pages صفحة';
+
+  @override
+  String get loginForgotPassword => 'نسيت كلمة المرور؟';
+
+  @override
+  String get loginResetPasswordTitle => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get loginResetEmailHint => 'أدخل عنوان بريدك الإلكتروني';
+
+  @override
+  String get loginResetSend => 'إرسال رابط إعادة التعيين';
+
+  @override
+  String loginResetSent(String email) => 'تم إرسال رابط إعادة التعيين إلى $email';
+
+  @override
+  String get loginResetErrEmpty => 'يرجى إدخال عنوان بريدك الإلكتروني.';
+
+  @override
+  String get achieveFirstBook => 'أول كتاب';
+
+  @override
+  String get achieve5Books => '5 كتب';
+
+  @override
+  String get achieve10Books => '10 كتب';
+
+  @override
+  String get achieveFirstFinish => 'أول إنهاء';
+
+  @override
+  String get achieveCollector => 'جامع';
+
+  @override
+  String get achieve100Pages => '100 صفحة';
+
+  @override
+  String get achieve1000Pages => '1000 صفحة';
+
+  @override
+  String get achieveSpeedReader => 'قارئ سريع';
+
+  @override
+  String get achieveMarathoner => 'عدّاء ماراثون';
+
+  @override
+  String get achieve7DayStreak => 'سلسلة 7 أيام';
+
+  @override
+  String get achieveCritic => 'ناقد';
 }

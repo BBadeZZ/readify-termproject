@@ -834,4 +834,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get socialBookAdded => 'Added to your library!';
+
+  @override
+  String settingsReminderSet(String time) => 'Reminder set for $time';
+
+  @override
+  String get settingsReminderCancelled => 'Reminder cancelled';
+
+  @override
+  String get settingsTestNotifSent => 'Test notification sent!';
+
+  @override
+  String get settingsTestNotifBtn => 'Send Test Notification';
+
+  @override
+  String get analyticsHeatmapLess => 'Less';
+
+  @override
+  String get analyticsHeatmapMore => 'More';
+
+  @override
+  String analyticsWeeklyMax(int pages) => '$pages p max';
+
+  @override
+  String detailSessionFormat(int min, int pages) => '${min}m · $pages pages';
+
+  @override
+  String get loginForgotPassword => 'Forgot Password?';
+
+  @override
+  String get loginResetPasswordTitle => 'Reset Password';
+
+  @override
+  String get loginResetEmailHint => 'Enter your email address';
+
+  @override
+  String get loginResetSend => 'Send Reset Email';
+
+  @override
+  String loginResetSent(String email) => 'Password reset email sent to $email';
+
+  @override
+  String get loginResetErrEmpty => 'Please enter your email address.';
+
+  @override
+  String get achieveFirstBook => 'First Book';
+
+  @override
+  String get achieve5Books => '5 Books';
+
+  @override
+  String get achieve10Books => '10 Books';
+
+  @override
+  String get achieveFirstFinish => 'First Finish';
+
+  @override
+  String get achieveCollector => 'Collector';
+
+  @override
+  String get achieve100Pages => '100 Pages';
+
+  @override
+  String get achieve1000Pages => '1000 Pages';
+
+  @override
+  String get achieveSpeedReader => 'Speed Reader';
+
+  @override
+  String get achieveMarathoner => 'Marathoner';
+
+  @override
+  String get achieve7DayStreak => '7-Day Streak';
+
+  @override
+  String get achieveCritic => 'Critic';
 }

@@ -297,18 +297,19 @@ class _AchievementsRow extends StatelessWidget {
     final maxSessionMin = sessions.isEmpty ? 0 : sessions.map((s) => s.durationMinutes).reduce((a, b) => a > b ? a : b);
     final hasHighRating = books.any((b) => b.rating >= 4);
 
+    final l10n = AppLocalizations.of(context)!;
     final badges = [
-      (emoji: '📚', label: 'First Book',    unlocked: books.isNotEmpty),
-      (emoji: '🎯', label: '5 Books',       unlocked: books.length >= 5),
-      (emoji: '🏆', label: '10 Books',      unlocked: books.length >= 10),
-      (emoji: '✅', label: 'First Finish',  unlocked: finished >= 1),
-      (emoji: '❤️', label: 'Collector',     unlocked: favorites >= 5),
-      (emoji: '💯', label: '100 Pages',     unlocked: totalPages >= 100),
-      (emoji: '📖', label: '1000 Pages',    unlocked: totalPages >= 1000),
-      (emoji: '⚡', label: 'Speed Reader',  unlocked: maxSessionPages >= 50),
-      (emoji: '⏱️', label: 'Marathoner',   unlocked: maxSessionMin >= 60),
-      (emoji: '🔥', label: '7-Day Streak',  unlocked: streak >= 7),
-      (emoji: '⭐', label: 'Critic',        unlocked: hasHighRating),
+      (emoji: '📚', label: l10n.achieveFirstBook,    unlocked: books.isNotEmpty),
+      (emoji: '🎯', label: l10n.achieve5Books,        unlocked: books.length >= 5),
+      (emoji: '🏆', label: l10n.achieve10Books,       unlocked: books.length >= 10),
+      (emoji: '✅', label: l10n.achieveFirstFinish,   unlocked: finished >= 1),
+      (emoji: '❤️', label: l10n.achieveCollector,    unlocked: favorites >= 5),
+      (emoji: '💯', label: l10n.achieve100Pages,      unlocked: totalPages >= 100),
+      (emoji: '📖', label: l10n.achieve1000Pages,     unlocked: totalPages >= 1000),
+      (emoji: '⚡', label: l10n.achieveSpeedReader,   unlocked: maxSessionPages >= 50),
+      (emoji: '⏱️', label: l10n.achieveMarathoner,   unlocked: maxSessionMin >= 60),
+      (emoji: '🔥', label: l10n.achieve7DayStreak,    unlocked: streak >= 7),
+      (emoji: '⭐', label: l10n.achieveCritic,        unlocked: hasHighRating),
     ];
 
     return SizedBox(

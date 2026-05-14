@@ -229,7 +229,9 @@ class _FriendsTab extends StatelessWidget {
 
             return RefreshIndicator(
               onRefresh: () async {
-                await Future.delayed(const Duration(milliseconds: 400));
+                // Re-ensure the local user's profile is up-to-date on Firestore.
+                // The Firestore streams automatically push any resulting changes.
+                await socialService.ensureProfile();
               },
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -720,7 +722,7 @@ class _FriendCard extends StatelessWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text(l10n.socialDecline)),
+              child: Text(l10n.libraryDeleteConfirmNo)),
           FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
               style:

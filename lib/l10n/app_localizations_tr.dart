@@ -833,4 +833,79 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get socialBookAdded => 'Kütüphanenize eklendi!';
+
+  @override
+  String settingsReminderSet(String time) => '$time için hatırlatıcı kuruldu';
+
+  @override
+  String get settingsReminderCancelled => 'Hatırlatıcı iptal edildi';
+
+  @override
+  String get settingsTestNotifSent => 'Test bildirimi gönderildi!';
+
+  @override
+  String get settingsTestNotifBtn => 'Test Bildirimi Gönder';
+
+  @override
+  String get analyticsHeatmapLess => 'Az';
+
+  @override
+  String get analyticsHeatmapMore => 'Çok';
+
+  @override
+  String analyticsWeeklyMax(int pages) => 'maks $pages s';
+
+  @override
+  String detailSessionFormat(int min, int pages) => '${min}d · $pages sayfa';
+
+  @override
+  String get loginForgotPassword => 'Şifremi Unuttum?';
+
+  @override
+  String get loginResetPasswordTitle => 'Şifre Sıfırla';
+
+  @override
+  String get loginResetEmailHint => 'E-posta adresinizi girin';
+
+  @override
+  String get loginResetSend => 'Sıfırlama E-postası Gönder';
+
+  @override
+  String loginResetSent(String email) => '$email adresine sıfırlama e-postası gönderildi';
+
+  @override
+  String get loginResetErrEmpty => 'Lütfen e-posta adresinizi girin.';
+
+  @override
+  String get achieveFirstBook => 'İlk Kitap';
+
+  @override
+  String get achieve5Books => '5 Kitap';
+
+  @override
+  String get achieve10Books => '10 Kitap';
+
+  @override
+  String get achieveFirstFinish => 'İlk Bitiş';
+
+  @override
+  String get achieveCollector => 'Koleksiyoner';
+
+  @override
+  String get achieve100Pages => '100 Sayfa';
+
+  @override
+  String get achieve1000Pages => '1000 Sayfa';
+
+  @override
+  String get achieveSpeedReader => 'Hızlı Okuyucu';
+
+  @override
+  String get achieveMarathoner => 'Maratoncu';
+
+  @override
+  String get achieve7DayStreak => '7 Günlük Seri';
+
+  @override
+  String get achieveCritic => 'Eleştirmen';
 }

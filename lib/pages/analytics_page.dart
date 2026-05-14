@@ -408,7 +408,7 @@ class _WeeklyChart extends StatelessWidget {
               Text(l10n.analyticsWeeklyChart, style: tt.titleMedium),
               if (maxPages > 0)
                 Text(
-                  '$maxPages p max',
+                  l10n.analyticsWeeklyMax(maxPages),
                   style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
                 ),
             ],
@@ -508,7 +508,7 @@ class _SessionCard extends StatelessWidget {
               children: [
                 Text(s.bookTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14), overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
-                Text('$date  ·  ${s.durationMinutes}m  ·  ${l10n.detailPages(s.pagesRead)}',
+                Text('$date  ·  ${l10n.detailSessionFormat(s.durationMinutes, s.pagesRead)}',
                     style: TextStyle(fontSize: 12, color: cs.onSurface.withValues(alpha: 0.6))),
               ],
             ),
@@ -520,7 +520,7 @@ class _SessionCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              '+${s.pagesRead}p',
+              '+${l10n.detailPages(s.pagesRead)}',
               style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.sessionPurple, fontSize: 13),
             ),
           ),
@@ -644,7 +644,7 @@ class _ReadingHeatmap extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text('Less', style: TextStyle(fontSize: 9, color: cs.onSurfaceVariant)),
+              Text(l10n.analyticsHeatmapLess, style: TextStyle(fontSize: 9, color: cs.onSurfaceVariant)),
               const SizedBox(width: 4),
               ...[0, 3, 10, 25, 50].map((p) => Container(
                 width: 11, height: 11,
@@ -655,7 +655,7 @@ class _ReadingHeatmap extends StatelessWidget {
                 ),
               )),
               const SizedBox(width: 4),
-              Text('More', style: TextStyle(fontSize: 9, color: cs.onSurfaceVariant)),
+              Text(l10n.analyticsHeatmapMore, style: TextStyle(fontSize: 9, color: cs.onSurfaceVariant)),
             ],
           ),
         ],

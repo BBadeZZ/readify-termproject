@@ -24,6 +24,8 @@ class BookCoverWidget extends StatelessWidget {
           width: width,
           height: height,
           fit: BoxFit.cover,
+          cacheWidth: (width * 2).toInt(),
+          cacheHeight: (height * 2).toInt(),
           errorBuilder: (context, error, stackTrace) => _placeholderCover(context),
         ),
       );

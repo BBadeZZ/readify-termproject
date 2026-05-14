@@ -56,8 +56,8 @@ class _SettingsPageState extends State<SettingsPage> {
     final msg = kIsWeb
         ? 'Notifications are only supported on mobile & desktop apps'
         : value
-            ? 'Reminder set for $_reminderTimeLabel'
-            : 'Reminder cancelled';
+            ? l10n.settingsReminderSet(_reminderTimeLabel)
+            : l10n.settingsReminderCancelled;
     messenger.showSnackBar(SnackBar(
       content: Text(msg),
       behavior: SnackBarBehavior.floating,
@@ -87,7 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
       final h = picked.hour.toString().padLeft(2, '0');
       final m = picked.minute.toString().padLeft(2, '0');
       messenger.showSnackBar(SnackBar(
-        content: Text('Reminder set for $h:$m'),
+        content: Text(l10n.settingsReminderSet('$h:$m')),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ));
@@ -102,7 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: l10n.settingsDailyReminderSub,
     );
     messenger.showSnackBar(SnackBar(
-      content: const Text('Test notification sent!'),
+      content: Text(l10n.settingsTestNotifSent),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ));
@@ -210,7 +210,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: OutlinedButton.icon(
                   onPressed: _sendTest,
                   icon: const Icon(Icons.notifications_active_outlined, size: 18),
-                  label: const Text('Send Test Notification'),
+                  label: Text(l10n.settingsTestNotifBtn),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: cs.primary,
                     side: BorderSide(color: cs.primary.withValues(alpha: 0.5)),

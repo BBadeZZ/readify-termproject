@@ -544,9 +544,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   maxLines: 4,
                   decoration: InputDecoration(
                     labelText: l10n.fieldNote,
-                    prefixIcon: const Padding(
-                      padding: EdgeInsets.only(bottom: 60),
-                      child: Icon(Icons.notes_rounded),
+                    prefixIcon: const Align(
+                      widthFactor: 1.0,
+                      heightFactor: 1.0,
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 14),
+                        child: Icon(Icons.notes_rounded),
+                      ),
                     ),
                     alignLabelWithHint: true,
                   ),
@@ -665,7 +670,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(date, style: tt.bodySmall?.copyWith(color: cs.onSurface.withValues(alpha: 0.6))),
-                          Text('${s.durationMinutes} min · ${s.pagesRead} pages', style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                          Text(l10n.detailSessionFormat(s.durationMinutes, s.pagesRead), style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
                         ],
                       ),
                     ),

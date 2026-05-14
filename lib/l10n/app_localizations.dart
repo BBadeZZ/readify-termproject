@@ -1635,6 +1635,68 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added to your library!'**
   String get socialBookAdded;
+
+  // ── Settings notifications ────────────────────────────────────────────────
+
+  /// Reminder set confirmation. e.g. "Reminder set for 08:30"
+  String settingsReminderSet(String time);
+
+  /// Reminder was cancelled.
+  String get settingsReminderCancelled;
+
+  /// Test notification was sent.
+  String get settingsTestNotifSent;
+
+  /// Button label to send a test notification.
+  String get settingsTestNotifBtn;
+
+  // ── Analytics ─────────────────────────────────────────────────────────────
+
+  /// Heatmap legend: "Less"
+  String get analyticsHeatmapLess;
+
+  /// Heatmap legend: "More"
+  String get analyticsHeatmapMore;
+
+  /// Weekly chart peak label. e.g. "32 p max"
+  String analyticsWeeklyMax(int pages);
+
+  /// Session history row format. e.g. "12 min · 25 pages"
+  String detailSessionFormat(int min, int pages);
+
+  // ── Login / Auth ──────────────────────────────────────────────────────────
+
+  /// "Forgot Password?" link on the login page.
+  String get loginForgotPassword;
+
+  /// Title of the reset-password dialog.
+  String get loginResetPasswordTitle;
+
+  /// Hint inside the email field of the reset dialog.
+  String get loginResetEmailHint;
+
+  /// Button label to send the reset email.
+  String get loginResetSend;
+
+  /// Success message after sending a reset email. e.g. "Reset email sent to user@example.com"
+  String loginResetSent(String email);
+
+  /// Error shown when the reset email field is empty.
+  String get loginResetErrEmpty;
+
+  // ── Achievement badges ────────────────────────────────────────────────────
+
+  String get achieveFirstBook;
+  String get achieve5Books;
+  String get achieve10Books;
+  String get achieveFirstFinish;
+  String get achieveCollector;
+  String get achieve100Pages;
+  String get achieve1000Pages;
+  String get achieveSpeedReader;
+  String get achieveMarathoner;
+  String get achieve7DayStreak;
+  String get achieveCritic;
 }
 
 class _AppLocalizationsDelegate
