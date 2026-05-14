@@ -368,5 +368,10 @@
 
   "settingsBiometricLock": "Biyometrik Uygulama Kilidi",
   "settingsBiometricLockSub": "Uygulamayı parmak izi veya yüzle kilitle",
-  "settingsBiometricFailed": "Kimlik doğrulama başarısız. Tekrar deneyin."
+  "settingsBiometricFailed": "Kimlik doğrulama başarısız. Tekrar deneyin.",
+
+  "profileExportLibrary": "Kütüphaneyi Dışa Aktar",
+  "profileExportSuccess": "Kütüphane dışa aktarıldı!",
+  "profileExportEmpty": "Dışa aktarılacak kitap yok.",
+  "profileExportError": "Dışa aktarma başarısız. Tekrar deneyin."
 }

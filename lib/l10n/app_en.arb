@@ -431,5 +431,10 @@
 
   "settingsBiometricLock": "Biometric App Lock",
   "settingsBiometricLockSub": "Lock app with fingerprint or face ID",
-  "settingsBiometricFailed": "Authentication failed. Try again."
+  "settingsBiometricFailed": "Authentication failed. Try again.",
+
+  "profileExportLibrary": "Export Library",
+  "profileExportSuccess": "Library exported!",
+  "profileExportEmpty": "No books to export.",
+  "profileExportError": "Export failed. Please try again."
 }

@@ -1803,6 +1803,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Authentication failed. Try again.'**
   String get settingsBiometricFailed;
+
+  /// No description provided for @profileExportLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Library'**
+  String get profileExportLibrary;
+
+  /// No description provided for @profileExportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Library exported!'**
+  String get profileExportSuccess;
+
+  /// No description provided for @profileExportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No books to export.'**
+  String get profileExportEmpty;
+
+  /// No description provided for @profileExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed. Please try again.'**
+  String get profileExportError;
 }
 
 class _AppLocalizationsDelegate

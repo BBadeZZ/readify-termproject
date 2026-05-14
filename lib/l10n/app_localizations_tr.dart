@@ -927,4 +927,16 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get settingsBiometricFailed =>
       'Kimlik doğrulama başarısız. Tekrar deneyin.';
+
+  @override
+  String get profileExportLibrary => 'Kütüphaneyi Dışa Aktar';
+
+  @override
+  String get profileExportSuccess => 'Kütüphane dışa aktarıldı!';
+
+  @override
+  String get profileExportEmpty => 'Dışa aktarılacak kitap yok.';
+
+  @override
+  String get profileExportError => 'Dışa aktarma başarısız. Tekrar deneyin.';
 }

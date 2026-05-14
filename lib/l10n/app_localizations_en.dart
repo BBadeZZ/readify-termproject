@@ -926,4 +926,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsBiometricFailed => 'Authentication failed. Try again.';
+
+  @override
+  String get profileExportLibrary => 'Export Library';
+
+  @override
+  String get profileExportSuccess => 'Library exported!';
+
+  @override
+  String get profileExportEmpty => 'No books to export.';
+
+  @override
+  String get profileExportError => 'Export failed. Please try again.';
 }

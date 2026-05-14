@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../models/book_status.dart';
 import '../models/reading_session.dart';
 import '../services/auth_service.dart';
+import '../services/export_service.dart';
 import '../services/firestore_service.dart';
 import '../theme/app_colors.dart';
 import '../utils/streak_utils.dart';
@@ -53,6 +55,19 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
+  Future<void> _exportLibrary(AppLocalizations l10n) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await exportService.exportBooks(_books);
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(
+        content: Text(l10n.profileExportError),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ));
+    }
+  }
+
   static String _computeFavoriteGenre(List<Book> books) {
     if (books.isEmpty) return '—';
     final counts = <String, int>{};
@@ -91,7 +106,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Profile'),
-      appBar: AppBar(title: Text(l10n.profileTitle)),
+      appBar: AppBar(
+        title: Text(l10n.profileTitle),
+        actions: [
+          if (!kIsWeb)
+            IconButton(
+              icon: const Icon(Icons.ios_share_rounded),
+              tooltip: l10n.profileExportLibrary,
+              onPressed: _books.isEmpty ? null : () => _exportLibrary(l10n),
+            ),
+        ],
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(

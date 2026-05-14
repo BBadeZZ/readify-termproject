@@ -923,4 +923,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsBiometricFailed => 'فشل التحقق. حاول مجدداً.';
+
+  @override
+  String get profileExportLibrary => 'تصدير المكتبة';
+
+  @override
+  String get profileExportSuccess => 'تم تصدير المكتبة!';
+
+  @override
+  String get profileExportEmpty => 'لا توجد كتب للتصدير.';
+
+  @override
+  String get profileExportError => 'فشل التصدير. حاول مجدداً.';
 }

@@ -368,5 +368,10 @@
 
   "settingsBiometricLock": "قفل بيومتري للتطبيق",
   "settingsBiometricLockSub": "قفل التطبيق ببصمة الإصبع أو معرف الوجه",
-  "settingsBiometricFailed": "فشل التحقق. حاول مجدداً."
+  "settingsBiometricFailed": "فشل التحقق. حاول مجدداً.",
+
+  "profileExportLibrary": "تصدير المكتبة",
+  "profileExportSuccess": "تم تصدير المكتبة!",
+  "profileExportEmpty": "لا توجد كتب للتصدير.",
+  "profileExportError": "فشل التصدير. حاول مجدداً."
 }
