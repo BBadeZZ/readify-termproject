@@ -16,7 +16,6 @@ class AddBookPage extends StatefulWidget {
 }
 
 class _AddBookPageState extends State<AddBookPage> {
-
   final _formKey = GlobalKey<FormState>();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
@@ -53,7 +52,7 @@ class _AddBookPageState extends State<AddBookPage> {
     super.didChangeDependencies();
     if (!argsLoaded) {
       final args =
-          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
       if (args != null) {
         titleController.text = args['title'] ?? '';
         authorController.text = args['author'] ?? '';
@@ -91,25 +90,25 @@ class _AddBookPageState extends State<AddBookPage> {
   Future<bool> _showDiscardDialog() async {
     final l10n = AppLocalizations.of(context)!;
     return await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(l10n.discardChangesTitle),
-            content: Text(l10n.discardChangesMsg),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: Text(l10n.discardChangesStay),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: Text(
-                  l10n.discardChangesLeave,
-                  style: TextStyle(color: Theme.of(ctx).colorScheme.error),
-                ),
-              ),
-            ],
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.discardChangesTitle),
+        content: Text(l10n.discardChangesMsg),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.discardChangesStay),
           ),
-        ) ??
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              l10n.discardChangesLeave,
+              style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -124,7 +123,7 @@ class _AddBookPageState extends State<AddBookPage> {
       if (result.coverUrl.isNotEmpty) coverUrlController.text = result.coverUrl;
 
       final matched = genres.firstWhere(
-        (g) => result.genre.toLowerCase().contains(g.toLowerCase()),
+            (g) => result.genre.toLowerCase().contains(g.toLowerCase()),
         orElse: () => 'Other',
       );
       selectedGenre = matched;
@@ -175,7 +174,8 @@ class _AddBookPageState extends State<AddBookPage> {
           title: result.title.isNotEmpty ? result.title : better.title,
           author: result.author.isNotEmpty ? result.author : better.author,
           pageCount: result.pageCount > 0 ? result.pageCount : better.pageCount,
-          coverUrl: result.coverUrl.isNotEmpty ? result.coverUrl : better.coverUrl,
+          coverUrl:
+          result.coverUrl.isNotEmpty ? result.coverUrl : better.coverUrl,
           genre: result.genre != 'Other' ? result.genre : better.genre,
         );
         _autoFill(enriched);
@@ -204,7 +204,8 @@ class _AddBookPageState extends State<AddBookPage> {
       currentPage = 0;
     } else if (selectedStatus == BookStatus.alreadyRead) {
       currentPage = totalPages;
-    } else if (selectedStatus == BookStatus.reading && currentPage == totalPages) {
+    } else if (selectedStatus == BookStatus.reading &&
+        currentPage == totalPages) {
       finalStatus = BookStatus.alreadyRead;
     }
 
@@ -238,7 +239,8 @@ class _AddBookPageState extends State<AddBookPage> {
             content: Text(l10n.addBookFailed),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         );
       }
@@ -248,14 +250,14 @@ class _AddBookPageState extends State<AddBookPage> {
   }
 
   Widget _inputField(
-    BuildContext context,
-    String label,
-    TextEditingController controller,
-    IconData icon, {
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-    String? Function(String?)? validator,
-  }) {
+      BuildContext context,
+      String label,
+      TextEditingController controller,
+      IconData icon, {
+        TextInputType keyboardType = TextInputType.text,
+        int maxLines = 1,
+        String? Function(String?)? validator,
+      }) {
     final primary = Theme.of(context).colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -286,169 +288,228 @@ class _AddBookPageState extends State<AddBookPage> {
         if (leave && context.mounted) Navigator.pop(context);
       },
       child: Scaffold(
-      drawer: const AppDrawer(currentPage: 'Add Book'),
-      appBar: AppBar(title: Text(l10n.addBookTitle)),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Google Books search card
-          GestureDetector(
-            onTap: _showBookSearchSheet,
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                color: cs.primaryContainer,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: cs.primary, width: 1.5),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.search, color: cs.primary),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.addBookSearchCardTitle,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: cs.onPrimaryContainer,
-                          ),
-                        ),
-                        Text(
-                          l10n.addBookSearchCardSub,
-                          style: TextStyle(fontSize: 13, color: cs.onPrimaryContainer),
-                        ),
-                      ],
-                    ),
+        drawer: const AppDrawer(currentPage: 'Add Book'),
+        appBar: AppBar(title: Text(l10n.addBookTitle)),
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              GestureDetector(
+                onTap: _showBookSearchSheet,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: cs.primaryContainer,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: cs.primary, width: 1.5),
                   ),
-                  Icon(Icons.arrow_forward_ios, size: 16, color: cs.primary),
-                ],
-              ),
-            ),
-          ),
-
-          _inputField(context, l10n.fieldBookTitle, titleController, Icons.title,
-              validator: (v) => (v == null || v.trim().isEmpty) ? l10n.validatorTitleRequired : null),
-          _inputField(context, l10n.fieldAuthor, authorController, Icons.person,
-              validator: (v) => (v == null || v.trim().isEmpty) ? l10n.validatorAuthorRequired : null),
-          _inputField(context, l10n.fieldCoverUrlOptional, coverUrlController, Icons.image),
-          _inputField(context, l10n.fieldTotalPages, totalPagesController, Icons.pages,
-              keyboardType: TextInputType.number,
-              validator: (v) {
-                final n = int.tryParse(v ?? '');
-                if (n == null || n <= 0) return l10n.validatorPagesRequired;
-                return null;
-              }),
-          _inputField(context, l10n.fieldCurrentPage, currentPageController, Icons.bookmark,
-              keyboardType: TextInputType.number),
-
-          // Genre dropdown
-          Container(
-            margin: const EdgeInsets.only(bottom: 14),
-            child: InputDecorator(
-              decoration: InputDecoration(
-                labelText: l10n.fieldGenre,
-                prefixIcon: Icon(Icons.category_outlined, color: cs.primary),
-              ),
-              child: DropdownButton<String>(
-                value: selectedGenre,
-                isExpanded: true,
-                underline: const SizedBox(),
-                items: genres
-                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                    .toList(),
-                onChanged: (value) => setState(() => selectedGenre = value!),
-              ),
-            ),
-          ),
-
-          Text(
-            l10n.fieldReadingStatus,
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: cs.onSurface),
-          ),
-          RadioGroup<String>(
-            groupValue: selectedStatus,
-            onChanged: (value) {
-              setState(() {
-                selectedStatus = value!;
-                if (selectedStatus == BookStatus.wishlist) {
-                  currentPageController.text = '0';
-                } else if (selectedStatus == BookStatus.alreadyRead) {
-                  currentPageController.text = totalPagesController.text;
-                } else if (selectedStatus == BookStatus.reading &&
-                    currentPageController.text == totalPagesController.text) {
-                  currentPageController.text = '0';
-                }
-              });
-            },
-            child: Column(
-              children: [
-                RadioListTile<String>(
-                  title: Text(l10n.statusReading, style: const TextStyle(fontSize: 17)),
-                  value: BookStatus.reading,
+                  child: Row(
+                    children: [
+                      Icon(Icons.search, color: cs.primary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.addBookSearchCardTitle,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: cs.onPrimaryContainer,
+                              ),
+                            ),
+                            Text(
+                              l10n.addBookSearchCardSub,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: cs.onPrimaryContainer,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_ios,
+                          size: 16, color: cs.primary),
+                    ],
+                  ),
                 ),
-                RadioListTile<String>(
-                  title: Text(l10n.statusWishlist, style: const TextStyle(fontSize: 17)),
-                  value: BookStatus.wishlist,
+              ),
+
+              _inputField(
+                context,
+                l10n.fieldBookTitle,
+                titleController,
+                Icons.title,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? l10n.validatorTitleRequired
+                    : null,
+              ),
+              _inputField(
+                context,
+                l10n.fieldAuthor,
+                authorController,
+                Icons.person,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? l10n.validatorAuthorRequired
+                    : null,
+              ),
+              _inputField(
+                context,
+                l10n.fieldCoverUrlOptional,
+                coverUrlController,
+                Icons.image,
+              ),
+              _inputField(
+                context,
+                l10n.fieldTotalPages,
+                totalPagesController,
+                Icons.pages,
+                keyboardType: TextInputType.number,
+                validator: (v) {
+                  final n = int.tryParse(v ?? '');
+                  if (n == null || n <= 0) return l10n.validatorPagesRequired;
+                  return null;
+                },
+              ),
+              _inputField(
+                context,
+                l10n.fieldCurrentPage,
+                currentPageController,
+                Icons.bookmark,
+                keyboardType: TextInputType.number,
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(bottom: 14),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.fieldGenre,
+                    prefixIcon:
+                    Icon(Icons.category_outlined, color: cs.primary),
+                  ),
+                  child: DropdownButton<String>(
+                    value: selectedGenre,
+                    isExpanded: true,
+                    underline: const SizedBox(),
+                    items: genres
+                        .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                        .toList(),
+                    onChanged: (value) =>
+                        setState(() => selectedGenre = value!),
+                  ),
                 ),
-                RadioListTile<String>(
-                  title: Text(l10n.statusAlreadyRead, style: const TextStyle(fontSize: 17)),
-                  value: BookStatus.alreadyRead,
+              ),
+
+              Text(
+                l10n.fieldReadingStatus,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: cs.onSurface,
                 ),
-              ],
-            ),
-          ),
+              ),
+              RadioGroup<String>(
+                groupValue: selectedStatus,
+                onChanged: (value) {
+                  setState(() {
+                    selectedStatus = value!;
+                    if (selectedStatus == BookStatus.wishlist) {
+                      currentPageController.text = '0';
+                    } else if (selectedStatus == BookStatus.alreadyRead) {
+                      currentPageController.text = totalPagesController.text;
+                    } else if (selectedStatus == BookStatus.reading &&
+                        currentPageController.text ==
+                            totalPagesController.text) {
+                      currentPageController.text = '0';
+                    }
+                  });
+                },
+                child: Column(
+                  children: [
+                    RadioListTile<String>(
+                      title: Text(
+                        l10n.statusReading,
+                        style: const TextStyle(fontSize: 17),
+                      ),
+                      value: BookStatus.reading,
+                    ),
+                    RadioListTile<String>(
+                      title: Text(
+                        l10n.statusWishlist,
+                        style: const TextStyle(fontSize: 17),
+                      ),
+                      value: BookStatus.wishlist,
+                    ),
+                    RadioListTile<String>(
+                      title: Text(
+                        l10n.statusAlreadyRead,
+                        style: const TextStyle(fontSize: 17),
+                      ),
+                      value: BookStatus.alreadyRead,
+                    ),
+                  ],
+                ),
+              ),
 
-          const SizedBox(height: 10),
-          Text(
-            l10n.fieldRating(rating),
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: cs.onSurface),
-          ),
-          Slider(
-            value: rating.toDouble(),
-            min: 1,
-            max: 5,
-            divisions: 4,
-            label: rating.toString(),
-            onChanged: (value) => setState(() => rating = value.toInt()),
-          ),
+              const SizedBox(height: 10),
+              Text(
+                l10n.fieldRating(rating),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: cs.onSurface,
+                ),
+              ),
+              Slider(
+                value: rating.toDouble(),
+                min: 1,
+                max: 5,
+                divisions: 4,
+                label: rating.toString(),
+                onChanged: (value) => setState(() => rating = value.toInt()),
+              ),
 
-          CheckboxListTile(
-            title: Text(l10n.fieldFavorite, style: const TextStyle(fontSize: 17)),
-            value: favorite,
-            onChanged: (value) => setState(() => favorite = value!),
-          ),
+              CheckboxListTile(
+                title:
+                Text(l10n.fieldFavorite, style: const TextStyle(fontSize: 17)),
+                value: favorite,
+                onChanged: (value) => setState(() => favorite = value!),
+              ),
 
-          _inputField(context, l10n.fieldNote, noteController, Icons.note, maxLines: 3),
+              _inputField(
+                context,
+                l10n.fieldNote,
+                noteController,
+                Icons.note,
+                maxLines: 3,
+              ),
 
-          ElevatedButton.icon(
-            onPressed: _saving ? null : saveBook,
-            icon: _saving
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                : const Icon(Icons.save),
-            label: Text(_saving ? l10n.addBookSaving : l10n.addBookSave),
+              ElevatedButton.icon(
+                onPressed: _saving ? null : saveBook,
+                icon: _saving
+                    ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+                    : const Icon(Icons.save),
+                label: Text(_saving ? l10n.addBookSaving : l10n.addBookSave),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-      ),
-    ),
     );
   }
 }
 
-// Bottom sheet widget for searching Google Books
 class _BookSearchSheet extends StatefulWidget {
   const _BookSearchSheet();
 
@@ -460,6 +521,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
   final _controller = TextEditingController();
   List<GoogleBooksResult> _results = [];
   bool _loading = false;
+  String? _errorMessage;
   Timer? _debounce;
 
   @override
@@ -471,25 +533,66 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
 
   void _onChanged(String query) {
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () async {
-      if (query.trim().isEmpty) {
-        setState(() => _results = []);
-        return;
-      }
-      setState(() => _loading = true);
-      final results = await GoogleBooksService.search(query);
-      if (mounted) {
-        setState(() {
-          _results = results;
-          _loading = false;
-        });
-      }
+
+    _debounce = Timer(const Duration(milliseconds: 600), () {
+      _searchBooks(query);
+    });
+
+    setState(() {});
+  }
+
+  Future<void> _searchBooks(String query) async {
+    final searchText = query.trim();
+
+    if (searchText.isEmpty) {
+      setState(() {
+        _results = [];
+        _loading = false;
+        _errorMessage = null;
+      });
+      return;
+    }
+
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final results = await GoogleBooksService.search(searchText);
+
+      if (!mounted) return;
+
+      setState(() {
+        _results = results;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _results = [];
+        _loading = false;
+        _errorMessage = 'Search failed. Please check internet connection.';
+      });
+    }
+  }
+
+  void _clearSearch() {
+    _controller.clear();
+
+    setState(() {
+      _results = [];
+      _loading = false;
+      _errorMessage = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -506,7 +609,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.outlineVariant,
+                color: cs.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -514,53 +617,83 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: TextField(
                 controller: _controller,
-                onChanged: _onChanged,
                 autofocus: true,
+                textInputAction: TextInputAction.search,
+                onChanged: _onChanged,
+                onSubmitted: _searchBooks,
                 decoration: InputDecoration(
                   hintText: l10n.searchHintSheet,
                   prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _controller.text.isNotEmpty
-                      ? IconButton(
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_controller.text.isNotEmpty)
+                        IconButton(
                           icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _controller.clear();
-                            setState(() => _results = []);
-                          },
-                        )
-                      : null,
+                          onPressed: _clearSearch,
+                        ),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_forward),
+                        onPressed: () => _searchBooks(_controller.text),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
+
             if (_loading) const LinearProgressIndicator(),
-            if (!_loading && _results.isEmpty && _controller.text.isNotEmpty)
+
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  _errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: cs.error),
+                ),
+              ),
+
+            if (!_loading &&
+                _errorMessage == null &&
+                _results.isEmpty &&
+                _controller.text.trim().isNotEmpty)
               Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
                   l10n.searchNoResults,
-                  style: TextStyle(color: Theme.of(context).colorScheme.outline),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: cs.outline),
                 ),
               ),
+
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: _results.length,
                 itemBuilder: (context, i) {
                   final r = _results[i];
+
                   return ListTile(
                     leading: SizedBox(
                       width: 40,
                       height: 56,
                       child: r.coverUrl.isNotEmpty
                           ? ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: Image.network(
-                                r.coverUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
-                                    Icon(Icons.book, color: Theme.of(context).colorScheme.primary),
-                              ),
-                            )
-                          : Icon(Icons.book, color: Theme.of(context).colorScheme.primary),
+                        borderRadius: BorderRadius.circular(4),
+                        child: Image.network(
+                          r.coverUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Icon(
+                            Icons.book,
+                            color: cs.primary,
+                          ),
+                        ),
+                      )
+                          : Icon(
+                        Icons.book,
+                        color: cs.primary,
+                      ),
                     ),
                     title: Text(
                       r.title,

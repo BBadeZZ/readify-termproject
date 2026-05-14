@@ -16,128 +16,89 @@ class GoogleBooksResult {
     required this.genre,
   });
 
-  factory GoogleBooksResult.fromJson(Map<String, dynamic> json) {
-    final info = json['volumeInfo'] as Map<String, dynamic>? ?? {};
-    final authors = (info['authors'] as List?)?.cast<String>() ?? [];
-    final imageLinks = info['imageLinks'] as Map<String, dynamic>? ?? {};
-    final categories = (info['categories'] as List?)?.cast<String>() ?? [];
+  factory GoogleBooksResult.fromOpenLibrary(Map<String, dynamic> json) {
+    final title = json['title']?.toString() ?? '';
 
-    String cover = imageLinks['thumbnail'] ?? '';
-    cover = cover.replaceFirst('http://', 'https://');
+    final authorList = json['author_name'];
+    final authors = authorList is List
+        ? authorList.map((e) => e.toString()).toList()
+        : <String>[];
+
+    final pageRaw = json['number_of_pages_median'];
+    final pageCount = int.tryParse(pageRaw?.toString() ?? '') ?? 0;
+
+    String coverUrl = '';
+    final coverId = json['cover_i'];
+    if (coverId != null) {
+      coverUrl = 'https://covers.openlibrary.org/b/id/$coverId-M.jpg';
+    }
+
+    final subjectList = json['subject'];
+    final subjects = subjectList is List
+        ? subjectList.map((e) => e.toString()).toList()
+        : <String>[];
 
     return GoogleBooksResult(
-      title: info['title'] ?? '',
+      title: title,
       author: authors.join(', '),
-      pageCount: info['pageCount'] ?? 0,
-      coverUrl: cover,
-      genre: categories.isNotEmpty ? categories.first : 'Other',
+      pageCount: pageCount,
+      coverUrl: coverUrl,
+      genre: subjects.isNotEmpty ? subjects.first : 'Other',
     );
   }
 }
 
 class GoogleBooksService {
-  static const _booksBase = 'https://www.googleapis.com/books/v1/volumes';
-  // Serper fallback is disabled — API key must be injected server-side,
-  // never stored in client source code.
-  static const _serperKey = '';
-  static const _serperUrl = 'https://google.serper.dev/search';
-
   static Future<List<GoogleBooksResult>> search(String query) async {
-    if (query.trim().isEmpty) return [];
+    final searchText = query.trim();
 
-    final primary = await _searchGoogleBooks(query);
-    if (primary.isNotEmpty) return primary;
+    if (searchText.isEmpty) return [];
 
-    // Fallback: Google Search via Serper
-    return _searchSerper(query);
+    return _searchOpenLibrary(searchText);
   }
 
-  static Future<List<GoogleBooksResult>> _searchGoogleBooks(
-      String query) async {
-    final uri = Uri.parse(
-        '$_booksBase?q=${Uri.encodeComponent(query)}&maxResults=10&printType=books');
+  static Future<List<GoogleBooksResult>> _searchOpenLibrary(
+      String query,
+      ) async {
+    final uri = Uri.https(
+      'openlibrary.org',
+      '/search.json',
+      {
+        'q': query,
+        'limit': '20',
+      },
+    );
+
     try {
-      final response = await http.get(uri).timeout(const Duration(seconds: 8));
-      if (response.statusCode != 200) return [];
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 15));
 
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      final items = data['items'] as List? ?? [];
+      if (response.statusCode != 200) {
+        return [];
+      }
 
-      return items
-          .map((item) =>
-              GoogleBooksResult.fromJson(item as Map<String, dynamic>))
-          .where((r) => r.title.isNotEmpty)
+      final decoded = jsonDecode(response.body);
+
+      if (decoded is! Map<String, dynamic>) {
+        return [];
+      }
+
+      final docs = decoded['docs'];
+
+      if (docs is! List) {
+        return [];
+      }
+
+      return docs
+          .whereType<Map<String, dynamic>>()
+          .map((item) => GoogleBooksResult.fromOpenLibrary(item))
+          .where((book) => book.title.trim().isNotEmpty)
           .toList();
-    } catch (_) {
-      return [];
-    }
-  }
-
-  static Future<List<GoogleBooksResult>> _searchSerper(String query) async {
-    if (_serperKey.isEmpty) return [];
-    try {
-      final response = await http
-          .post(
-            Uri.parse(_serperUrl),
-            headers: {
-              'X-API-KEY': _serperKey,
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({'q': '$query book', 'num': 10}),
-          )
-          .timeout(const Duration(seconds: 8));
-
-      if (response.statusCode != 200) return [];
-
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      final results = <GoogleBooksResult>[];
-
-      // Knowledge Graph — tek kitap sonucu (en doğru veri)
-      final kg = data['knowledgeGraph'] as Map<String, dynamic>?;
-      if (kg != null) {
-        final type = (kg['type'] as String? ?? '').toLowerCase();
-        if (type.contains('book') || type.contains('novel')) {
-          final attrs = kg['attributes'] as Map<String, dynamic>? ?? {};
-          final pageStr = attrs['Page count'] as String? ?? '';
-          final pageCount =
-              int.tryParse(pageStr.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-          final genreRaw = attrs['Genres'] as String? ?? '';
-          final genre =
-              genreRaw.isNotEmpty ? genreRaw.split(',').first.trim() : 'Other';
-
-          results.add(GoogleBooksResult(
-            title: kg['title'] ?? '',
-            author: attrs['Author'] ?? attrs['Authors'] ?? '',
-            pageCount: pageCount,
-            coverUrl: kg['imageUrl'] ?? '',
-            genre: genre,
-          ));
-        }
-      }
-
-      // Organic sonuçlar — snippet'ten yazar çıkar
-      final organic = data['organic'] as List? ?? [];
-      for (final item in organic.take(6)) {
-        final map = item as Map<String, dynamic>;
-        final title = map['title'] as String? ?? '';
-        if (title.isEmpty) continue;
-
-        final snippet = map['snippet'] as String? ?? '';
-        String author = '';
-        final byMatch = RegExp(r'by ([A-Z][^,\.·]+)').firstMatch(snippet);
-        if (byMatch != null) author = byMatch.group(1)?.trim() ?? '';
-
-        results.add(GoogleBooksResult(
-          title: title,
-          author: author,
-          pageCount: 0,
-          coverUrl: map['imageUrl'] ?? '',
-          genre: 'Other',
-        ));
-      }
-
-      return results.where((r) => r.title.isNotEmpty).toList();
-    } catch (_) {
+    } catch (e) {
       return [];
     }
   }

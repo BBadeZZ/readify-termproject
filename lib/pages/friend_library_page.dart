@@ -31,16 +31,26 @@ class FriendLibraryPage extends StatelessWidget {
           if (snap.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
           final books = snap.data ?? [];
+
           if (books.isEmpty) {
             return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.library_books_outlined, size: 56, color: cs.outlineVariant),
+                  Icon(
+                    Icons.library_books_outlined,
+                    size: 56,
+                    color: cs.outlineVariant,
+                  ),
                   const SizedBox(height: 12),
-                  Text(l10n.socialEmptyLibrary,
-                      style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6))),
+                  Text(
+                    l10n.socialEmptyLibrary,
+                    style: TextStyle(
+                      color: cs.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -104,7 +114,10 @@ class _BookCard extends StatelessWidget {
                 children: [
                   Text(
                     book.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -119,7 +132,11 @@ class _BookCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      _StatusChip(status: book.status, cs: cs, l10n: l10n),
+                      _StatusChip(
+                        status: book.status,
+                        cs: cs,
+                        l10n: l10n,
+                      ),
                       if (book.totalPages > 0) ...[
                         const SizedBox(width: 8),
                         Expanded(
@@ -155,9 +172,15 @@ class _BookCard extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.library_add_rounded, size: 16),
+                          const Icon(
+                            Icons.library_add_rounded,
+                            size: 16,
+                          ),
                           const SizedBox(width: 6),
-                          Text(l10n.socialAddToLibrary, style: const TextStyle(fontSize: 13)),
+                          Text(
+                            l10n.socialAddToLibrary,
+                            style: const TextStyle(fontSize: 13),
+                          ),
                         ],
                       ),
                     ),
@@ -169,6 +192,10 @@ class _BookCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _normalize(String value) {
+    return value.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
   }
 
   Future<void> _confirmAdd(BuildContext context) async {
@@ -189,28 +216,82 @@ class _BookCard extends StatelessWidget {
         ],
       ),
     );
+
     if (confirmed != true) return;
 
-    final copy = Book(
-      id: '',
-      title: book.title,
-      author: book.author,
-      genre: book.genre,
-      totalPages: book.totalPages,
-      currentPage: 0,
-      status: BookStatus.wishlist,
-      rating: 1,
-      note: '',
-      favorite: false,
-      coverUrl: book.coverUrl,
-      createdAt: DateTime.now(),
-    );
-    await firestoreService.addBook(copy);
+    try {
+      final myBooks = await firestoreService.getBooks().first;
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.socialBookAdded)),
+      final targetTitle = _normalize(book.title);
+      final targetAuthor = _normalize(book.author);
+
+      final alreadyExists = myBooks.any((myBook) {
+        final myTitle = _normalize(myBook.title);
+        final myAuthor = _normalize(myBook.author);
+
+        if (myTitle != targetTitle) {
+          return false;
+        }
+
+        if (targetAuthor.isEmpty || myAuthor.isEmpty) {
+          return true;
+        }
+
+        return myAuthor == targetAuthor;
+      });
+
+      if (alreadyExists) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                'This book is already in your library.',
+              ),
+              backgroundColor: cs.error,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
+      final copy = Book(
+        id: '',
+        title: book.title,
+        author: book.author,
+        genre: book.genre,
+        totalPages: book.totalPages,
+        currentPage: 0,
+        status: BookStatus.wishlist,
+        rating: 1,
+        note: '',
+        favorite: false,
+        coverUrl: book.coverUrl,
+        createdAt: DateTime.now(),
       );
+
+      await firestoreService.addBook(copy);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.socialBookAdded),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.librarySomethingWrong),
+            backgroundColor: cs.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 }
@@ -219,12 +300,18 @@ class _StatusChip extends StatelessWidget {
   final String status;
   final ColorScheme cs;
   final AppLocalizations l10n;
-  const _StatusChip({required this.status, required this.cs, required this.l10n});
+
+  const _StatusChip({
+    required this.status,
+    required this.cs,
+    required this.l10n,
+  });
 
   @override
   Widget build(BuildContext context) {
     String label;
     Color bg;
+
     if (status == BookStatus.reading) {
       label = l10n.statusReading;
       bg = cs.primaryContainer;
@@ -235,10 +322,20 @@ class _StatusChip extends StatelessWidget {
       label = l10n.statusWishlist;
       bg = cs.tertiaryContainer;
     }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
-      child: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
