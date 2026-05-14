@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../models/reading_session.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
@@ -84,14 +85,25 @@ class HomePage extends StatelessWidget {
                   final updated = book.copyWith(
                     currentPage: newPage,
                     status: newPage >= book.totalPages
-                        ? 'Already Read'
+                        ? BookStatus.alreadyRead
                         : newPage > 0
-                            ? 'Reading'
+                            ? BookStatus.reading
                             : book.status,
                   );
                   try {
                     await firestoreService.updateBook(updated);
-                  } catch (_) {}
+                  } catch (_) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(AppLocalizations.of(context)!.detailErrProgress),
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      );
+                    }
+                  }
                 },
                 child: Text(l10n.homeSave),
               ),
@@ -185,8 +197,8 @@ class HomePage extends StatelessWidget {
             );
           }
           final totalBooks = books.length;
-          final reading = books.where((b) => b.status == 'Reading').toList();
-          final alreadyRead = books.where((b) => b.status == 'Already Read').length;
+          final reading = books.where((b) => b.status == BookStatus.reading).toList();
+          final alreadyRead = books.where((b) => b.status == BookStatus.alreadyRead).length;
           final pagesRead = books.fold(0, (sum, b) => sum + b.currentPage);
 
           reading.sort((a, b) => b.progress.compareTo(a.progress));
@@ -227,7 +239,7 @@ class HomePage extends StatelessWidget {
                     icon: Icons.auto_stories_rounded,
                     color: AppColors.readingBlueContainer,
                     iconColor: AppColors.readingBlue,
-                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
+                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': BookStatus.reading}),
                   ),
                   StatCard(
                     label: l10n.homeAlreadyRead,
@@ -235,7 +247,7 @@ class HomePage extends StatelessWidget {
                     icon: Icons.check_circle_rounded,
                     color: AppColors.completedGreenContainer,
                     iconColor: AppColors.completedGreen,
-                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Already Read'}),
+                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': BookStatus.alreadyRead}),
                   ),
                   StatCard(
                     label: l10n.homePagesRead,
@@ -260,7 +272,7 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(l10n.homeCurrentlyReading, style: tt.titleLarge),
                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
+                      onPressed: () => Navigator.pushNamed(context, '/library', arguments: {'filter': BookStatus.reading}),
                       child: Text(l10n.homeSeeAll, style: TextStyle(color: cs.primary)),
                     ),
                   ],
@@ -336,7 +348,7 @@ class HomePage extends StatelessWidget {
 
               if (alreadyRead > 0) ...[
                 const SizedBox(height: 20),
-                _AlreadyReadBanner(count: alreadyRead, onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Already Read'})),
+                _AlreadyReadBanner(count: alreadyRead, onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': BookStatus.alreadyRead})),
               ],
             ],
           );

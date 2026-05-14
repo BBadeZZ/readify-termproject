@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../services/firestore_service.dart';
 import '../l10n/app_localizations.dart';
 
@@ -59,10 +60,10 @@ class _EditBookPageState extends State<EditBookPage> {
 
     selectedGenre = genres.contains(widget.book.genre) ? widget.book.genre : 'Other';
 
-    if (['Reading', 'Wishlist', 'Already Read'].contains(widget.book.status)) {
+    if (BookStatus.all.contains(widget.book.status)) {
       selectedStatus = widget.book.status;
     } else {
-      selectedStatus = 'Already Read';
+      selectedStatus = BookStatus.alreadyRead;
     }
 
     rating = widget.book.rating;
@@ -96,17 +97,16 @@ class _EditBookPageState extends State<EditBookPage> {
 
     String finalStatus = selectedStatus;
 
-    if (selectedStatus == 'Wishlist') {
+    if (selectedStatus == BookStatus.wishlist) {
       currentPage = 0;
-      finalStatus = 'Wishlist';
-    } else if (selectedStatus == 'Already Read') {
+      finalStatus = BookStatus.wishlist;
+    } else if (selectedStatus == BookStatus.alreadyRead) {
       currentPage = totalPages;
-      finalStatus = 'Already Read';
-    } else if (selectedStatus == 'Reading') {
-      finalStatus = 'Reading';
-
+      finalStatus = BookStatus.alreadyRead;
+    } else if (selectedStatus == BookStatus.reading) {
+      finalStatus = BookStatus.reading;
       if (currentPage == totalPages) {
-        finalStatus = 'Already Read';
+        finalStatus = BookStatus.alreadyRead;
       }
     }
 
@@ -179,11 +179,11 @@ class _EditBookPageState extends State<EditBookPage> {
     if (newValue == null) return;
     setState(() {
       selectedStatus = newValue;
-      if (selectedStatus == 'Wishlist') {
+      if (selectedStatus == BookStatus.wishlist) {
         currentPageController.text = '0';
-      } else if (selectedStatus == 'Already Read') {
+      } else if (selectedStatus == BookStatus.alreadyRead) {
         currentPageController.text = totalPagesController.text;
-      } else if (selectedStatus == 'Reading') {
+      } else if (selectedStatus == BookStatus.reading) {
         if (currentPageController.text == totalPagesController.text) {
           currentPageController.text = '0';
         }
@@ -262,15 +262,15 @@ class _EditBookPageState extends State<EditBookPage> {
               children: [
                 RadioListTile<String>(
                   title: Text(l10n.statusReading, style: const TextStyle(fontSize: 17)),
-                  value: 'Reading',
+                  value: BookStatus.reading,
                 ),
                 RadioListTile<String>(
                   title: Text(l10n.statusWishlist, style: const TextStyle(fontSize: 17)),
-                  value: 'Wishlist',
+                  value: BookStatus.wishlist,
                 ),
                 RadioListTile<String>(
                   title: Text(l10n.statusAlreadyRead, style: const TextStyle(fontSize: 17)),
-                  value: 'Already Read',
+                  value: BookStatus.alreadyRead,
                 ),
               ],
             ),

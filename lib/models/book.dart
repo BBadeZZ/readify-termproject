@@ -1,17 +1,19 @@
+import 'book_status.dart';
+
 class Book {
-  String id;
-  String title;
-  String author;
-  String genre;
-  int totalPages;
-  int currentPage;
-  String status;
-  int rating;
-  String note;
-  List<String> notes;
-  bool favorite;
-  String coverUrl;
-  DateTime createdAt;
+  final String id;
+  final String title;
+  final String author;
+  final String genre;
+  final int totalPages;
+  final int currentPage;
+  final String status;
+  final int rating;
+  final String note;
+  final List<String> notes;
+  final bool favorite;
+  final String coverUrl;
+  final DateTime createdAt;
 
   Book({
     required this.id,
@@ -91,7 +93,7 @@ class Book {
       genre: data['genre'] ?? '',
       totalPages: data['totalPages'] ?? 0,
       currentPage: data['currentPage'] ?? 0,
-      status: data['status'] ?? 'Reading',
+      status: data['status'] ?? BookStatus.reading,
       rating: data['rating'] ?? 1,
       note: data['note'] ?? '',
       notes: List<String>.from(data['notes'] ?? []),

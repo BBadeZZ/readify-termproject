@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../services/firestore_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
@@ -27,7 +28,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
   final TextEditingController searchController = TextEditingController();
 
-  static const _filters = ['All', 'Reading', 'Wishlist', 'Already Read', 'Favorites'];
+  static const _filters = ['All', BookStatus.reading, BookStatus.wishlist, BookStatus.alreadyRead, 'Favorites'];
   static const _sortOptions = ['Date Added', 'Title', 'Author', 'Progress'];
 
   @override
@@ -37,7 +38,7 @@ class _LibraryPageState extends State<LibraryPage> {
       final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
       if (args != null && args['filter'] != null) {
         final incoming = args['filter'] as String;
-        if (['All', 'Reading', 'Wishlist', 'Already Read', 'Pages Read', 'Favorite Books'].contains(incoming)) {
+        if (['All', BookStatus.reading, BookStatus.wishlist, BookStatus.alreadyRead, 'Pages Read', 'Favorite Books'].contains(incoming)) {
           // Map legacy filter names to new ones
           filter = incoming == 'Favorite Books' ? 'Favorites' : incoming == 'Pages Read' ? 'All' : incoming;
         }
@@ -55,9 +56,9 @@ class _LibraryPageState extends State<LibraryPage> {
 
   List<Book> applyFilter(List<Book> books) {
     List<Book> result = books;
-    if (filter == 'Reading') { result = result.where((b) => b.status == 'Reading').toList(); }
-    else if (filter == 'Wishlist') { result = result.where((b) => b.status == 'Wishlist').toList(); }
-    else if (filter == 'Already Read') { result = result.where((b) => b.status == 'Already Read').toList(); }
+    if (filter == BookStatus.reading) { result = result.where((b) => b.status == BookStatus.reading).toList(); }
+    else if (filter == BookStatus.wishlist) { result = result.where((b) => b.status == BookStatus.wishlist).toList(); }
+    else if (filter == BookStatus.alreadyRead) { result = result.where((b) => b.status == BookStatus.alreadyRead).toList(); }
     else if (filter == 'Favorites') { result = result.where((b) => b.favorite).toList(); }
 
     if (searchText.trim().isNotEmpty) {
@@ -84,9 +85,9 @@ class _LibraryPageState extends State<LibraryPage> {
     if (searchText.isNotEmpty) return l10n.libraryNoResults(searchText);
     switch (filter) {
       case 'Favorites': return l10n.libraryEmptyFavorites;
-      case 'Reading': return l10n.libraryEmptyReading;
-      case 'Wishlist': return l10n.libraryEmptyWishlist;
-      case 'Already Read': return l10n.libraryEmptyAlreadyRead;
+      case BookStatus.reading: return l10n.libraryEmptyReading;
+      case BookStatus.wishlist: return l10n.libraryEmptyWishlist;
+      case BookStatus.alreadyRead: return l10n.libraryEmptyAlreadyRead;
       default: return l10n.libraryEmptyDefault;
     }
   }
@@ -94,9 +95,9 @@ class _LibraryPageState extends State<LibraryPage> {
   String _filterLabel(String f, AppLocalizations l10n) {
     switch (f) {
       case 'All': return l10n.libraryFilterAll;
-      case 'Reading': return l10n.statusReading;
-      case 'Wishlist': return l10n.statusWishlist;
-      case 'Already Read': return l10n.statusAlreadyRead;
+      case BookStatus.reading: return l10n.statusReading;
+      case BookStatus.wishlist: return l10n.statusWishlist;
+      case BookStatus.alreadyRead: return l10n.statusAlreadyRead;
       case 'Favorites': return l10n.libraryFilterFavorites;
       default: return f;
     }
@@ -115,8 +116,8 @@ class _LibraryPageState extends State<LibraryPage> {
   IconData _emptyIcon() {
     switch (filter) {
       case 'Favorites': return Icons.favorite_border_rounded;
-      case 'Wishlist': return Icons.bookmark_border_rounded;
-      case 'Already Read': return Icons.menu_book_rounded;
+      case BookStatus.wishlist: return Icons.bookmark_border_rounded;
+      case BookStatus.alreadyRead: return Icons.menu_book_rounded;
       default: return Icons.library_books_outlined;
     }
   }
@@ -214,7 +215,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
                 // Summary bar
                 final favCount = allBooks.where((b) => b.favorite).length;
-                final readingCount = allBooks.where((b) => b.status == 'Reading').length;
+                final readingCount = allBooks.where((b) => b.status == BookStatus.reading).length;
 
                 return Column(
                   children: [
@@ -259,11 +260,12 @@ class _LibraryPageState extends State<LibraryPage> {
                                   statusColor: AppColors.forStatus(book.status),
                                   onTap: () => Navigator.push(context, SlidePageRoute(page: BookDetailPage(book: book))),
                                   onFavorite: () async {
-                                    setState(() => book.favorite = !book.favorite);
+                                    // Build the updated copy before the async gap so the
+                                    // captured 'book' reference stays consistent.
+                                    final updated = book.copyWith(favorite: !book.favorite);
                                     try {
-                                      await firestoreService.updateBook(book);
+                                      await firestoreService.updateBook(updated);
                                     } catch (e) {
-                                      setState(() => book.favorite = !book.favorite);
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
@@ -387,6 +389,30 @@ class _BookCard extends StatelessWidget {
     required this.onDelete,
   });
 
+  Future<bool> _confirmDelete(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.libraryDeleteConfirmTitle),
+        content: Text(l10n.libraryDeleteConfirmMsg(book.title)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.libraryDeleteConfirmNo),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(backgroundColor: cs.error, foregroundColor: cs.onError),
+            child: Text(l10n.libraryDeleteConfirmYes),
+          ),
+        ],
+      ),
+    );
+    return confirmed == true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -417,27 +443,8 @@ class _BookCard extends StatelessWidget {
         },
       ),
       confirmDismiss: (_) async {
-        final l10n = AppLocalizations.of(context)!;
-        final cs = Theme.of(context).colorScheme;
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(l10n.libraryDeleteConfirmTitle),
-            content: Text(l10n.libraryDeleteConfirmMsg(book.title)),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: Text(l10n.libraryDeleteConfirmNo),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                style: FilledButton.styleFrom(backgroundColor: cs.error, foregroundColor: cs.onError),
-                child: Text(l10n.libraryDeleteConfirmYes),
-              ),
-            ],
-          ),
-        );
-        if (confirmed == true) onDelete();
+        final confirmed = await _confirmDelete(context);
+        if (confirmed) onDelete();
         return false;
       },
       child: Card(
@@ -543,28 +550,7 @@ class _BookCard extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () async {
-                        final confirmed = await showDialog<bool>(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: Text(l10n.libraryDeleteConfirmTitle),
-                            content: Text(l10n.libraryDeleteConfirmMsg(book.title)),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx, false),
-                                child: Text(l10n.libraryDeleteConfirmNo),
-                              ),
-                              FilledButton(
-                                onPressed: () => Navigator.pop(ctx, true),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: cs.error,
-                                  foregroundColor: cs.onError,
-                                ),
-                                child: Text(l10n.libraryDeleteConfirmYes),
-                              ),
-                            ],
-                          ),
-                        );
-                        if (confirmed == true) onDelete();
+                        if (await _confirmDelete(context)) onDelete();
                       },
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(minWidth: 36, minHeight: 36),

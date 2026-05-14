@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../models/reading_session.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
@@ -22,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<Book> _books = [];
   List<ReadingSession> _sessions = [];
+  String _favoriteGenre = '—';
   bool _loading = true;
 
   StreamSubscription? _booksSub;
@@ -31,7 +33,13 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _booksSub = firestoreService.getBooks().listen((books) {
-      if (mounted) setState(() { _books = books; _loading = false; });
+      if (mounted) {
+        setState(() {
+          _books = books;
+          _loading = false;
+          _favoriteGenre = _computeFavoriteGenre(books);
+        });
+      }
     });
     _sessionsSub = firestoreService.getSessions().listen((sessions) {
       if (mounted) setState(() => _sessions = sessions);
@@ -45,10 +53,10 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  String _favoriteGenre() {
-    if (_books.isEmpty) return '—';
+  static String _computeFavoriteGenre(List<Book> books) {
+    if (books.isEmpty) return '—';
     final counts = <String, int>{};
-    for (final b in _books) {
+    for (final b in books) {
       counts[b.genre] = (counts[b.genre] ?? 0) + 1;
     }
     return counts.entries.reduce((a, b) => a.value >= b.value ? a : b).key;
@@ -64,12 +72,12 @@ class _ProfilePageState extends State<ProfilePage> {
     final email = user?.email ?? '';
 
     final totalBooks = _books.length;
-    final finished = _books.where((b) => b.status == 'Already Read').length;
-    final reading = _books.where((b) => b.status == 'Reading').length;
-    final wishlist = _books.where((b) => b.status == 'Wishlist').length;
+    final finished = _books.where((b) => b.status == BookStatus.alreadyRead).length;
+    final reading = _books.where((b) => b.status == BookStatus.reading).length;
+    final wishlist = _books.where((b) => b.status == BookStatus.wishlist).length;
     final favorites = _books.where((b) => b.favorite).length;
     final totalPages = _books.fold(0, (s, b) => s + b.currentPage);
-    final favoriteGenre = _favoriteGenre();
+    final favoriteGenre = _favoriteGenre;
     final streak = calculateStreak(_sessions);
 
     final totalSessions = _sessions.length;
@@ -283,7 +291,7 @@ class _AchievementsRow extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
-    final finished = books.where((b) => b.status == 'Already Read').length;
+    final finished = books.where((b) => b.status == BookStatus.alreadyRead).length;
     final favorites = books.where((b) => b.favorite).length;
     final maxSessionPages = sessions.isEmpty ? 0 : sessions.map((s) => s.pagesRead).reduce((a, b) => a > b ? a : b);
     final maxSessionMin = sessions.isEmpty ? 0 : sessions.map((s) => s.durationMinutes).reduce((a, b) => a > b ? a : b);

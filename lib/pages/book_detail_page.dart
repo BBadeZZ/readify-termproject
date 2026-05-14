@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../models/reading_session.dart';
+import '../models/book_status.dart';
 import '../services/firestore_service.dart';
 import '../services/settings_service.dart';
 import '../theme/app_colors.dart';
@@ -32,6 +33,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Timer? _ticker;
 
   List<ReadingSession> _sessions = [];
+  bool _sessionsError = false;
   StreamSubscription<List<ReadingSession>>? _sessionsSub;
   final TextEditingController _newNoteController = TextEditingController();
 
@@ -43,8 +45,20 @@ class _BookDetailPageState extends State<BookDetailPage> {
     noteController = TextEditingController(text: book.note);
     _restoreActiveSession();
     _sessionsSub = firestoreService.getSessions().listen(
-      (all) { if (mounted) setState(() => _sessions = all.where((s) => s.bookId == book.id).toList()..sort((a, b) => b.startedAt.compareTo(a.startedAt))); },
-      onError: (_) {},
+      (all) {
+        if (mounted) {
+          setState(() {
+            _sessionsError = false;
+            _sessions = all
+                .where((s) => s.bookId == book.id)
+                .toList()
+              ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
+          });
+        }
+      },
+      onError: (_) {
+        if (mounted) setState(() => _sessionsError = true);
+      },
     );
   }
 
@@ -120,14 +134,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
       await firestoreService.addSession(session);
       await settingsService.clearActiveSession();
 
+      final newStatus = endPage >= book.totalPages
+          ? BookStatus.alreadyRead
+          : endPage > 0
+              ? BookStatus.reading
+              : book.status;
       setState(() {
-        book.currentPage = endPage;
+        book = book.copyWith(currentPage: endPage, status: newStatus);
         pageController.text = endPage.toString();
-        if (book.currentPage >= book.totalPages) {
-          book.status = 'Already Read';
-        } else if (book.currentPage > 0) {
-          book.status = 'Reading';
-        }
         _sessionActive = false;
         _sessionStart = null;
         _elapsed = Duration.zero;
@@ -216,20 +230,18 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
   void updateProgress() async {
     final l10n = AppLocalizations.of(context)!;
-    final original = book.copyWith();
+    final original = book;
     int newPage = int.tryParse(pageController.text) ?? book.currentPage;
     newPage = newPage.clamp(0, book.totalPages);
+    final newNote = noteController.text.trim();
+    final newStatus = newPage >= book.totalPages
+        ? BookStatus.alreadyRead
+        : newPage > 0
+            ? BookStatus.reading
+            : BookStatus.wishlist;
 
     setState(() {
-      book.currentPage = newPage;
-      book.note = noteController.text.trim();
-      if (book.currentPage >= book.totalPages) {
-        book.status = 'Already Read';
-      } else if (book.currentPage > 0) {
-        book.status = 'Reading';
-      } else {
-        book.status = 'Wishlist';
-      }
+      book = book.copyWith(currentPage: newPage, note: newNote, status: newStatus);
     });
 
     try {
@@ -263,11 +275,12 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   void toggleFavorite() async {
-    setState(() => book.favorite = !book.favorite);
+    final original = book;
+    setState(() => book = book.copyWith(favorite: !book.favorite));
     try {
       await firestoreService.updateBook(book);
     } catch (e) {
-      setState(() => book.favorite = !book.favorite);
+      setState(() => book = original);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -282,12 +295,12 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   void _setRating(int rating) async {
-    final originalRating = book.rating;
-    setState(() => book.rating = rating);
+    final original = book;
+    setState(() => book = book.copyWith(rating: rating));
     try {
       await firestoreService.updateBook(book);
     } catch (e) {
-      setState(() => book.rating = originalRating);
+      setState(() => book = original);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -606,7 +619,21 @@ class _BookDetailPageState extends State<BookDetailPage> {
             ],
           ),
           const SizedBox(height: 12),
-          if (_sessions.isEmpty)
+          if (_sessionsError)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  Icon(Icons.cloud_off_rounded, size: 16, color: cs.error),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.librarySomethingWrong,
+                    style: tt.bodyMedium?.copyWith(color: cs.error),
+                  ),
+                ],
+              ),
+            )
+          else if (_sessions.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Center(

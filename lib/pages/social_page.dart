@@ -547,8 +547,21 @@ class _RequestCard extends StatelessWidget {
                 SizedBox(
                   height: 32,
                   child: FilledButton(
-                    onPressed: () =>
-                        socialService.acceptFriendRequest(req['id'], req),
+                    onPressed: () async {
+                      try {
+                        await socialService.acceptFriendRequest(req['id'], req);
+                      } catch (_) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.librarySomethingWrong),
+                              backgroundColor: cs.error,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
+                    },
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       minimumSize: Size.zero,
@@ -561,8 +574,21 @@ class _RequestCard extends StatelessWidget {
                 SizedBox(
                   height: 28,
                   child: TextButton(
-                    onPressed: () =>
-                        socialService.declineFriendRequest(req['id']),
+                    onPressed: () async {
+                      try {
+                        await socialService.declineFriendRequest(req['id']);
+                      } catch (_) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.librarySomethingWrong),
+                              backgroundColor: cs.error,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
+                    },
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       minimumSize: Size.zero,

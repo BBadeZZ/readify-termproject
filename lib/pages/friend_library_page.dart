@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../services/social_service.dart';
 import '../services/firestore_service.dart';
 import '../widgets/book_cover_widget.dart';
@@ -197,7 +198,7 @@ class _BookCard extends StatelessWidget {
       genre: book.genre,
       totalPages: book.totalPages,
       currentPage: 0,
-      status: 'Wishlist',
+      status: BookStatus.wishlist,
       rating: 1,
       note: '',
       favorite: false,
@@ -224,10 +225,10 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     String label;
     Color bg;
-    if (status == 'Reading') {
+    if (status == BookStatus.reading) {
       label = l10n.statusReading;
       bg = cs.primaryContainer;
-    } else if (status == 'Already Read') {
+    } else if (status == BookStatus.alreadyRead) {
       label = l10n.statusAlreadyRead;
       bg = cs.secondaryContainer;
     } else {

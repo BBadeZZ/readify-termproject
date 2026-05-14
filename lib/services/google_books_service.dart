@@ -37,7 +37,9 @@ class GoogleBooksResult {
 
 class GoogleBooksService {
   static const _booksBase = 'https://www.googleapis.com/books/v1/volumes';
-  static const _serperKey = '043b515fa7be3dd33ef89b0157e53080c6e6750e';
+  // Serper fallback is disabled — API key must be injected server-side,
+  // never stored in client source code.
+  static const _serperKey = '';
   static const _serperUrl = 'https://google.serper.dev/search';
 
   static Future<List<GoogleBooksResult>> search(String query) async {
@@ -72,6 +74,7 @@ class GoogleBooksService {
   }
 
   static Future<List<GoogleBooksResult>> _searchSerper(String query) async {
+    if (_serperKey.isEmpty) return [];
     try {
       final response = await http
           .post(

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../models/reading_session.dart';
 import '../services/firestore_service.dart';
 import '../widgets/app_drawer.dart';
@@ -91,9 +93,9 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     }
 
     final totalBooks = _books.length;
-    final reading = _books.where((b) => b.status == 'Reading').length;
-    final wishlist = _books.where((b) => b.status == 'Wishlist').length;
-    final alreadyRead = _books.where((b) => b.status == 'Already Read').length;
+    final reading = _books.where((b) => b.status == BookStatus.reading).length;
+    final wishlist = _books.where((b) => b.status == BookStatus.wishlist).length;
+    final alreadyRead = _books.where((b) => b.status == BookStatus.alreadyRead).length;
     final favorite = _books.where((b) => b.favorite).length;
 
     int pagesRead = 0, totalPages = 0, ratingSum = 0;
@@ -360,7 +362,8 @@ class _DonutPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_DonutPainter old) => old.slices != slices;
+  bool shouldRepaint(_DonutPainter old) =>
+      !listEquals(old.slices, slices) || !listEquals(old.colors, colors);
 }
 
 class _WeeklyChart extends StatelessWidget {
@@ -496,7 +499,7 @@ class _SessionCard extends StatelessWidget {
               color: AppColors.sessionPurpleContainer,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.menu_book_rounded, color: Color(0xFF5E35B1), size: 20),
+            child: const Icon(Icons.menu_book_rounded, color: AppColors.sessionPurple, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -518,7 +521,7 @@ class _SessionCard extends StatelessWidget {
             ),
             child: Text(
               '+${s.pagesRead}p',
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF5E35B1), fontSize: 13),
+              style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.sessionPurple, fontSize: 13),
             ),
           ),
         ],
