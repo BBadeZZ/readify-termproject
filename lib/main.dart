@@ -27,27 +27,41 @@ import 'services/auth_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  settingsService = await SettingsService.init();
-  themeController.loadSavedTheme();
-  localeProvider = LocaleProvider();
-
-  if (authService.currentUser != null) {
-    socialService.ensureProfile();
-  }
-
-  await NotificationService.initialize();
-  if (settingsService.dailyReminder) {
-    await NotificationService.scheduleDailyReminder(
-      settingsService.reminderHour,
-      settingsService.reminderMinute,
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    settingsService = await SettingsService.init();
+    themeController.loadSavedTheme();
+    localeProvider = LocaleProvider();
+  } catch (e) {
+    debugPrint('Startup error: $e');
   }
 
   runApp(const ReadifyApp());
+
+  // Uygulama açıldıktan sonra arka planda çalışsın.
+  _startBackgroundServices();
+}
+
+Future<void> _startBackgroundServices() async {
+  try {
+    if (authService.currentUser != null) {
+      await socialService.ensureProfile();
+    }
+
+    await NotificationService.initialize();
+
+    if (settingsService.dailyReminder) {
+      await NotificationService.scheduleDailyReminder(
+        settingsService.reminderHour,
+        settingsService.reminderMinute,
+      );
+    }
+  } catch (e) {
+    debugPrint('Background service error: $e');
+  }
 }
 
 class ReadifyApp extends StatelessWidget {

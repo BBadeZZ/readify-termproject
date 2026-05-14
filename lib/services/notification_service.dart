@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -16,6 +17,7 @@ class NotificationService {
     tz.initializeTimeZones();
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+
     const darwin = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -30,47 +32,55 @@ class NotificationService {
       ),
     );
 
-    // Android 13+ runtime notification permission
     if (Platform.isAndroid) {
       await _plugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin>()
           ?.requestNotificationsPermission();
     }
   }
 
   static Future<void> scheduleDailyReminder(
-    int hour,
-    int minute, {
-    String title = 'Time to Read!',
-    String body = 'Keep up with your daily reading goal.',
-  }) async {
+      int hour,
+      int minute, {
+        String title = 'Time to Read!',
+        String body = 'Keep up with your daily reading goal.',
+      }) async {
     if (!_isSupported) return;
 
-    await _plugin.cancel(0);
+    try {
+      await _plugin.cancel(0);
 
-    await _plugin.zonedSchedule(
-      0,
-      title,
-      body,
-      _nextInstanceOf(hour, minute),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_reminder',
-          'Daily Reading Reminder',
-          channelDescription: 'Reminds you to read every day',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+      await _plugin.zonedSchedule(
+        0,
+        title,
+        body,
+        _nextInstanceOf(hour, minute),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'daily_reminder',
+            'Daily Reading Reminder',
+            channelDescription: 'Reminds you to read every day',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          ),
+          iOS: DarwinNotificationDetails(),
+          macOS: DarwinNotificationDetails(),
         ),
-        iOS: DarwinNotificationDetails(),
-        macOS: DarwinNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
+
+        // exactAllowWhileIdle hata verdiği için inexact kullanıyoruz.
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Daily reminder could not be scheduled: $e');
+      }
+    }
   }
 
   static Future<void> sendTestNotification({
@@ -78,38 +88,61 @@ class NotificationService {
     String body = 'Your daily reading reminder is working!',
   }) async {
     if (!_isSupported) return;
-    await _plugin.show(
-      99,
-      title,
-      body,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_reminder',
-          'Daily Reading Reminder',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+
+    try {
+      await _plugin.show(
+        99,
+        title,
+        body,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'daily_reminder',
+            'Daily Reading Reminder',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          ),
+          iOS: DarwinNotificationDetails(),
+          macOS: DarwinNotificationDetails(),
         ),
-        iOS: DarwinNotificationDetails(),
-        macOS: DarwinNotificationDetails(),
-      ),
-    );
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Test notification could not be sent: $e');
+      }
+    }
   }
 
   static bool get isSupported => _isSupported;
 
   static Future<void> cancelAll() async {
     if (!_isSupported) return;
-    await _plugin.cancelAll();
+
+    try {
+      await _plugin.cancelAll();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Notifications could not be cancelled: $e');
+      }
+    }
   }
 
   static tz.TZDateTime _nextInstanceOf(int hour, int minute) {
     final now = tz.TZDateTime.now(tz.local);
-    var scheduled =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+
+    var scheduled = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
     if (scheduled.isBefore(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
+
     return scheduled;
   }
 }
