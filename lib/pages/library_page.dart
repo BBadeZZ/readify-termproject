@@ -250,85 +250,80 @@ class _LibraryPageState extends State<LibraryPage> {
                                 ],
                               ),
                             )
-                          : ListView.builder(
-                              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                              itemCount: books.length,
-                              itemBuilder: (context, index) {
-                                final book = books[index];
-                                return _BookCard(
-                                  book: book,
-                                  statusColor: AppColors.forStatus(book.status),
-                                  onTap: () => Navigator.push(context, SlidePageRoute(page: BookDetailPage(book: book))),
-                                  onFavorite: () async {
-                                    // Build the updated copy before the async gap so the
-                                    // captured 'book' reference stays consistent.
-                                    final updated = book.copyWith(favorite: !book.favorite);
-                                    try {
-                                      await firestoreService.updateBook(updated);
-                                    } catch (e) {
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(AppLocalizations.of(context)!.libraryErrFavorite),
-                                            backgroundColor: Theme.of(context).colorScheme.error,
-                                            behavior: SnackBarBehavior.floating,
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                          ),
-                                        );
-                                      }
-                                    }
-                                  },
-                                  onDelete: () async {
-                                    final deletedBook = book;
-                                    try {
-                                      await firestoreService.deleteBook(deletedBook.id);
-                                    } catch (e) {
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(AppLocalizations.of(context)!.libraryErrDelete),
-                                            backgroundColor: Theme.of(context).colorScheme.error,
-                                            behavior: SnackBarBehavior.floating,
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                          ),
-                                        );
-                                      }
-                                      return;
-                                    }
-                                    if (context.mounted) {
-                                      final l = AppLocalizations.of(context)!;
-                                      ScaffoldMessenger.of(context).clearSnackBars();
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                          : _BookAnimatedList(
+                              key: ValueKey('$filter|$sortBy|$searchText'),
+                              books: books,
+                              itemBuilder: (ctx, book) => _BookCard(
+                                book: book,
+                                statusColor: AppColors.forStatus(book.status),
+                                onTap: () => Navigator.push(ctx, SlidePageRoute(page: BookDetailPage(book: book))),
+                                onFavorite: () async {
+                                  final updated = book.copyWith(favorite: !book.favorite);
+                                  try {
+                                    await firestoreService.updateBook(updated);
+                                  } catch (e) {
+                                    if (ctx.mounted) {
+                                      ScaffoldMessenger.of(ctx).showSnackBar(
                                         SnackBar(
-                                          content: Text(l.libraryDeleted(deletedBook.title)),
-                                          duration: const Duration(seconds: 5),
+                                          content: Text(AppLocalizations.of(ctx)!.libraryErrFavorite),
+                                          backgroundColor: Theme.of(ctx).colorScheme.error,
                                           behavior: SnackBarBehavior.floating,
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                          action: SnackBarAction(
-                                            label: l.libraryUndo,
-                                            onPressed: () async {
-                                              try {
-                                                await firestoreService.addBook(deletedBook);
-                                              } catch (e) {
-                                                if (context.mounted) {
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(AppLocalizations.of(context)!.libraryErrRestore),
-                                                      backgroundColor: Theme.of(context).colorScheme.error,
-                                                      behavior: SnackBarBehavior.floating,
-                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                                    ),
-                                                  );
-                                                }
-                                              }
-                                            },
-                                          ),
                                         ),
                                       );
                                     }
-                                  },
-                                );
-                              },
+                                  }
+                                },
+                                onDelete: () async {
+                                  final deletedBook = book;
+                                  try {
+                                    await firestoreService.deleteBook(deletedBook.id);
+                                  } catch (e) {
+                                    if (ctx.mounted) {
+                                      ScaffoldMessenger.of(ctx).showSnackBar(
+                                        SnackBar(
+                                          content: Text(AppLocalizations.of(ctx)!.libraryErrDelete),
+                                          backgroundColor: Theme.of(ctx).colorScheme.error,
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        ),
+                                      );
+                                    }
+                                    return;
+                                  }
+                                  if (ctx.mounted) {
+                                    final l = AppLocalizations.of(ctx)!;
+                                    ScaffoldMessenger.of(ctx).clearSnackBars();
+                                    ScaffoldMessenger.of(ctx).showSnackBar(
+                                      SnackBar(
+                                        content: Text(l.libraryDeleted(deletedBook.title)),
+                                        duration: const Duration(seconds: 5),
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        action: SnackBarAction(
+                                          label: l.libraryUndo,
+                                          onPressed: () async {
+                                            try {
+                                              await firestoreService.addBook(deletedBook);
+                                            } catch (e) {
+                                              if (ctx.mounted) {
+                                                ScaffoldMessenger.of(ctx).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(AppLocalizations.of(ctx)!.libraryErrRestore),
+                                                    backgroundColor: Theme.of(ctx).colorScheme.error,
+                                                    behavior: SnackBarBehavior.floating,
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
                             ),
                     ),
                   ],
@@ -369,6 +364,80 @@ class _SummaryChip extends StatelessWidget {
           const SizedBox(width: 4),
           Text('$value', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color)),
         ],
+      ),
+    );
+  }
+}
+
+class _BookAnimatedList extends StatefulWidget {
+  final List<Book> books;
+  final Widget Function(BuildContext, Book) itemBuilder;
+
+  const _BookAnimatedList({super.key, required this.books, required this.itemBuilder});
+
+  @override
+  State<_BookAnimatedList> createState() => _BookAnimatedListState();
+}
+
+class _BookAnimatedListState extends State<_BookAnimatedList> {
+  final _listKey = GlobalKey<AnimatedListState>();
+  late List<Book> _books;
+
+  @override
+  void initState() {
+    super.initState();
+    _books = List.from(widget.books);
+  }
+
+  @override
+  void didUpdateWidget(_BookAnimatedList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncList(widget.books);
+  }
+
+  void _syncList(List<Book> newBooks) {
+    // Remove items no longer present (back-to-front to preserve indices)
+    for (int i = _books.length - 1; i >= 0; i--) {
+      if (!newBooks.any((b) => b.id == _books[i].id)) {
+        final removed = _books.removeAt(i);
+        _listKey.currentState?.removeItem(
+          i,
+          (ctx, anim) => SizeTransition(
+            sizeFactor: anim,
+            axisAlignment: -1,
+            child: FadeTransition(
+              opacity: anim,
+              child: widget.itemBuilder(ctx, removed),
+            ),
+          ),
+          duration: const Duration(milliseconds: 280),
+        );
+      }
+    }
+    // Insert newly appeared items
+    for (int i = 0; i < newBooks.length; i++) {
+      if (!_books.any((b) => b.id == newBooks[i].id)) {
+        _books.insert(i, newBooks[i]);
+        _listKey.currentState?.insertItem(i, duration: const Duration(milliseconds: 350));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedList(
+      key: _listKey,
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+      initialItemCount: _books.length,
+      itemBuilder: (ctx, index, animation) => SlideTransition(
+        position: animation.drive(
+          Tween(begin: const Offset(0.15, 0), end: Offset.zero)
+              .chain(CurveTween(curve: Curves.easeOutCubic)),
+        ),
+        child: FadeTransition(
+          opacity: animation,
+          child: widget.itemBuilder(ctx, _books[index]),
+        ),
       ),
     );
   }
