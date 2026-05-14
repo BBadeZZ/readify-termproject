@@ -373,5 +373,10 @@
   "profileExportLibrary": "Kütüphaneyi Dışa Aktar",
   "profileExportSuccess": "Kütüphane dışa aktarıldı!",
   "profileExportEmpty": "Dışa aktarılacak kitap yok.",
-  "profileExportError": "Dışa aktarma başarısız. Tekrar deneyin."
+  "profileExportError": "Dışa aktarma başarısız. Tekrar deneyin.",
+
+  "discardChangesTitle": "Değişiklikler İptal Edilsin?",
+  "discardChangesMsg": "Kaydedilmemiş değişiklikleriniz var. Çıkmak istediğinizden emin misiniz?",
+  "discardChangesLeave": "Çık",
+  "discardChangesStay": "Kal"
 }

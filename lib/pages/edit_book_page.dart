@@ -81,6 +81,47 @@ class _EditBookPageState extends State<EditBookPage> {
     super.dispose();
   }
 
+  bool get _isDirty =>
+      titleController.text.trim() != widget.book.title ||
+      authorController.text.trim() != widget.book.author ||
+      totalPagesController.text.trim() != widget.book.totalPages.toString() ||
+      currentPageController.text.trim() != widget.book.currentPage.toString() ||
+      noteController.text.trim() != widget.book.note ||
+      coverUrlController.text.trim() != widget.book.coverUrl ||
+      selectedGenre !=
+          (genres.contains(widget.book.genre) ? widget.book.genre : 'Other') ||
+      selectedStatus !=
+          (BookStatus.all.contains(widget.book.status)
+              ? widget.book.status
+              : BookStatus.alreadyRead) ||
+      rating != widget.book.rating ||
+      favorite != widget.book.favorite;
+
+  Future<bool> _showDiscardDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    return await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(l10n.discardChangesTitle),
+            content: Text(l10n.discardChangesMsg),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l10n.discardChangesStay),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  l10n.discardChangesLeave,
+                  style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   void updateBook() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -196,7 +237,14 @@ class _EditBookPageState extends State<EditBookPage> {
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return PopScope(
+      canPop: !_isDirty,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop || !_isDirty) return;
+        final leave = await _showDiscardDialog();
+        if (leave && context.mounted) Navigator.pop(context);
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: Text(l10n.editBookTitle),
       ),
@@ -325,6 +373,7 @@ class _EditBookPageState extends State<EditBookPage> {
         ],
       ),
       ),
+    ),
     );
   }
 }

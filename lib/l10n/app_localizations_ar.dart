@@ -935,4 +935,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileExportError => 'فشل التصدير. حاول مجدداً.';
+
+  @override
+  String get discardChangesTitle => 'تجاهل التغييرات؟';
+
+  @override
+  String get discardChangesMsg =>
+      'لديك تغييرات غير محفوظة. هل أنت متأكد من المغادرة؟';
+
+  @override
+  String get discardChangesLeave => 'غادر';
+
+  @override
+  String get discardChangesStay => 'البقاء';
 }

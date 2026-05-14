@@ -1827,6 +1827,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export failed. Please try again.'**
   String get profileExportError;
+
+  /// No description provided for @discardChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard Changes?'**
+  String get discardChangesTitle;
+
+  /// No description provided for @discardChangesMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. Are you sure you want to leave?'**
+  String get discardChangesMsg;
+
+  /// No description provided for @discardChangesLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get discardChangesLeave;
+
+  /// No description provided for @discardChangesStay.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get discardChangesStay;
 }
 
 class _AppLocalizationsDelegate

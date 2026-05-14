@@ -938,4 +938,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileExportError => 'Export failed. Please try again.';
+
+  @override
+  String get discardChangesTitle => 'Discard Changes?';
+
+  @override
+  String get discardChangesMsg =>
+      'You have unsaved changes. Are you sure you want to leave?';
+
+  @override
+  String get discardChangesLeave => 'Leave';
+
+  @override
+  String get discardChangesStay => 'Stay';
 }

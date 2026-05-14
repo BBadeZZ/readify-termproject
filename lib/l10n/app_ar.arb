@@ -373,5 +373,10 @@
   "profileExportLibrary": "تصدير المكتبة",
   "profileExportSuccess": "تم تصدير المكتبة!",
   "profileExportEmpty": "لا توجد كتب للتصدير.",
-  "profileExportError": "فشل التصدير. حاول مجدداً."
+  "profileExportError": "فشل التصدير. حاول مجدداً.",
+
+  "discardChangesTitle": "تجاهل التغييرات؟",
+  "discardChangesMsg": "لديك تغييرات غير محفوظة. هل أنت متأكد من المغادرة؟",
+  "discardChangesLeave": "غادر",
+  "discardChangesStay": "البقاء"
 }

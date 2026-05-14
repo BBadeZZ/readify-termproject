@@ -939,4 +939,17 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profileExportError => 'Dışa aktarma başarısız. Tekrar deneyin.';
+
+  @override
+  String get discardChangesTitle => 'Değişiklikler İptal Edilsin?';
+
+  @override
+  String get discardChangesMsg =>
+      'Kaydedilmemiş değişiklikleriniz var. Çıkmak istediğinizden emin misiniz?';
+
+  @override
+  String get discardChangesLeave => 'Çık';
+
+  @override
+  String get discardChangesStay => 'Kal';
 }

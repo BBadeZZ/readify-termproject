@@ -86,6 +86,33 @@ class _AddBookPageState extends State<AddBookPage> {
     super.dispose();
   }
 
+  bool get _isDirty => titleController.text.trim().isNotEmpty;
+
+  Future<bool> _showDiscardDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    return await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(l10n.discardChangesTitle),
+            content: Text(l10n.discardChangesMsg),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l10n.discardChangesStay),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  l10n.discardChangesLeave,
+                  style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   void _autoFill(GoogleBooksResult result) {
     final l10n = AppLocalizations.of(context)!;
     setState(() {
@@ -251,7 +278,14 @@ class _AddBookPageState extends State<AddBookPage> {
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return PopScope(
+      canPop: !_isDirty,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop || !_isDirty) return;
+        final leave = await _showDiscardDialog();
+        if (leave && context.mounted) Navigator.pop(context);
+      },
+      child: Scaffold(
       drawer: const AppDrawer(currentPage: 'Add Book'),
       appBar: AppBar(title: Text(l10n.addBookTitle)),
       body: Form(
@@ -409,6 +443,7 @@ class _AddBookPageState extends State<AddBookPage> {
         ],
       ),
       ),
+    ),
     );
   }
 }

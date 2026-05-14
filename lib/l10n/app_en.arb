@@ -436,5 +436,10 @@
   "profileExportLibrary": "Export Library",
   "profileExportSuccess": "Library exported!",
   "profileExportEmpty": "No books to export.",
-  "profileExportError": "Export failed. Please try again."
+  "profileExportError": "Export failed. Please try again.",
+
+  "discardChangesTitle": "Discard Changes?",
+  "discardChangesMsg": "You have unsaved changes. Are you sure you want to leave?",
+  "discardChangesLeave": "Leave",
+  "discardChangesStay": "Stay"
 }
