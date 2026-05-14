@@ -672,4 +672,280 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recsAddFavorite => 'أضف إلى المفضلة';
+
+  @override
+  String get analyticsGenreBreakdown => 'توزيع الأنواع';
+
+  @override
+  String get detailSessionHistory => 'جلسات القراءة';
+
+  @override
+  String get detailNotes => 'ملاحظات';
+
+  @override
+  String get detailAddNote => 'أضف ملاحظة...';
+
+  @override
+  String get detailNoteHint => 'اكتب ملاحظتك هنا';
+
+  @override
+  String get detailNoteSave => 'حفظ';
+
+  @override
+  String get homeUpdatePage => 'تحديث الصفحة';
+
+  @override
+  String get homeCurrentPage => 'الصفحة الحالية';
+
+  @override
+  String get homeSave => 'حفظ';
+
+  @override
+  String get analyticsHeatmap => 'نشاط القراءة';
+
+  @override
+  String get profileAchievements => 'الإنجازات';
+
+  @override
+  String get profileStreakLabel => 'يوم متتالي';
+
+  @override
+  String get libraryDeleteConfirmTitle => 'حذف الكتاب';
+
+  @override
+  String libraryDeleteConfirmMsg(String title) {
+    return 'هل أنت متأكد من حذف \"$title\"؟ لا يمكن التراجع عن هذا.';
+  }
+
+  @override
+  String get libraryDeleteConfirmYes => 'حذف';
+
+  @override
+  String get libraryDeleteConfirmNo => 'إلغاء';
+
+  @override
+  String get navSocial => 'الشبكة';
+
+  @override
+  String get socialTitle => 'الشبكة الاجتماعية';
+
+  @override
+  String get socialFriends => 'الأصدقاء';
+
+  @override
+  String get socialSearch => 'بحث';
+
+  @override
+  String get socialSearchHint => 'البحث بالاسم أو البريد الإلكتروني...';
+
+  @override
+  String get socialAddFriend => 'إضافة صديق';
+
+  @override
+  String get socialRequestSent => 'تم إرسال الطلب';
+
+  @override
+  String get socialCancelRequest => 'إلغاء الطلب';
+
+  @override
+  String get socialAccept => 'قبول';
+
+  @override
+  String get socialDecline => 'رفض';
+
+  @override
+  String get socialRemove => 'إزالة';
+
+  @override
+  String get socialFriendRequests => 'طلبات الصداقة';
+
+  @override
+  String get socialNoFriends => 'لا أصدقاء بعد.\nابحث لإضافة شخص!';
+
+  @override
+  String get socialNoRequests => 'لا طلبات معلقة.';
+
+  @override
+  String get socialViewLibrary => 'عرض المكتبة';
+
+  @override
+  String socialFriendLibrary(String name) {
+    return 'مكتبة $name';
+  }
+
+  @override
+  String get socialBorrowBook => 'استعر هذا الكتاب';
+
+  @override
+  String get socialBorrowRequests => 'طلبات الاستعارة';
+
+  @override
+  String get socialIncoming => 'واردة';
+
+  @override
+  String get socialOutgoing => 'صادرة';
+
+  @override
+  String get socialBorrowSent => 'تم إرسال طلب الاستعارة!';
+
+  @override
+  String get socialMarkReturned => 'تحديد كمُعاد';
+
+  @override
+  String get socialNoBorrows => 'لا طلبات استعارة.';
+
+  @override
+  String get socialAlreadyFriends => 'صديق بالفعل';
+
+  @override
+  String get socialPending => 'قيد الانتظار';
+
+  @override
+  String get socialAccepted => 'مقبول';
+
+  @override
+  String get socialDeclined => 'مرفوض';
+
+  @override
+  String get socialReturned => 'تم الإعادة';
+
+  @override
+  String get socialEmptyLibrary => 'المكتبة فارغة.';
+
+  @override
+  String get socialRequests => 'الطلبات';
+
+  @override
+  String socialRequestFrom(String name) {
+    return '$name يريد الاستعارة';
+  }
+
+  @override
+  String socialBorrowFrom(String name) {
+    return 'استعر من $name';
+  }
+
+  @override
+  String get socialAddToLibrary => 'أضف إلى مكتبتي';
+
+  @override
+  String get socialBookAdded => 'تمت الإضافة إلى مكتبتك!';
+
+  @override
+  String settingsReminderSet(String time) {
+    return 'تم ضبط التذكير في $time';
+  }
+
+  @override
+  String get settingsReminderCancelled => 'تم إلغاء التذكير';
+
+  @override
+  String get settingsTestNotifSent => 'تم إرسال الإشعار التجريبي!';
+
+  @override
+  String get settingsTestNotifBtn => 'إرسال إشعار تجريبي';
+
+  @override
+  String get analyticsHeatmapLess => 'أقل';
+
+  @override
+  String get analyticsHeatmapMore => 'أكثر';
+
+  @override
+  String analyticsWeeklyMax(int pages) {
+    return 'الحد الأقصى $pages ص';
+  }
+
+  @override
+  String detailSessionFormat(int min, int pages) {
+    return '$minد · $pages صفحة';
+  }
+
+  @override
+  String get loginForgotPassword => 'نسيت كلمة المرور؟';
+
+  @override
+  String get loginResetPasswordTitle => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get loginResetEmailHint => 'أدخل عنوان بريدك الإلكتروني';
+
+  @override
+  String get loginResetSend => 'إرسال رابط إعادة التعيين';
+
+  @override
+  String loginResetSent(String email) {
+    return 'تم إرسال رابط إعادة التعيين إلى $email';
+  }
+
+  @override
+  String get loginResetErrEmpty => 'يرجى إدخال عنوان بريدك الإلكتروني.';
+
+  @override
+  String get achieveFirstBook => 'أول كتاب';
+
+  @override
+  String get achieve5Books => '5 كتب';
+
+  @override
+  String get achieve10Books => '10 كتب';
+
+  @override
+  String get achieveFirstFinish => 'أول إنهاء';
+
+  @override
+  String get achieveCollector => 'جامع';
+
+  @override
+  String get achieve100Pages => '100 صفحة';
+
+  @override
+  String get achieve1000Pages => '1000 صفحة';
+
+  @override
+  String get achieveSpeedReader => 'قارئ سريع';
+
+  @override
+  String get achieveMarathoner => 'عدّاء ماراثون';
+
+  @override
+  String get achieve7DayStreak => 'سلسلة 7 أيام';
+
+  @override
+  String get achieveCritic => 'ناقد';
+
+  @override
+  String get settingsBiometricLock => 'قفل بيومتري للتطبيق';
+
+  @override
+  String get settingsBiometricLockSub =>
+      'قفل التطبيق ببصمة الإصبع أو معرف الوجه';
+
+  @override
+  String get settingsBiometricFailed => 'فشل التحقق. حاول مجدداً.';
+
+  @override
+  String get profileExportLibrary => 'تصدير المكتبة';
+
+  @override
+  String get profileExportSuccess => 'تم تصدير المكتبة!';
+
+  @override
+  String get profileExportEmpty => 'لا توجد كتب للتصدير.';
+
+  @override
+  String get profileExportError => 'فشل التصدير. حاول مجدداً.';
+
+  @override
+  String get discardChangesTitle => 'تجاهل التغييرات؟';
+
+  @override
+  String get discardChangesMsg =>
+      'لديك تغييرات غير محفوظة. هل أنت متأكد من المغادرة؟';
+
+  @override
+  String get discardChangesLeave => 'غادر';
+
+  @override
+  String get discardChangesStay => 'البقاء';
 }

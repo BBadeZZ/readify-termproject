@@ -1335,6 +1335,522 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add to Favorites'**
   String get recsAddFavorite;
+
+  /// No description provided for @analyticsGenreBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre Breakdown'**
+  String get analyticsGenreBreakdown;
+
+  /// No description provided for @detailSessionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Sessions'**
+  String get detailSessionHistory;
+
+  /// No description provided for @detailNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get detailNotes;
+
+  /// No description provided for @detailAddNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note...'**
+  String get detailAddNote;
+
+  /// No description provided for @detailNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your note here'**
+  String get detailNoteHint;
+
+  /// No description provided for @detailNoteSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get detailNoteSave;
+
+  /// No description provided for @homeUpdatePage.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Page'**
+  String get homeUpdatePage;
+
+  /// No description provided for @homeCurrentPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Current page'**
+  String get homeCurrentPage;
+
+  /// No description provided for @homeSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get homeSave;
+
+  /// No description provided for @analyticsHeatmap.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Activity'**
+  String get analyticsHeatmap;
+
+  /// No description provided for @profileAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get profileAchievements;
+
+  /// No description provided for @profileStreakLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Day Streak'**
+  String get profileStreakLabel;
+
+  /// No description provided for @libraryDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Book'**
+  String get libraryDeleteConfirmTitle;
+
+  /// No description provided for @libraryDeleteConfirmMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{title}\"? This cannot be undone.'**
+  String libraryDeleteConfirmMsg(String title);
+
+  /// No description provided for @libraryDeleteConfirmYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get libraryDeleteConfirmYes;
+
+  /// No description provided for @libraryDeleteConfirmNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get libraryDeleteConfirmNo;
+
+  /// No description provided for @navSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get navSocial;
+
+  /// No description provided for @socialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Network'**
+  String get socialTitle;
+
+  /// No description provided for @socialFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get socialFriends;
+
+  /// No description provided for @socialSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get socialSearch;
+
+  /// No description provided for @socialSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or email...'**
+  String get socialSearchHint;
+
+  /// No description provided for @socialAddFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Friend'**
+  String get socialAddFriend;
+
+  /// No description provided for @socialRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Sent'**
+  String get socialRequestSent;
+
+  /// No description provided for @socialCancelRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Request'**
+  String get socialCancelRequest;
+
+  /// No description provided for @socialAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get socialAccept;
+
+  /// No description provided for @socialDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get socialDecline;
+
+  /// No description provided for @socialRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get socialRemove;
+
+  /// No description provided for @socialFriendRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend Requests'**
+  String get socialFriendRequests;
+
+  /// No description provided for @socialNoFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'No friends yet.\nSearch to find someone!'**
+  String get socialNoFriends;
+
+  /// No description provided for @socialNoRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests.'**
+  String get socialNoRequests;
+
+  /// No description provided for @socialViewLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'View Library'**
+  String get socialViewLibrary;
+
+  /// No description provided for @socialFriendLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\'s Library'**
+  String socialFriendLibrary(String name);
+
+  /// No description provided for @socialBorrowBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow This Book'**
+  String get socialBorrowBook;
+
+  /// No description provided for @socialBorrowRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow Requests'**
+  String get socialBorrowRequests;
+
+  /// No description provided for @socialIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming'**
+  String get socialIncoming;
+
+  /// No description provided for @socialOutgoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Outgoing'**
+  String get socialOutgoing;
+
+  /// No description provided for @socialBorrowSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow request sent!'**
+  String get socialBorrowSent;
+
+  /// No description provided for @socialMarkReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Returned'**
+  String get socialMarkReturned;
+
+  /// No description provided for @socialNoBorrows.
+  ///
+  /// In en, this message translates to:
+  /// **'No borrow requests.'**
+  String get socialNoBorrows;
+
+  /// No description provided for @socialAlreadyFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Already Friends'**
+  String get socialAlreadyFriends;
+
+  /// No description provided for @socialPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get socialPending;
+
+  /// No description provided for @socialAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get socialAccepted;
+
+  /// No description provided for @socialDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get socialDeclined;
+
+  /// No description provided for @socialReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get socialReturned;
+
+  /// No description provided for @socialEmptyLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'This library is empty.'**
+  String get socialEmptyLibrary;
+
+  /// No description provided for @socialRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get socialRequests;
+
+  /// No description provided for @socialRequestFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} wants to borrow'**
+  String socialRequestFrom(String name);
+
+  /// No description provided for @socialBorrowFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrow from {name}'**
+  String socialBorrowFrom(String name);
+
+  /// No description provided for @socialAddToLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to My Library'**
+  String get socialAddToLibrary;
+
+  /// No description provided for @socialBookAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your library!'**
+  String get socialBookAdded;
+
+  /// No description provided for @settingsReminderSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set for {time}'**
+  String settingsReminderSet(String time);
+
+  /// No description provided for @settingsReminderCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder cancelled'**
+  String get settingsReminderCancelled;
+
+  /// No description provided for @settingsTestNotifSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification sent!'**
+  String get settingsTestNotifSent;
+
+  /// No description provided for @settingsTestNotifBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Test Notification'**
+  String get settingsTestNotifBtn;
+
+  /// No description provided for @analyticsHeatmapLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less'**
+  String get analyticsHeatmapLess;
+
+  /// No description provided for @analyticsHeatmapMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get analyticsHeatmapMore;
+
+  /// No description provided for @analyticsWeeklyMax.
+  ///
+  /// In en, this message translates to:
+  /// **'{pages} p max'**
+  String analyticsWeeklyMax(int pages);
+
+  /// No description provided for @detailSessionFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{min}m · {pages} pages'**
+  String detailSessionFormat(int min, int pages);
+
+  /// No description provided for @loginForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get loginForgotPassword;
+
+  /// No description provided for @loginResetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get loginResetPasswordTitle;
+
+  /// No description provided for @loginResetEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address'**
+  String get loginResetEmailHint;
+
+  /// No description provided for @loginResetSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Email'**
+  String get loginResetSend;
+
+  /// No description provided for @loginResetSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent to {email}'**
+  String loginResetSent(String email);
+
+  /// No description provided for @loginResetErrEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email address.'**
+  String get loginResetErrEmpty;
+
+  /// No description provided for @achieveFirstBook.
+  ///
+  /// In en, this message translates to:
+  /// **'First Book'**
+  String get achieveFirstBook;
+
+  /// No description provided for @achieve5Books.
+  ///
+  /// In en, this message translates to:
+  /// **'5 Books'**
+  String get achieve5Books;
+
+  /// No description provided for @achieve10Books.
+  ///
+  /// In en, this message translates to:
+  /// **'10 Books'**
+  String get achieve10Books;
+
+  /// No description provided for @achieveFirstFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'First Finish'**
+  String get achieveFirstFinish;
+
+  /// No description provided for @achieveCollector.
+  ///
+  /// In en, this message translates to:
+  /// **'Collector'**
+  String get achieveCollector;
+
+  /// No description provided for @achieve100Pages.
+  ///
+  /// In en, this message translates to:
+  /// **'100 Pages'**
+  String get achieve100Pages;
+
+  /// No description provided for @achieve1000Pages.
+  ///
+  /// In en, this message translates to:
+  /// **'1000 Pages'**
+  String get achieve1000Pages;
+
+  /// No description provided for @achieveSpeedReader.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed Reader'**
+  String get achieveSpeedReader;
+
+  /// No description provided for @achieveMarathoner.
+  ///
+  /// In en, this message translates to:
+  /// **'Marathoner'**
+  String get achieveMarathoner;
+
+  /// No description provided for @achieve7DayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'7-Day Streak'**
+  String get achieve7DayStreak;
+
+  /// No description provided for @achieveCritic.
+  ///
+  /// In en, this message translates to:
+  /// **'Critic'**
+  String get achieveCritic;
+
+  /// No description provided for @settingsBiometricLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric App Lock'**
+  String get settingsBiometricLock;
+
+  /// No description provided for @settingsBiometricLockSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock app with fingerprint or face ID'**
+  String get settingsBiometricLockSub;
+
+  /// No description provided for @settingsBiometricFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Try again.'**
+  String get settingsBiometricFailed;
+
+  /// No description provided for @profileExportLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Library'**
+  String get profileExportLibrary;
+
+  /// No description provided for @profileExportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Library exported!'**
+  String get profileExportSuccess;
+
+  /// No description provided for @profileExportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No books to export.'**
+  String get profileExportEmpty;
+
+  /// No description provided for @profileExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed. Please try again.'**
+  String get profileExportError;
+
+  /// No description provided for @discardChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard Changes?'**
+  String get discardChangesTitle;
+
+  /// No description provided for @discardChangesMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. Are you sure you want to leave?'**
+  String get discardChangesMsg;
+
+  /// No description provided for @discardChangesLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get discardChangesLeave;
+
+  /// No description provided for @discardChangesStay.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get discardChangesStay;
 }
 
 class _AppLocalizationsDelegate

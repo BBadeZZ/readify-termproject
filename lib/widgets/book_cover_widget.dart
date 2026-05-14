@@ -24,6 +24,8 @@ class BookCoverWidget extends StatelessWidget {
           width: width,
           height: height,
           fit: BoxFit.cover,
+          cacheWidth: (width * 2).toInt(),
+          cacheHeight: (height * 2).toInt(),
           errorBuilder: (context, error, stackTrace) => _placeholderCover(context),
         ),
       );
@@ -49,20 +51,27 @@ class BookCoverWidget extends StatelessWidget {
         border: Border.all(color: cs.outlineVariant),
       ),
       child: smallCover
-          ? Center(child: Icon(Icons.menu_book, color: cs.primary, size: 30))
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.menu_book, color: cs.primary, size: 34),
-                const SizedBox(height: 8),
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: cs.primary),
-                ),
-              ],
+          ? Center(child: Icon(Icons.menu_book, color: cs.primary, size: width * 0.55))
+          : FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.menu_book, color: cs.primary, size: 34),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: width - 20,
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: cs.primary),
+                    ),
+                  ),
+                ],
+              ),
             ),
     );
   }

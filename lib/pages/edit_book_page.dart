@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../services/firestore_service.dart';
 import '../l10n/app_localizations.dart';
 
@@ -59,10 +60,10 @@ class _EditBookPageState extends State<EditBookPage> {
 
     selectedGenre = genres.contains(widget.book.genre) ? widget.book.genre : 'Other';
 
-    if (['Reading', 'Wishlist', 'Already Read'].contains(widget.book.status)) {
+    if (BookStatus.all.contains(widget.book.status)) {
       selectedStatus = widget.book.status;
     } else {
-      selectedStatus = 'Already Read';
+      selectedStatus = BookStatus.alreadyRead;
     }
 
     rating = widget.book.rating;
@@ -78,6 +79,47 @@ class _EditBookPageState extends State<EditBookPage> {
     noteController.dispose();
     coverUrlController.dispose();
     super.dispose();
+  }
+
+  bool get _isDirty =>
+      titleController.text.trim() != widget.book.title ||
+      authorController.text.trim() != widget.book.author ||
+      totalPagesController.text.trim() != widget.book.totalPages.toString() ||
+      currentPageController.text.trim() != widget.book.currentPage.toString() ||
+      noteController.text.trim() != widget.book.note ||
+      coverUrlController.text.trim() != widget.book.coverUrl ||
+      selectedGenre !=
+          (genres.contains(widget.book.genre) ? widget.book.genre : 'Other') ||
+      selectedStatus !=
+          (BookStatus.all.contains(widget.book.status)
+              ? widget.book.status
+              : BookStatus.alreadyRead) ||
+      rating != widget.book.rating ||
+      favorite != widget.book.favorite;
+
+  Future<bool> _showDiscardDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    return await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(l10n.discardChangesTitle),
+            content: Text(l10n.discardChangesMsg),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l10n.discardChangesStay),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  l10n.discardChangesLeave,
+                  style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   void updateBook() async {
@@ -96,17 +138,16 @@ class _EditBookPageState extends State<EditBookPage> {
 
     String finalStatus = selectedStatus;
 
-    if (selectedStatus == 'Wishlist') {
+    if (selectedStatus == BookStatus.wishlist) {
       currentPage = 0;
-      finalStatus = 'Wishlist';
-    } else if (selectedStatus == 'Already Read') {
+      finalStatus = BookStatus.wishlist;
+    } else if (selectedStatus == BookStatus.alreadyRead) {
       currentPage = totalPages;
-      finalStatus = 'Already Read';
-    } else if (selectedStatus == 'Reading') {
-      finalStatus = 'Reading';
-
+      finalStatus = BookStatus.alreadyRead;
+    } else if (selectedStatus == BookStatus.reading) {
+      finalStatus = BookStatus.reading;
       if (currentPage == totalPages) {
-        finalStatus = 'Already Read';
+        finalStatus = BookStatus.alreadyRead;
       }
     }
 
@@ -179,11 +220,11 @@ class _EditBookPageState extends State<EditBookPage> {
     if (newValue == null) return;
     setState(() {
       selectedStatus = newValue;
-      if (selectedStatus == 'Wishlist') {
+      if (selectedStatus == BookStatus.wishlist) {
         currentPageController.text = '0';
-      } else if (selectedStatus == 'Already Read') {
+      } else if (selectedStatus == BookStatus.alreadyRead) {
         currentPageController.text = totalPagesController.text;
-      } else if (selectedStatus == 'Reading') {
+      } else if (selectedStatus == BookStatus.reading) {
         if (currentPageController.text == totalPagesController.text) {
           currentPageController.text = '0';
         }
@@ -196,7 +237,14 @@ class _EditBookPageState extends State<EditBookPage> {
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return PopScope(
+      canPop: !_isDirty,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop || !_isDirty) return;
+        final leave = await _showDiscardDialog();
+        if (leave && context.mounted) Navigator.pop(context);
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: Text(l10n.editBookTitle),
       ),
@@ -262,15 +310,15 @@ class _EditBookPageState extends State<EditBookPage> {
               children: [
                 RadioListTile<String>(
                   title: Text(l10n.statusReading, style: const TextStyle(fontSize: 17)),
-                  value: 'Reading',
+                  value: BookStatus.reading,
                 ),
                 RadioListTile<String>(
                   title: Text(l10n.statusWishlist, style: const TextStyle(fontSize: 17)),
-                  value: 'Wishlist',
+                  value: BookStatus.wishlist,
                 ),
                 RadioListTile<String>(
                   title: Text(l10n.statusAlreadyRead, style: const TextStyle(fontSize: 17)),
-                  value: 'Already Read',
+                  value: BookStatus.alreadyRead,
                 ),
               ],
             ),
@@ -325,6 +373,7 @@ class _EditBookPageState extends State<EditBookPage> {
         ],
       ),
       ),
+    ),
     );
   }
 }

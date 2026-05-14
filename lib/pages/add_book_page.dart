@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../services/firestore_service.dart';
 import '../services/google_books_service.dart';
 import '../theme/app_colors.dart';
@@ -25,7 +26,7 @@ class _AddBookPageState extends State<AddBookPage> {
   final TextEditingController coverUrlController = TextEditingController();
 
   String selectedGenre = 'Novel';
-  String selectedStatus = 'Reading';
+  String selectedStatus = BookStatus.reading;
   int rating = 3;
   bool favorite = false;
   bool argsLoaded = false;
@@ -63,9 +64,9 @@ class _AddBookPageState extends State<AddBookPage> {
 
         final comingGenre = args['genre'] ?? 'Novel';
         selectedGenre = genres.contains(comingGenre) ? comingGenre : 'Other';
-        selectedStatus = args['status'] ?? 'Wishlist';
-        if (!['Reading', 'Wishlist', 'Already Read'].contains(selectedStatus)) {
-          selectedStatus = 'Wishlist';
+        selectedStatus = args['status'] ?? BookStatus.wishlist;
+        if (!BookStatus.all.contains(selectedStatus)) {
+          selectedStatus = BookStatus.wishlist;
         }
         rating = (args['rating'] ?? 3).clamp(1, 5);
         favorite = args['favorite'] ?? false;
@@ -83,6 +84,33 @@ class _AddBookPageState extends State<AddBookPage> {
     noteController.dispose();
     coverUrlController.dispose();
     super.dispose();
+  }
+
+  bool get _isDirty => titleController.text.trim().isNotEmpty;
+
+  Future<bool> _showDiscardDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    return await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(l10n.discardChangesTitle),
+            content: Text(l10n.discardChangesMsg),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l10n.discardChangesStay),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  l10n.discardChangesLeave,
+                  style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   void _autoFill(GoogleBooksResult result) {
@@ -172,12 +200,12 @@ class _AddBookPageState extends State<AddBookPage> {
     currentPage = currentPage.clamp(0, totalPages);
 
     String finalStatus = selectedStatus;
-    if (selectedStatus == 'Wishlist') {
+    if (selectedStatus == BookStatus.wishlist) {
       currentPage = 0;
-    } else if (selectedStatus == 'Already Read') {
+    } else if (selectedStatus == BookStatus.alreadyRead) {
       currentPage = totalPages;
-    } else if (selectedStatus == 'Reading' && currentPage == totalPages) {
-      finalStatus = 'Already Read';
+    } else if (selectedStatus == BookStatus.reading && currentPage == totalPages) {
+      finalStatus = BookStatus.alreadyRead;
     }
 
     final book = Book(
@@ -250,7 +278,14 @@ class _AddBookPageState extends State<AddBookPage> {
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return PopScope(
+      canPop: !_isDirty,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop || !_isDirty) return;
+        final leave = await _showDiscardDialog();
+        if (leave && context.mounted) Navigator.pop(context);
+      },
+      child: Scaffold(
       drawer: const AppDrawer(currentPage: 'Add Book'),
       appBar: AppBar(title: Text(l10n.addBookTitle)),
       body: Form(
@@ -343,11 +378,11 @@ class _AddBookPageState extends State<AddBookPage> {
             onChanged: (value) {
               setState(() {
                 selectedStatus = value!;
-                if (selectedStatus == 'Wishlist') {
+                if (selectedStatus == BookStatus.wishlist) {
                   currentPageController.text = '0';
-                } else if (selectedStatus == 'Already Read') {
+                } else if (selectedStatus == BookStatus.alreadyRead) {
                   currentPageController.text = totalPagesController.text;
-                } else if (selectedStatus == 'Reading' &&
+                } else if (selectedStatus == BookStatus.reading &&
                     currentPageController.text == totalPagesController.text) {
                   currentPageController.text = '0';
                 }
@@ -357,15 +392,15 @@ class _AddBookPageState extends State<AddBookPage> {
               children: [
                 RadioListTile<String>(
                   title: Text(l10n.statusReading, style: const TextStyle(fontSize: 17)),
-                  value: 'Reading',
+                  value: BookStatus.reading,
                 ),
                 RadioListTile<String>(
                   title: Text(l10n.statusWishlist, style: const TextStyle(fontSize: 17)),
-                  value: 'Wishlist',
+                  value: BookStatus.wishlist,
                 ),
                 RadioListTile<String>(
                   title: Text(l10n.statusAlreadyRead, style: const TextStyle(fontSize: 17)),
-                  value: 'Already Read',
+                  value: BookStatus.alreadyRead,
                 ),
               ],
             ),
@@ -408,6 +443,7 @@ class _AddBookPageState extends State<AddBookPage> {
         ],
       ),
       ),
+    ),
     );
   }
 }

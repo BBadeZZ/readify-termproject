@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../models/reading_session.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
@@ -28,6 +29,89 @@ class HomePage extends StatelessWidget {
     final name = authService.currentUser?.displayName ?? '';
     if (name.trim().isEmpty) return l10n.homeReader;
     return name.split(' ').first;
+  }
+
+  void _showQuickPageSheet(BuildContext context, Book book) {
+    final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
+    final controller = TextEditingController(text: book.currentPage.toString());
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36, height: 4,
+                decoration: BoxDecoration(color: cs.outlineVariant, borderRadius: BorderRadius.circular(2)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(l10n.homeUpdatePage, style: Theme.of(ctx).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(
+              book.title,
+              style: Theme.of(ctx).textTheme.bodySmall?.copyWith(color: cs.onSurface.withValues(alpha: 0.6)),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: l10n.homeCurrentPage,
+                hintText: '1 – ${book.totalPages}',
+                prefixIcon: const Icon(Icons.bookmark_outline_rounded),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () async {
+                  int newPage = int.tryParse(controller.text) ?? book.currentPage;
+                  newPage = newPage.clamp(0, book.totalPages);
+                  Navigator.pop(ctx);
+                  final updated = book.copyWith(
+                    currentPage: newPage,
+                    status: newPage >= book.totalPages
+                        ? BookStatus.alreadyRead
+                        : newPage > 0
+                            ? BookStatus.reading
+                            : book.status,
+                  );
+                  try {
+                    await firestoreService.updateBook(updated);
+                  } catch (_) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(AppLocalizations.of(context)!.detailErrProgress),
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Text(l10n.homeSave),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -62,6 +146,19 @@ class HomePage extends StatelessWidget {
           return StreamBuilder<List<Book>>(
             stream: firestoreService.getBooks(),
             builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.cloud_off_rounded, size: 52, color: Theme.of(context).colorScheme.error),
+                  const SizedBox(height: 12),
+                  Text(AppLocalizations.of(context)!.librarySomethingWrong,
+                      style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                ],
+              ),
+            );
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -100,8 +197,8 @@ class HomePage extends StatelessWidget {
             );
           }
           final totalBooks = books.length;
-          final reading = books.where((b) => b.status == 'Reading').toList();
-          final alreadyRead = books.where((b) => b.status == 'Already Read').length;
+          final reading = books.where((b) => b.status == BookStatus.reading).toList();
+          final alreadyRead = books.where((b) => b.status == BookStatus.alreadyRead).length;
           final pagesRead = books.fold(0, (sum, b) => sum + b.currentPage);
 
           reading.sort((a, b) => b.progress.compareTo(a.progress));
@@ -142,7 +239,7 @@ class HomePage extends StatelessWidget {
                     icon: Icons.auto_stories_rounded,
                     color: AppColors.readingBlueContainer,
                     iconColor: AppColors.readingBlue,
-                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
+                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': BookStatus.reading}),
                   ),
                   StatCard(
                     label: l10n.homeAlreadyRead,
@@ -150,7 +247,7 @@ class HomePage extends StatelessWidget {
                     icon: Icons.check_circle_rounded,
                     color: AppColors.completedGreenContainer,
                     iconColor: AppColors.completedGreen,
-                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Already Read'}),
+                    onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': BookStatus.alreadyRead}),
                   ),
                   StatCard(
                     label: l10n.homePagesRead,
@@ -175,7 +272,7 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(l10n.homeCurrentlyReading, style: tt.titleLarge),
                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Reading'}),
+                      onPressed: () => Navigator.pushNamed(context, '/library', arguments: {'filter': BookStatus.reading}),
                       child: Text(l10n.homeSeeAll, style: TextStyle(color: cs.primary)),
                     ),
                   ],
@@ -195,6 +292,7 @@ class HomePage extends StatelessWidget {
                           context,
                           SlidePageRoute(page: BookDetailPage(book: book)),
                         ),
+                        onLongPress: () => _showQuickPageSheet(context, book),
                       );
                     },
                   ),
@@ -250,7 +348,7 @@ class HomePage extends StatelessWidget {
 
               if (alreadyRead > 0) ...[
                 const SizedBox(height: 20),
-                _AlreadyReadBanner(count: alreadyRead, onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': 'Already Read'})),
+                _AlreadyReadBanner(count: alreadyRead, onTap: () => Navigator.pushNamed(context, '/library', arguments: {'filter': BookStatus.alreadyRead})),
               ],
             ],
           );
@@ -375,8 +473,9 @@ class _StreakBanner extends StatelessWidget {
 class _ReadingBookCard extends StatelessWidget {
   final Book book;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
-  const _ReadingBookCard({required this.book, required this.onTap});
+  const _ReadingBookCard({required this.book, required this.onTap, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -385,6 +484,7 @@ class _ReadingBookCard extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
+      onLongPress: onLongPress,
       borderRadius: BorderRadius.circular(18),
       child: Container(
         width: 150,

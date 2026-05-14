@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:math' as math;
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../models/reading_session.dart';
 import '../services/firestore_service.dart';
 import '../widgets/app_drawer.dart';
@@ -22,6 +25,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   List<Book> _books = [];
   List<ReadingSession> _sessions = [];
   bool _loading = true;
+  bool _hasError = false;
 
   StreamSubscription? _booksSub;
   StreamSubscription? _sessionsSub;
@@ -29,12 +33,22 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   @override
   void initState() {
     super.initState();
-    _booksSub = firestoreService.getBooks().listen((books) {
-      if (mounted) setState(() { _books = books; _loading = false; });
-    });
-    _sessionsSub = firestoreService.getSessions().listen((sessions) {
-      if (mounted) setState(() => _sessions = sessions);
-    });
+    _booksSub = firestoreService.getBooks().listen(
+      (books) {
+        if (mounted) setState(() { _books = books; _loading = false; });
+      },
+      onError: (_) {
+        if (mounted) setState(() { _hasError = true; _loading = false; });
+      },
+    );
+    _sessionsSub = firestoreService.getSessions().listen(
+      (sessions) {
+        if (mounted) setState(() => _sessions = sessions);
+      },
+      onError: (_) {
+        if (mounted) setState(() => _hasError = true);
+      },
+    );
   }
 
   @override
@@ -60,10 +74,28 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
       );
     }
 
+    if (_hasError) {
+      return Scaffold(
+        drawer: const AppDrawer(currentPage: 'Analytics'),
+        appBar: AppBar(title: Text(l10n.analyticsTitle)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.cloud_off_rounded, size: 52, color: cs.error),
+              const SizedBox(height: 12),
+              Text(l10n.librarySomethingWrong, style: TextStyle(color: cs.error)),
+            ],
+          ),
+        ),
+        bottomNavigationBar: const AppBottomNav(currentIndex: 3),
+      );
+    }
+
     final totalBooks = _books.length;
-    final reading = _books.where((b) => b.status == 'Reading').length;
-    final wishlist = _books.where((b) => b.status == 'Wishlist').length;
-    final alreadyRead = _books.where((b) => b.status == 'Already Read').length;
+    final reading = _books.where((b) => b.status == BookStatus.reading).length;
+    final wishlist = _books.where((b) => b.status == BookStatus.wishlist).length;
+    final alreadyRead = _books.where((b) => b.status == BookStatus.alreadyRead).length;
     final favorite = _books.where((b) => b.favorite).length;
 
     int pagesRead = 0, totalPages = 0, ratingSum = 0;
@@ -120,6 +152,13 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           const SizedBox(height: 20),
           _WeeklyChart(sessions: _sessions),
 
+          const SizedBox(height: 20),
+          if (_books.isNotEmpty) ...[
+            _GenreChart(books: _books),
+            const SizedBox(height: 20),
+          ],
+
+          _ReadingHeatmap(sessions: _sessions),
           const SizedBox(height: 20),
 
           Container(
@@ -183,7 +222,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 StatCard(label: l10n.analyticsSessions, value: '$totalSessions', icon: Icons.timer_rounded, color: AppColors.sessionPurpleContainer, iconColor: AppColors.sessionPurple),
                 StatCard(
                   label: l10n.analyticsTotalTime,
-                  value: totalHours > 0 ? '${totalHours}h ${remainingMin}m' : '${totalMinutes}m',
+                  value: totalHours > 0 ? '${totalHours}h ${remainingMin}m' : totalMinutes > 0 ? '${totalMinutes}m' : '< 1m',
                   icon: Icons.schedule_rounded,
                   color: AppColors.pagesTealContainer,
                   iconColor: AppColors.pagesTeal,
@@ -203,6 +242,128 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
       bottomNavigationBar: const AppBottomNav(currentIndex: 3),
     );
   }
+}
+
+class _GenreChart extends StatelessWidget {
+  final List<Book> books;
+  const _GenreChart({required this.books});
+
+  static const _palette = [
+    AppColors.readingBlue,
+    AppColors.completedGreen,
+    AppColors.starYellow,
+    AppColors.sessionPurple,
+    AppColors.pagesTeal,
+    AppColors.suggestionsPurple,
+    AppColors.wishlistAmber,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+
+    final counts = <String, int>{};
+    for (final b in books) {
+      final g = b.genre.trim().isEmpty ? '–' : b.genre;
+      counts[g] = (counts[g] ?? 0) + 1;
+    }
+    final sorted = counts.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final total = books.length;
+    final slices = sorted.map((e) => e.value / total).toList();
+    final colors = List.generate(sorted.length, (i) => _palette[i % _palette.length]);
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.analyticsGenreBreakdown, style: tt.titleMedium),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              SizedBox(
+                width: 110,
+                height: 110,
+                child: CustomPaint(painter: _DonutPainter(slices: slices, colors: colors)),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: sorted.take(6).toList().asMap().entries.map((entry) {
+                    final color = colors[entry.key];
+                    final genre = entry.value.key;
+                    final count = entry.value.value;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 9, height: 9,
+                            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(genre, style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis),
+                          ),
+                          Text('$count', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color)),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DonutPainter extends CustomPainter {
+  final List<double> slices;
+  final List<Color> colors;
+  const _DonutPainter({required this.slices, required this.colors});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final outerR = math.min(cx, cy);
+    final strokeW = outerR * 0.42;
+    final arcR = outerR - strokeW / 2;
+    final rect = Rect.fromCircle(center: Offset(cx, cy), radius: arcR);
+    const gap = 0.05;
+    double angle = -math.pi / 2;
+
+    for (int i = 0; i < slices.length; i++) {
+      final sweep = slices[i] * 2 * math.pi - gap;
+      canvas.drawArc(
+        rect,
+        angle + gap / 2,
+        sweep.clamp(0.01, 2 * math.pi),
+        false,
+        Paint()
+          ..color = colors[i]
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeW
+          ..strokeCap = StrokeCap.butt,
+      );
+      angle += slices[i] * 2 * math.pi;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DonutPainter old) =>
+      !listEquals(old.slices, slices) || !listEquals(old.colors, colors);
 }
 
 class _WeeklyChart extends StatelessWidget {
@@ -247,7 +408,7 @@ class _WeeklyChart extends StatelessWidget {
               Text(l10n.analyticsWeeklyChart, style: tt.titleMedium),
               if (maxPages > 0)
                 Text(
-                  '$maxPages p max',
+                  l10n.analyticsWeeklyMax(maxPages),
                   style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
                 ),
             ],
@@ -338,7 +499,7 @@ class _SessionCard extends StatelessWidget {
               color: AppColors.sessionPurpleContainer,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.menu_book_rounded, color: Color(0xFF5E35B1), size: 20),
+            child: const Icon(Icons.menu_book_rounded, color: AppColors.sessionPurple, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -347,7 +508,7 @@ class _SessionCard extends StatelessWidget {
               children: [
                 Text(s.bookTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14), overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
-                Text('$date  ·  ${s.durationMinutes}m  ·  ${l10n.detailPages(s.pagesRead)}',
+                Text('$date  ·  ${l10n.detailSessionFormat(s.durationMinutes, s.pagesRead)}',
                     style: TextStyle(fontSize: 12, color: cs.onSurface.withValues(alpha: 0.6))),
               ],
             ),
@@ -359,9 +520,143 @@ class _SessionCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              '+${s.pagesRead}p',
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF5E35B1), fontSize: 13),
+              '+${l10n.detailPages(s.pagesRead)}',
+              style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.sessionPurple, fontSize: 13),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReadingHeatmap extends StatelessWidget {
+  final List<ReadingSession> sessions;
+  const _ReadingHeatmap({required this.sessions});
+
+  static const _cellSize = 11.0;
+  static const _gap = 2.0;
+
+  Color _cellColor(int pages, ColorScheme cs) {
+    if (pages == 0) return cs.surfaceContainerHighest;
+    if (pages <= 5) return cs.primary.withValues(alpha: 0.22);
+    if (pages <= 15) return cs.primary.withValues(alpha: 0.45);
+    if (pages <= 30) return cs.primary.withValues(alpha: 0.70);
+    return cs.primary;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+
+    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    // Build day → pages map
+    final Map<String, int> dayPages = {};
+    for (final s in sessions) {
+      final key = '${s.startedAt.year}-${s.startedAt.month}-${s.startedAt.day}';
+      dayPages[key] = (dayPages[key] ?? 0) + s.pagesRead;
+    }
+
+    // 365 days ending today, oldest first
+    final days = List.generate(365, (i) => today.subtract(Duration(days: 364 - i)));
+
+    // Pad start so first column begins on Monday (weekday 1)
+    final leadingEmpty = (days.first.weekday - 1) % 7;
+    final allCells = <DateTime?>[...List.filled(leadingEmpty, null), ...days];
+    final numCols = (allCells.length / 7).ceil();
+
+    // Organize into week columns of 7 rows
+    final weeks = List.generate(numCols, (col) =>
+      List.generate(7, (row) {
+        final idx = col * 7 + row;
+        return idx < allCells.length ? allCells[idx] : null;
+      }),
+    );
+
+    String monthLabel(int col) {
+      final DateTime? first = weeks[col].firstWhere((d) => d != null, orElse: () => null);
+      if (first == null) return '';
+      if (col == 0) return DateFormat.MMM(locale).format(first);
+      final DateTime? prev = weeks[col - 1].firstWhere((d) => d != null, orElse: () => null);
+      if (prev == null || prev.month != first.month) return DateFormat.MMM(locale).format(first);
+      return '';
+    }
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.analyticsHeatmap, style: tt.titleMedium),
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Month labels
+                Row(
+                  children: List.generate(numCols, (col) => SizedBox(
+                    width: _cellSize + _gap,
+                    child: Text(
+                      monthLabel(col),
+                      style: TextStyle(fontSize: 8.5, color: cs.onSurfaceVariant, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.visible,
+                    ),
+                  )),
+                ),
+                const SizedBox(height: 3),
+                // Cell grid
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(numCols, (col) => Column(
+                    children: List.generate(7, (row) {
+                      final date = weeks[col][row];
+                      final pages = date == null ? 0 : (dayPages['${date.year}-${date.month}-${date.day}'] ?? 0);
+                      final isToday = date != null && date == today;
+                      return Container(
+                        width: _cellSize,
+                        height: _cellSize,
+                        margin: const EdgeInsets.only(right: _gap, bottom: _gap),
+                        decoration: BoxDecoration(
+                          color: date == null ? Colors.transparent : _cellColor(pages, cs),
+                          borderRadius: BorderRadius.circular(2),
+                          border: isToday ? Border.all(color: cs.primary, width: 1.5) : null,
+                        ),
+                      );
+                    }),
+                  )),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Legend
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(l10n.analyticsHeatmapLess, style: TextStyle(fontSize: 9, color: cs.onSurfaceVariant)),
+              const SizedBox(width: 4),
+              ...[0, 3, 10, 25, 50].map((p) => Container(
+                width: 11, height: 11,
+                margin: const EdgeInsets.only(left: 2),
+                decoration: BoxDecoration(
+                  color: _cellColor(p, cs),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              )),
+              const SizedBox(width: 4),
+              Text(l10n.analyticsHeatmapMore, style: TextStyle(fontSize: 9, color: cs.onSurfaceVariant)),
+            ],
           ),
         ],
       ),

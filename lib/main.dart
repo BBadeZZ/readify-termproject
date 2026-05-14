@@ -19,6 +19,10 @@ import 'pages/login_page.dart';
 import 'pages/register_page.dart';
 import 'pages/onboarding_page.dart';
 import 'pages/profile_page.dart';
+import 'pages/social_page.dart';
+import 'pages/borrow_requests_page.dart';
+import 'services/social_service.dart';
+import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +34,10 @@ void main() async {
   settingsService = await SettingsService.init();
   themeController.loadSavedTheme();
   localeProvider = LocaleProvider();
+
+  if (authService.currentUser != null) {
+    socialService.ensureProfile();
+  }
 
   await NotificationService.initialize();
   if (settingsService.dailyReminder) {
@@ -77,6 +85,8 @@ class ReadifyApp extends StatelessWidget {
             '/register': (context) => const RegisterPage(),
             '/onboarding': (context) => const OnboardingPage(),
             '/profile': (context) => const ProfilePage(),
+            '/social': (context) => const SocialPage(),
+            '/borrow-requests': (context) => const BorrowRequestsPage(),
           },
         );
       },

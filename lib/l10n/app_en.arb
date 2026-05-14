@@ -319,5 +319,127 @@
   },
   "recsClose": "Close",
   "recsAddBook": "Add This Book",
-  "recsAddFavorite": "Add to Favorites"
+  "recsAddFavorite": "Add to Favorites",
+
+  "analyticsGenreBreakdown": "Genre Breakdown",
+  "detailSessionHistory": "Reading Sessions",
+  "detailNotes": "Notes",
+  "detailAddNote": "Add a note...",
+  "detailNoteHint": "Write your note here",
+  "detailNoteSave": "Save",
+  "homeUpdatePage": "Update Page",
+  "homeCurrentPage": "Current page",
+  "homeSave": "Save",
+  "analyticsHeatmap": "Reading Activity",
+  "profileAchievements": "Achievements",
+  "profileStreakLabel": "Day Streak",
+  "libraryDeleteConfirmTitle": "Delete Book",
+  "libraryDeleteConfirmMsg": "Are you sure you want to delete \"{title}\"? This cannot be undone.",
+  "@libraryDeleteConfirmMsg": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+  "libraryDeleteConfirmYes": "Delete",
+  "libraryDeleteConfirmNo": "Cancel",
+
+  "navSocial": "Social",
+  "socialTitle": "Social Network",
+  "socialFriends": "Friends",
+  "socialSearch": "Search",
+  "socialSearchHint": "Search by name or email...",
+  "socialAddFriend": "Add Friend",
+  "socialRequestSent": "Request Sent",
+  "socialCancelRequest": "Cancel Request",
+  "socialAccept": "Accept",
+  "socialDecline": "Decline",
+  "socialRemove": "Remove",
+  "socialFriendRequests": "Friend Requests",
+  "socialNoFriends": "No friends yet.\nSearch to find someone!",
+  "socialNoRequests": "No pending requests.",
+  "socialViewLibrary": "View Library",
+  "socialFriendLibrary": "{name}'s Library",
+  "@socialFriendLibrary": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialBorrowBook": "Borrow This Book",
+  "socialBorrowRequests": "Borrow Requests",
+  "socialIncoming": "Incoming",
+  "socialOutgoing": "Outgoing",
+  "socialBorrowSent": "Borrow request sent!",
+  "socialMarkReturned": "Mark as Returned",
+  "socialNoBorrows": "No borrow requests.",
+  "socialAlreadyFriends": "Already Friends",
+  "socialPending": "Pending",
+  "socialAccepted": "Accepted",
+  "socialDeclined": "Declined",
+  "socialReturned": "Returned",
+  "socialEmptyLibrary": "This library is empty.",
+  "socialRequests": "Requests",
+  "socialRequestFrom": "{name} wants to borrow",
+  "@socialRequestFrom": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialBorrowFrom": "Borrow from {name}",
+  "@socialBorrowFrom": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "socialAddToLibrary": "Add to My Library",
+  "socialBookAdded": "Added to your library!",
+
+  "settingsReminderSet": "Reminder set for {time}",
+  "@settingsReminderSet": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "settingsReminderCancelled": "Reminder cancelled",
+  "settingsTestNotifSent": "Test notification sent!",
+  "settingsTestNotifBtn": "Send Test Notification",
+
+  "analyticsHeatmapLess": "Less",
+  "analyticsHeatmapMore": "More",
+  "analyticsWeeklyMax": "{pages} p max",
+  "@analyticsWeeklyMax": {
+    "placeholders": { "pages": { "type": "int" } }
+  },
+  "detailSessionFormat": "{min}m · {pages} pages",
+  "@detailSessionFormat": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "pages": { "type": "int" }
+    }
+  },
+
+  "loginForgotPassword": "Forgot Password?",
+  "loginResetPasswordTitle": "Reset Password",
+  "loginResetEmailHint": "Enter your email address",
+  "loginResetSend": "Send Reset Email",
+  "loginResetSent": "Password reset email sent to {email}",
+  "@loginResetSent": {
+    "placeholders": { "email": { "type": "String" } }
+  },
+  "loginResetErrEmpty": "Please enter your email address.",
+
+  "achieveFirstBook": "First Book",
+  "achieve5Books": "5 Books",
+  "achieve10Books": "10 Books",
+  "achieveFirstFinish": "First Finish",
+  "achieveCollector": "Collector",
+  "achieve100Pages": "100 Pages",
+  "achieve1000Pages": "1000 Pages",
+  "achieveSpeedReader": "Speed Reader",
+  "achieveMarathoner": "Marathoner",
+  "achieve7DayStreak": "7-Day Streak",
+  "achieveCritic": "Critic",
+
+  "settingsBiometricLock": "Biometric App Lock",
+  "settingsBiometricLockSub": "Lock app with fingerprint or face ID",
+  "settingsBiometricFailed": "Authentication failed. Try again.",
+
+  "profileExportLibrary": "Export Library",
+  "profileExportSuccess": "Library exported!",
+  "profileExportEmpty": "No books to export.",
+  "profileExportError": "Export failed. Please try again.",
+
+  "discardChangesTitle": "Discard Changes?",
+  "discardChangesMsg": "You have unsaved changes. Are you sure you want to leave?",
+  "discardChangesLeave": "Leave",
+  "discardChangesStay": "Stay"
 }

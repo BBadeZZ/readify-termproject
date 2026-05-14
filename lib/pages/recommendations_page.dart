@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/recommended_books.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import '../services/firestore_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
@@ -24,7 +25,7 @@ class RecommendationsPage extends StatelessWidget {
           normalize(book.title) == normalize(recommendedBook.title);
       bool sameAuthor =
           normalize(book.author) == normalize(recommendedBook.author);
-      bool alreadyRead = book.status == 'Already Read';
+      bool alreadyRead = book.status == BookStatus.alreadyRead;
 
       return sameTitle && sameAuthor && alreadyRead;
     });
@@ -47,7 +48,7 @@ class RecommendationsPage extends StatelessWidget {
         'totalPages': book.pages.toString(),
         'currentPage': '0',
         'note': book.description,
-        'status': 'Wishlist',
+        'status': BookStatus.wishlist,
         'rating': book.rating.round(),
         'favorite': favorite,
         'coverUrl': book.coverUrl,

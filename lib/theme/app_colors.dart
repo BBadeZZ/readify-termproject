@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
+import '../models/book_status.dart';
 
 /// Semantic color constants shared across the app.
 /// Theme-brand colors (primary, secondary, etc.) come from [ColorScheme].
@@ -28,17 +29,17 @@ abstract final class AppColors {
 
   /// Returns the semantic status color for a book status string.
   static Color forStatus(String status) => switch (status) {
-    'Reading'      => AppColors.readingBlue,
-    'Already Read' => AppColors.completedGreen,
-    'Wishlist'     => AppColors.wishlistAmber,
-    _              => const Color(0xFF9E9E9E),
+    BookStatus.reading     => AppColors.readingBlue,
+    BookStatus.alreadyRead => AppColors.completedGreen,
+    BookStatus.wishlist    => AppColors.wishlistAmber,
+    _                      => const Color(0xFF9E9E9E),
   };
 
   /// Returns the localized display label for a book status string.
   static String localizeStatus(String status, AppLocalizations l10n) => switch (status) {
-    'Reading'      => l10n.statusReading,
-    'Already Read' => l10n.statusAlreadyRead,
-    'Wishlist'     => l10n.statusWishlist,
-    _              => status,
+    BookStatus.reading     => l10n.statusReading,
+    BookStatus.alreadyRead => l10n.statusAlreadyRead,
+    BookStatus.wishlist    => l10n.statusWishlist,
+    _                      => status,
   };
 }

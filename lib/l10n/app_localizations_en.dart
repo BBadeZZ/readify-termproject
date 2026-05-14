@@ -676,4 +676,279 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recsAddFavorite => 'Add to Favorites';
+
+  @override
+  String get analyticsGenreBreakdown => 'Genre Breakdown';
+
+  @override
+  String get detailSessionHistory => 'Reading Sessions';
+
+  @override
+  String get detailNotes => 'Notes';
+
+  @override
+  String get detailAddNote => 'Add a note...';
+
+  @override
+  String get detailNoteHint => 'Write your note here';
+
+  @override
+  String get detailNoteSave => 'Save';
+
+  @override
+  String get homeUpdatePage => 'Update Page';
+
+  @override
+  String get homeCurrentPage => 'Current page';
+
+  @override
+  String get homeSave => 'Save';
+
+  @override
+  String get analyticsHeatmap => 'Reading Activity';
+
+  @override
+  String get profileAchievements => 'Achievements';
+
+  @override
+  String get profileStreakLabel => 'Day Streak';
+
+  @override
+  String get libraryDeleteConfirmTitle => 'Delete Book';
+
+  @override
+  String libraryDeleteConfirmMsg(String title) {
+    return 'Are you sure you want to delete \"$title\"? This cannot be undone.';
+  }
+
+  @override
+  String get libraryDeleteConfirmYes => 'Delete';
+
+  @override
+  String get libraryDeleteConfirmNo => 'Cancel';
+
+  @override
+  String get navSocial => 'Social';
+
+  @override
+  String get socialTitle => 'Social Network';
+
+  @override
+  String get socialFriends => 'Friends';
+
+  @override
+  String get socialSearch => 'Search';
+
+  @override
+  String get socialSearchHint => 'Search by name or email...';
+
+  @override
+  String get socialAddFriend => 'Add Friend';
+
+  @override
+  String get socialRequestSent => 'Request Sent';
+
+  @override
+  String get socialCancelRequest => 'Cancel Request';
+
+  @override
+  String get socialAccept => 'Accept';
+
+  @override
+  String get socialDecline => 'Decline';
+
+  @override
+  String get socialRemove => 'Remove';
+
+  @override
+  String get socialFriendRequests => 'Friend Requests';
+
+  @override
+  String get socialNoFriends => 'No friends yet.\nSearch to find someone!';
+
+  @override
+  String get socialNoRequests => 'No pending requests.';
+
+  @override
+  String get socialViewLibrary => 'View Library';
+
+  @override
+  String socialFriendLibrary(String name) {
+    return '$name\'s Library';
+  }
+
+  @override
+  String get socialBorrowBook => 'Borrow This Book';
+
+  @override
+  String get socialBorrowRequests => 'Borrow Requests';
+
+  @override
+  String get socialIncoming => 'Incoming';
+
+  @override
+  String get socialOutgoing => 'Outgoing';
+
+  @override
+  String get socialBorrowSent => 'Borrow request sent!';
+
+  @override
+  String get socialMarkReturned => 'Mark as Returned';
+
+  @override
+  String get socialNoBorrows => 'No borrow requests.';
+
+  @override
+  String get socialAlreadyFriends => 'Already Friends';
+
+  @override
+  String get socialPending => 'Pending';
+
+  @override
+  String get socialAccepted => 'Accepted';
+
+  @override
+  String get socialDeclined => 'Declined';
+
+  @override
+  String get socialReturned => 'Returned';
+
+  @override
+  String get socialEmptyLibrary => 'This library is empty.';
+
+  @override
+  String get socialRequests => 'Requests';
+
+  @override
+  String socialRequestFrom(String name) {
+    return '$name wants to borrow';
+  }
+
+  @override
+  String socialBorrowFrom(String name) {
+    return 'Borrow from $name';
+  }
+
+  @override
+  String get socialAddToLibrary => 'Add to My Library';
+
+  @override
+  String get socialBookAdded => 'Added to your library!';
+
+  @override
+  String settingsReminderSet(String time) {
+    return 'Reminder set for $time';
+  }
+
+  @override
+  String get settingsReminderCancelled => 'Reminder cancelled';
+
+  @override
+  String get settingsTestNotifSent => 'Test notification sent!';
+
+  @override
+  String get settingsTestNotifBtn => 'Send Test Notification';
+
+  @override
+  String get analyticsHeatmapLess => 'Less';
+
+  @override
+  String get analyticsHeatmapMore => 'More';
+
+  @override
+  String analyticsWeeklyMax(int pages) {
+    return '$pages p max';
+  }
+
+  @override
+  String detailSessionFormat(int min, int pages) {
+    return '${min}m · $pages pages';
+  }
+
+  @override
+  String get loginForgotPassword => 'Forgot Password?';
+
+  @override
+  String get loginResetPasswordTitle => 'Reset Password';
+
+  @override
+  String get loginResetEmailHint => 'Enter your email address';
+
+  @override
+  String get loginResetSend => 'Send Reset Email';
+
+  @override
+  String loginResetSent(String email) {
+    return 'Password reset email sent to $email';
+  }
+
+  @override
+  String get loginResetErrEmpty => 'Please enter your email address.';
+
+  @override
+  String get achieveFirstBook => 'First Book';
+
+  @override
+  String get achieve5Books => '5 Books';
+
+  @override
+  String get achieve10Books => '10 Books';
+
+  @override
+  String get achieveFirstFinish => 'First Finish';
+
+  @override
+  String get achieveCollector => 'Collector';
+
+  @override
+  String get achieve100Pages => '100 Pages';
+
+  @override
+  String get achieve1000Pages => '1000 Pages';
+
+  @override
+  String get achieveSpeedReader => 'Speed Reader';
+
+  @override
+  String get achieveMarathoner => 'Marathoner';
+
+  @override
+  String get achieve7DayStreak => '7-Day Streak';
+
+  @override
+  String get achieveCritic => 'Critic';
+
+  @override
+  String get settingsBiometricLock => 'Biometric App Lock';
+
+  @override
+  String get settingsBiometricLockSub => 'Lock app with fingerprint or face ID';
+
+  @override
+  String get settingsBiometricFailed => 'Authentication failed. Try again.';
+
+  @override
+  String get profileExportLibrary => 'Export Library';
+
+  @override
+  String get profileExportSuccess => 'Library exported!';
+
+  @override
+  String get profileExportEmpty => 'No books to export.';
+
+  @override
+  String get profileExportError => 'Export failed. Please try again.';
+
+  @override
+  String get discardChangesTitle => 'Discard Changes?';
+
+  @override
+  String get discardChangesMsg =>
+      'You have unsaved changes. Are you sure you want to leave?';
+
+  @override
+  String get discardChangesLeave => 'Leave';
+
+  @override
+  String get discardChangesStay => 'Stay';
 }

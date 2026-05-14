@@ -674,4 +674,282 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get recsAddFavorite => 'Favorilere Ekle';
+
+  @override
+  String get analyticsGenreBreakdown => 'Tür Dağılımı';
+
+  @override
+  String get detailSessionHistory => 'Okuma Seansları';
+
+  @override
+  String get detailNotes => 'Notlar';
+
+  @override
+  String get detailAddNote => 'Not ekle...';
+
+  @override
+  String get detailNoteHint => 'Notunuzu buraya yazın';
+
+  @override
+  String get detailNoteSave => 'Kaydet';
+
+  @override
+  String get homeUpdatePage => 'Sayfa Güncelle';
+
+  @override
+  String get homeCurrentPage => 'Mevcut sayfa';
+
+  @override
+  String get homeSave => 'Kaydet';
+
+  @override
+  String get analyticsHeatmap => 'Okuma Aktivitesi';
+
+  @override
+  String get profileAchievements => 'Başarılar';
+
+  @override
+  String get profileStreakLabel => 'Günlük Seri';
+
+  @override
+  String get libraryDeleteConfirmTitle => 'Kitabı Sil';
+
+  @override
+  String libraryDeleteConfirmMsg(String title) {
+    return '\"$title\" kitabını silmek istediğine emin misin? Bu işlem geri alınamaz.';
+  }
+
+  @override
+  String get libraryDeleteConfirmYes => 'Sil';
+
+  @override
+  String get libraryDeleteConfirmNo => 'İptal';
+
+  @override
+  String get navSocial => 'Sosyal';
+
+  @override
+  String get socialTitle => 'Sosyal Ağ';
+
+  @override
+  String get socialFriends => 'Arkadaşlar';
+
+  @override
+  String get socialSearch => 'Ara';
+
+  @override
+  String get socialSearchHint => 'İsim veya e-posta ile ara...';
+
+  @override
+  String get socialAddFriend => 'Arkadaş Ekle';
+
+  @override
+  String get socialRequestSent => 'İstek Gönderildi';
+
+  @override
+  String get socialCancelRequest => 'İsteği İptal Et';
+
+  @override
+  String get socialAccept => 'Kabul Et';
+
+  @override
+  String get socialDecline => 'Reddet';
+
+  @override
+  String get socialRemove => 'Çıkar';
+
+  @override
+  String get socialFriendRequests => 'Arkadaşlık İstekleri';
+
+  @override
+  String get socialNoFriends =>
+      'Henüz arkadaş yok.\nArama yaparak birini ekle!';
+
+  @override
+  String get socialNoRequests => 'Bekleyen istek yok.';
+
+  @override
+  String get socialViewLibrary => 'Kütüphaneyi Gör';
+
+  @override
+  String socialFriendLibrary(String name) {
+    return '$name Kütüphanesi';
+  }
+
+  @override
+  String get socialBorrowBook => 'Bu Kitabı Ödünç Al';
+
+  @override
+  String get socialBorrowRequests => 'Ödünç İstekleri';
+
+  @override
+  String get socialIncoming => 'Gelen';
+
+  @override
+  String get socialOutgoing => 'Giden';
+
+  @override
+  String get socialBorrowSent => 'Ödünç isteği gönderildi!';
+
+  @override
+  String get socialMarkReturned => 'İade Edildi';
+
+  @override
+  String get socialNoBorrows => 'Ödünç isteği yok.';
+
+  @override
+  String get socialAlreadyFriends => 'Zaten Arkadaşsınız';
+
+  @override
+  String get socialPending => 'Bekliyor';
+
+  @override
+  String get socialAccepted => 'Kabul Edildi';
+
+  @override
+  String get socialDeclined => 'Reddedildi';
+
+  @override
+  String get socialReturned => 'İade Edildi';
+
+  @override
+  String get socialEmptyLibrary => 'Bu kütüphane boş.';
+
+  @override
+  String get socialRequests => 'İstekler';
+
+  @override
+  String socialRequestFrom(String name) {
+    return '$name ödünç istiyor';
+  }
+
+  @override
+  String socialBorrowFrom(String name) {
+    return '$name\'den ödünç al';
+  }
+
+  @override
+  String get socialAddToLibrary => 'Kütüphaneme Ekle';
+
+  @override
+  String get socialBookAdded => 'Kütüphanenize eklendi!';
+
+  @override
+  String settingsReminderSet(String time) {
+    return '$time için hatırlatıcı kuruldu';
+  }
+
+  @override
+  String get settingsReminderCancelled => 'Hatırlatıcı iptal edildi';
+
+  @override
+  String get settingsTestNotifSent => 'Test bildirimi gönderildi!';
+
+  @override
+  String get settingsTestNotifBtn => 'Test Bildirimi Gönder';
+
+  @override
+  String get analyticsHeatmapLess => 'Az';
+
+  @override
+  String get analyticsHeatmapMore => 'Çok';
+
+  @override
+  String analyticsWeeklyMax(int pages) {
+    return 'maks $pages s';
+  }
+
+  @override
+  String detailSessionFormat(int min, int pages) {
+    return '${min}d · $pages sayfa';
+  }
+
+  @override
+  String get loginForgotPassword => 'Şifremi Unuttum?';
+
+  @override
+  String get loginResetPasswordTitle => 'Şifre Sıfırla';
+
+  @override
+  String get loginResetEmailHint => 'E-posta adresinizi girin';
+
+  @override
+  String get loginResetSend => 'Sıfırlama E-postası Gönder';
+
+  @override
+  String loginResetSent(String email) {
+    return '$email adresine sıfırlama e-postası gönderildi';
+  }
+
+  @override
+  String get loginResetErrEmpty => 'Lütfen e-posta adresinizi girin.';
+
+  @override
+  String get achieveFirstBook => 'İlk Kitap';
+
+  @override
+  String get achieve5Books => '5 Kitap';
+
+  @override
+  String get achieve10Books => '10 Kitap';
+
+  @override
+  String get achieveFirstFinish => 'İlk Bitiş';
+
+  @override
+  String get achieveCollector => 'Koleksiyoner';
+
+  @override
+  String get achieve100Pages => '100 Sayfa';
+
+  @override
+  String get achieve1000Pages => '1000 Sayfa';
+
+  @override
+  String get achieveSpeedReader => 'Hızlı Okuyucu';
+
+  @override
+  String get achieveMarathoner => 'Maratoncu';
+
+  @override
+  String get achieve7DayStreak => '7 Günlük Seri';
+
+  @override
+  String get achieveCritic => 'Eleştirmen';
+
+  @override
+  String get settingsBiometricLock => 'Biyometrik Uygulama Kilidi';
+
+  @override
+  String get settingsBiometricLockSub =>
+      'Uygulamayı parmak izi veya yüzle kilitle';
+
+  @override
+  String get settingsBiometricFailed =>
+      'Kimlik doğrulama başarısız. Tekrar deneyin.';
+
+  @override
+  String get profileExportLibrary => 'Kütüphaneyi Dışa Aktar';
+
+  @override
+  String get profileExportSuccess => 'Kütüphane dışa aktarıldı!';
+
+  @override
+  String get profileExportEmpty => 'Dışa aktarılacak kitap yok.';
+
+  @override
+  String get profileExportError => 'Dışa aktarma başarısız. Tekrar deneyin.';
+
+  @override
+  String get discardChangesTitle => 'Değişiklikler İptal Edilsin?';
+
+  @override
+  String get discardChangesMsg =>
+      'Kaydedilmemiş değişiklikleriniz var. Çıkmak istediğinizden emin misiniz?';
+
+  @override
+  String get discardChangesLeave => 'Çık';
+
+  @override
+  String get discardChangesStay => 'Kal';
 }

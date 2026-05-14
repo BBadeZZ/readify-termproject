@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../models/reading_session.dart';
+import '../models/book_status.dart';
 import '../services/firestore_service.dart';
 import '../services/settings_service.dart';
 import '../theme/app_colors.dart';
@@ -31,6 +32,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Duration _elapsed = Duration.zero;
   Timer? _ticker;
 
+  List<ReadingSession> _sessions = [];
+  bool _sessionsError = false;
+  StreamSubscription<List<ReadingSession>>? _sessionsSub;
+  final TextEditingController _newNoteController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -38,13 +44,31 @@ class _BookDetailPageState extends State<BookDetailPage> {
     pageController = TextEditingController(text: book.currentPage.toString());
     noteController = TextEditingController(text: book.note);
     _restoreActiveSession();
+    _sessionsSub = firestoreService.getSessions().listen(
+      (all) {
+        if (mounted) {
+          setState(() {
+            _sessionsError = false;
+            _sessions = all
+                .where((s) => s.bookId == book.id)
+                .toList()
+              ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
+          });
+        }
+      },
+      onError: (_) {
+        if (mounted) setState(() => _sessionsError = true);
+      },
+    );
   }
 
   @override
   void dispose() {
     _ticker?.cancel();
+    _sessionsSub?.cancel();
     pageController.dispose();
     noteController.dispose();
+    _newNoteController.dispose();
     super.dispose();
   }
 
@@ -110,14 +134,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
       await firestoreService.addSession(session);
       await settingsService.clearActiveSession();
 
+      final newStatus = endPage >= book.totalPages
+          ? BookStatus.alreadyRead
+          : endPage > 0
+              ? BookStatus.reading
+              : book.status;
       setState(() {
-        book.currentPage = endPage;
+        book = book.copyWith(currentPage: endPage, status: newStatus);
         pageController.text = endPage.toString();
-        if (book.currentPage >= book.totalPages) {
-          book.status = 'Already Read';
-        } else if (book.currentPage > 0) {
-          book.status = 'Reading';
-        }
         _sessionActive = false;
         _sessionStart = null;
         _elapsed = Duration.zero;
@@ -206,20 +230,18 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
   void updateProgress() async {
     final l10n = AppLocalizations.of(context)!;
-    final original = book.copyWith();
+    final original = book;
     int newPage = int.tryParse(pageController.text) ?? book.currentPage;
     newPage = newPage.clamp(0, book.totalPages);
+    final newNote = noteController.text.trim();
+    final newStatus = newPage >= book.totalPages
+        ? BookStatus.alreadyRead
+        : newPage > 0
+            ? BookStatus.reading
+            : BookStatus.wishlist;
 
     setState(() {
-      book.currentPage = newPage;
-      book.note = noteController.text.trim();
-      if (book.currentPage >= book.totalPages) {
-        book.status = 'Already Read';
-      } else if (book.currentPage > 0) {
-        book.status = 'Reading';
-      } else {
-        book.status = 'Wishlist';
-      }
+      book = book.copyWith(currentPage: newPage, note: newNote, status: newStatus);
     });
 
     try {
@@ -253,11 +275,12 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   void toggleFavorite() async {
-    setState(() => book.favorite = !book.favorite);
+    final original = book;
+    setState(() => book = book.copyWith(favorite: !book.favorite));
     try {
       await firestoreService.updateBook(book);
     } catch (e) {
-      setState(() => book.favorite = !book.favorite);
+      setState(() => book = original);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -272,12 +295,12 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   void _setRating(int rating) async {
-    final originalRating = book.rating;
-    setState(() => book.rating = rating);
+    final original = book;
+    setState(() => book = book.copyWith(rating: rating));
     try {
       await firestoreService.updateBook(book);
     } catch (e) {
-      setState(() => book.rating = originalRating);
+      setState(() => book = original);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -291,12 +314,36 @@ class _BookDetailPageState extends State<BookDetailPage> {
     }
   }
 
+  void _addNote() async {
+    final text = _newNoteController.text.trim();
+    if (text.isEmpty) return;
+    final updated = List<String>.from(book.notes)..add(text);
+    setState(() { book = book.copyWith(notes: updated); });
+    _newNoteController.clear();
+    try {
+      await firestoreService.updateBook(book);
+    } catch (_) {
+      final rollback = List<String>.from(book.notes)..removeLast();
+      setState(() { book = book.copyWith(notes: rollback); });
+    }
+  }
+
+  void _deleteNote(int index) async {
+    final previous = List<String>.from(book.notes);
+    final updated = List<String>.from(book.notes)..removeAt(index);
+    setState(() { book = book.copyWith(notes: updated); });
+    try {
+      await firestoreService.updateBook(book);
+    } catch (_) {
+      setState(() { book = book.copyWith(notes: previous); });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context)!;
-    final percent = (book.progress * 100).toInt();
 
     return Scaffold(
       appBar: AppBar(
@@ -427,32 +474,45 @@ class _BookDetailPageState extends State<BookDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(l10n.detailReadingProgress, style: tt.titleMedium),
-                    Text(
-                      '$percent%',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: cs.primary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: book.progress,
-                    minHeight: 10,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.pagesProgress(book.currentPage, book.totalPages),
-                  style: tt.bodyMedium,
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: book.progress),
+                  duration: const Duration(milliseconds: 700),
+                  curve: Curves.easeOut,
+                  builder: (context, animValue, _) {
+                    final animPercent = (animValue * 100).toInt();
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(l10n.detailReadingProgress, style: tt.titleMedium),
+                            Text(
+                              '$animPercent%',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: cs.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: LinearProgressIndicator(
+                            value: animValue,
+                            minHeight: 10,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.pagesProgress(book.currentPage, book.totalPages),
+                          style: tt.bodyMedium,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -484,9 +544,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   maxLines: 4,
                   decoration: InputDecoration(
                     labelText: l10n.fieldNote,
-                    prefixIcon: const Padding(
-                      padding: EdgeInsets.only(bottom: 60),
-                      child: Icon(Icons.notes_rounded),
+                    prefixIcon: const Align(
+                      widthFactor: 1.0,
+                      heightFactor: 1.0,
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 14),
+                        child: Icon(Icons.notes_rounded),
+                      ),
                     ),
                     alignLabelWithHint: true,
                   ),
@@ -529,6 +594,172 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
+
+          const SizedBox(height: 24),
+          _buildSessionHistory(l10n, tt, cs),
+
+          const SizedBox(height: 24),
+          _buildNotesSection(l10n, tt, cs),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSessionHistory(AppLocalizations l10n, TextTheme tt, ColorScheme cs) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.history_rounded, size: 18, color: cs.primary),
+              const SizedBox(width: 8),
+              Text(l10n.detailSessionHistory, style: tt.titleMedium),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (_sessionsError)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  Icon(Icons.cloud_off_rounded, size: 16, color: cs.error),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.librarySomethingWrong,
+                    style: tt.bodyMedium?.copyWith(color: cs.error),
+                  ),
+                ],
+              ),
+            )
+          else if (_sessions.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Center(
+                child: Text(
+                  l10n.analyticsNoSessions,
+                  textAlign: TextAlign.center,
+                  style: tt.bodyMedium?.copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
+                ),
+              ),
+            )
+          else
+            ...(_sessions.take(5).map((s) {
+              final date = '${s.startedAt.day}.${s.startedAt.month.toString().padLeft(2, '0')}.${s.startedAt.year}';
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: cs.primaryContainer,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(Icons.menu_book_rounded, size: 16, color: cs.onPrimaryContainer),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(date, style: tt.bodySmall?.copyWith(color: cs.onSurface.withValues(alpha: 0.6))),
+                          Text(l10n.detailSessionFormat(s.durationMinutes, s.pagesRead), style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            })),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotesSection(AppLocalizations l10n, TextTheme tt, ColorScheme cs) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.sticky_note_2_outlined, size: 18, color: cs.primary),
+              const SizedBox(width: 8),
+              Text(l10n.detailNotes, style: tt.titleMedium),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (book.notes.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                l10n.detailAddNote,
+                style: tt.bodyMedium?.copyWith(color: cs.onSurface.withValues(alpha: 0.45)),
+              ),
+            )
+          else
+            ...book.notes.asMap().entries.map((entry) {
+              final i = entry.key;
+              final note = entry.value;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: Text(note, style: tt.bodyMedium)),
+                    GestureDetector(
+                      onTap: () => _deleteNote(i),
+                      child: Icon(Icons.close_rounded, size: 16, color: cs.onSurface.withValues(alpha: 0.45)),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _newNoteController,
+                  maxLines: 2,
+                  minLines: 1,
+                  decoration: InputDecoration(
+                    hintText: l10n.detailNoteHint,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              FilledButton(
+                onPressed: _addNote,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(l10n.detailNoteSave),
+              ),
+            ],
+          ),
         ],
       ),
     );

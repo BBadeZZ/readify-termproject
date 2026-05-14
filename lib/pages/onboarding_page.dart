@@ -145,36 +145,36 @@ class _SlideView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 150,
-            height: 150,
+            width: 140,
+            height: 140,
             decoration: BoxDecoration(
               color: slide.circleColor,
               shape: BoxShape.circle,
             ),
-            child: Icon(slide.icon, size: 80, color: slide.iconColor),
+            child: Icon(slide.icon, size: 72, color: slide.iconColor),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 28),
           Text(
             slide.title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
               color: slide.iconColor,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Text(
             slide.description,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 17,
+              fontSize: 16,
               height: 1.5,
               color: slide.iconColor.withValues(alpha: 0.8),
             ),
