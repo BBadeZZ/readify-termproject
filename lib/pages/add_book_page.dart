@@ -17,6 +17,7 @@ class AddBookPage extends StatefulWidget {
 
 class _AddBookPageState extends State<AddBookPage> {
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController titleController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
   final TextEditingController totalPagesController = TextEditingController();
@@ -50,9 +51,10 @@ class _AddBookPageState extends State<AddBookPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     if (!argsLoaded) {
-      final args =
-      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
       if (args != null) {
         titleController.text = args['title'] ?? '';
         authorController.text = args['author'] ?? '';
@@ -63,13 +65,16 @@ class _AddBookPageState extends State<AddBookPage> {
 
         final comingGenre = args['genre'] ?? 'Novel';
         selectedGenre = genres.contains(comingGenre) ? comingGenre : 'Other';
+
         selectedStatus = args['status'] ?? BookStatus.wishlist;
         if (!BookStatus.all.contains(selectedStatus)) {
           selectedStatus = BookStatus.wishlist;
         }
+
         rating = (args['rating'] ?? 3).clamp(1, 5);
         favorite = args['favorite'] ?? false;
       }
+
       argsLoaded = true;
     }
   }
@@ -87,8 +92,27 @@ class _AddBookPageState extends State<AddBookPage> {
 
   bool get _isDirty => titleController.text.trim().isNotEmpty;
 
+  String _normalizeText(String value) {
+    return value.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  Future<bool> _bookAlreadyExists(String title, String author) async {
+    final existingBooks = await firestoreService.getBooks().first;
+
+    final newTitle = _normalizeText(title);
+    final newAuthor = _normalizeText(author);
+
+    return existingBooks.any((book) {
+      final existingTitle = _normalizeText(book.title);
+      final existingAuthor = _normalizeText(book.author);
+
+      return existingTitle == newTitle && existingAuthor == newAuthor;
+    });
+  }
+
   Future<bool> _showDiscardDialog() async {
     final l10n = AppLocalizations.of(context)!;
+
     return await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -103,7 +127,9 @@ class _AddBookPageState extends State<AddBookPage> {
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
               l10n.discardChangesLeave,
-              style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+              style: TextStyle(
+                color: Theme.of(ctx).colorScheme.error,
+              ),
             ),
           ),
         ],
@@ -114,18 +140,27 @@ class _AddBookPageState extends State<AddBookPage> {
 
   void _autoFill(GoogleBooksResult result) {
     final l10n = AppLocalizations.of(context)!;
+
     setState(() {
       titleController.text = result.title;
-      if (result.author.isNotEmpty) authorController.text = result.author;
+
+      if (result.author.isNotEmpty) {
+        authorController.text = result.author;
+      }
+
       if (result.pageCount > 0) {
         totalPagesController.text = result.pageCount.toString();
       }
-      if (result.coverUrl.isNotEmpty) coverUrlController.text = result.coverUrl;
+
+      if (result.coverUrl.isNotEmpty) {
+        coverUrlController.text = result.coverUrl;
+      }
 
       final matched = genres.firstWhere(
             (g) => result.genre.toLowerCase().contains(g.toLowerCase()),
         orElse: () => 'Other',
       );
+
       selectedGenre = matched;
     });
 
@@ -150,6 +185,7 @@ class _AddBookPageState extends State<AddBookPage> {
         SnackBar(
           content: Text(l10n.addBookAutoFill(result.title)),
           backgroundColor: AppColors.completedGreen,
+          duration: const Duration(seconds: 3),
         ),
       );
     }
@@ -160,24 +196,29 @@ class _AddBookPageState extends State<AddBookPage> {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
       ),
       builder: (_) => const _BookSearchSheet(),
     );
+
     if (result == null) return;
 
     if (result.author.isEmpty || result.pageCount == 0) {
       final retry = await GoogleBooksService.search(result.title);
+
       if (retry.isNotEmpty) {
         final better = retry.first;
+
         final enriched = GoogleBooksResult(
           title: result.title.isNotEmpty ? result.title : better.title,
           author: result.author.isNotEmpty ? result.author : better.author,
           pageCount: result.pageCount > 0 ? result.pageCount : better.pageCount,
-          coverUrl:
-          result.coverUrl.isNotEmpty ? result.coverUrl : better.coverUrl,
+          coverUrl: result.coverUrl.isNotEmpty ? result.coverUrl : better.coverUrl,
           genre: result.genre != 'Other' ? result.genre : better.genre,
         );
+
         _autoFill(enriched);
         return;
       }
@@ -190,46 +231,72 @@ class _AddBookPageState extends State<AddBookPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final l10n = AppLocalizations.of(context)!;
+
     final title = titleController.text.trim();
     final author = authorController.text.trim();
-    int totalPages = int.tryParse(totalPagesController.text) ?? 0;
-    int currentPage = int.tryParse(currentPageController.text) ?? 0;
 
     setState(() => _saving = true);
 
-    currentPage = currentPage.clamp(0, totalPages);
-
-    String finalStatus = selectedStatus;
-    if (selectedStatus == BookStatus.wishlist) {
-      currentPage = 0;
-    } else if (selectedStatus == BookStatus.alreadyRead) {
-      currentPage = totalPages;
-    } else if (selectedStatus == BookStatus.reading &&
-        currentPage == totalPages) {
-      finalStatus = BookStatus.alreadyRead;
-    }
-
-    final book = Book(
-      id: '',
-      title: title,
-      author: author,
-      genre: selectedGenre,
-      totalPages: totalPages,
-      currentPage: currentPage,
-      status: finalStatus,
-      rating: rating,
-      note: noteController.text.trim(),
-      favorite: favorite,
-      coverUrl: coverUrlController.text.trim(),
-      createdAt: DateTime.now(),
-    );
-
     try {
+      final exists = await _bookAlreadyExists(title, author);
+
+      if (exists) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('This book is already in your library.'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
+      int totalPages = int.tryParse(totalPagesController.text) ?? 0;
+      int currentPage = int.tryParse(currentPageController.text) ?? 0;
+
+      currentPage = currentPage.clamp(0, totalPages);
+
+      String finalStatus = selectedStatus;
+
+      if (selectedStatus == BookStatus.wishlist) {
+        currentPage = 0;
+      } else if (selectedStatus == BookStatus.alreadyRead) {
+        currentPage = totalPages;
+      } else if (selectedStatus == BookStatus.reading && currentPage == totalPages) {
+        finalStatus = BookStatus.alreadyRead;
+      }
+
+      final book = Book(
+        id: '',
+        title: title,
+        author: author,
+        genre: selectedGenre,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        status: finalStatus,
+        rating: rating,
+        note: noteController.text.trim(),
+        favorite: favorite,
+        coverUrl: coverUrlController.text.trim(),
+        createdAt: DateTime.now(),
+      );
+
       await firestoreService.addBook(book);
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.addBookSuccess)),
+          SnackBar(
+            content: Text(l10n.addBookSuccess),
+            duration: const Duration(seconds: 2),
+          ),
         );
+
         Navigator.pushReplacementNamed(context, '/library');
       }
     } catch (e) {
@@ -239,13 +306,17 @@ class _AddBookPageState extends State<AddBookPage> {
             content: Text(l10n.addBookFailed),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            duration: const Duration(seconds: 4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
     } finally {
-      if (mounted) setState(() => _saving = false);
+      if (mounted) {
+        setState(() => _saving = false);
+      }
     }
   }
 
@@ -259,6 +330,7 @@ class _AddBookPageState extends State<AddBookPage> {
         String? Function(String?)? validator,
       }) {
     final primary = Theme.of(context).colorScheme.primary;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
@@ -268,7 +340,10 @@ class _AddBookPageState extends State<AddBookPage> {
         style: const TextStyle(fontSize: 17),
         validator: validator,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: primary),
+          prefixIcon: Icon(
+            icon,
+            color: primary,
+          ),
           labelText: label,
         ),
       ),
@@ -284,12 +359,18 @@ class _AddBookPageState extends State<AddBookPage> {
       canPop: !_isDirty,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop || !_isDirty) return;
+
         final leave = await _showDiscardDialog();
-        if (leave && context.mounted) Navigator.pop(context);
+
+        if (leave && context.mounted) {
+          Navigator.pop(context);
+        }
       },
       child: Scaffold(
         drawer: const AppDrawer(currentPage: 'Add Book'),
-        appBar: AppBar(title: Text(l10n.addBookTitle)),
+        appBar: AppBar(
+          title: Text(l10n.addBookTitle),
+        ),
         body: Form(
           key: _formKey,
           child: ListView(
@@ -299,16 +380,24 @@ class _AddBookPageState extends State<AddBookPage> {
                 onTap: _showBookSearchSheet,
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 20),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
                     color: cs.primaryContainer,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: cs.primary, width: 1.5),
+                    border: Border.all(
+                      color: cs.primary,
+                      width: 1.5,
+                    ),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.search, color: cs.primary),
+                      Icon(
+                        Icons.search,
+                        color: cs.primary,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -332,8 +421,11 @@ class _AddBookPageState extends State<AddBookPage> {
                           ],
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios,
-                          size: 16, color: cs.primary),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: cs.primary,
+                      ),
                     ],
                   ),
                 ),
@@ -344,25 +436,32 @@ class _AddBookPageState extends State<AddBookPage> {
                 l10n.fieldBookTitle,
                 titleController,
                 Icons.title,
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? l10n.validatorTitleRequired
-                    : null,
+                validator: (v) {
+                  return (v == null || v.trim().isEmpty)
+                      ? l10n.validatorTitleRequired
+                      : null;
+                },
               ),
+
               _inputField(
                 context,
                 l10n.fieldAuthor,
                 authorController,
                 Icons.person,
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? l10n.validatorAuthorRequired
-                    : null,
+                validator: (v) {
+                  return (v == null || v.trim().isEmpty)
+                      ? l10n.validatorAuthorRequired
+                      : null;
+                },
               ),
+
               _inputField(
                 context,
                 l10n.fieldCoverUrlOptional,
                 coverUrlController,
                 Icons.image,
               ),
+
               _inputField(
                 context,
                 l10n.fieldTotalPages,
@@ -371,10 +470,15 @@ class _AddBookPageState extends State<AddBookPage> {
                 keyboardType: TextInputType.number,
                 validator: (v) {
                   final n = int.tryParse(v ?? '');
-                  if (n == null || n <= 0) return l10n.validatorPagesRequired;
+
+                  if (n == null || n <= 0) {
+                    return l10n.validatorPagesRequired;
+                  }
+
                   return null;
                 },
               ),
+
               _inputField(
                 context,
                 l10n.fieldCurrentPage,
@@ -388,18 +492,24 @@ class _AddBookPageState extends State<AddBookPage> {
                 child: InputDecorator(
                   decoration: InputDecoration(
                     labelText: l10n.fieldGenre,
-                    prefixIcon:
-                    Icon(Icons.category_outlined, color: cs.primary),
+                    prefixIcon: Icon(
+                      Icons.category_outlined,
+                      color: cs.primary,
+                    ),
                   ),
                   child: DropdownButton<String>(
                     value: selectedGenre,
                     isExpanded: true,
                     underline: const SizedBox(),
-                    items: genres
-                        .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                        .toList(),
-                    onChanged: (value) =>
-                        setState(() => selectedGenre = value!),
+                    items: genres.map((g) {
+                      return DropdownMenuItem(
+                        value: g,
+                        child: Text(g),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() => selectedGenre = value!);
+                    },
                   ),
                 ),
               ),
@@ -412,18 +522,19 @@ class _AddBookPageState extends State<AddBookPage> {
                   color: cs.onSurface,
                 ),
               ),
+
               RadioGroup<String>(
                 groupValue: selectedStatus,
                 onChanged: (value) {
                   setState(() {
                     selectedStatus = value!;
+
                     if (selectedStatus == BookStatus.wishlist) {
                       currentPageController.text = '0';
                     } else if (selectedStatus == BookStatus.alreadyRead) {
                       currentPageController.text = totalPagesController.text;
                     } else if (selectedStatus == BookStatus.reading &&
-                        currentPageController.text ==
-                            totalPagesController.text) {
+                        currentPageController.text == totalPagesController.text) {
                       currentPageController.text = '0';
                     }
                   });
@@ -456,6 +567,7 @@ class _AddBookPageState extends State<AddBookPage> {
               ),
 
               const SizedBox(height: 10),
+
               Text(
                 l10n.fieldRating(rating),
                 style: TextStyle(
@@ -464,20 +576,27 @@ class _AddBookPageState extends State<AddBookPage> {
                   color: cs.onSurface,
                 ),
               ),
+
               Slider(
                 value: rating.toDouble(),
                 min: 1,
                 max: 5,
                 divisions: 4,
                 label: rating.toString(),
-                onChanged: (value) => setState(() => rating = value.toInt()),
+                onChanged: (value) {
+                  setState(() => rating = value.toInt());
+                },
               ),
 
               CheckboxListTile(
-                title:
-                Text(l10n.fieldFavorite, style: const TextStyle(fontSize: 17)),
+                title: Text(
+                  l10n.fieldFavorite,
+                  style: const TextStyle(fontSize: 17),
+                ),
                 value: favorite,
-                onChanged: (value) => setState(() => favorite = value!),
+                onChanged: (value) {
+                  setState(() => favorite = value!);
+                },
               ),
 
               _inputField(
@@ -500,7 +619,9 @@ class _AddBookPageState extends State<AddBookPage> {
                   ),
                 )
                     : const Icon(Icons.save),
-                label: Text(_saving ? l10n.addBookSaving : l10n.addBookSave),
+                label: Text(
+                  _saving ? l10n.addBookSaving : l10n.addBookSave,
+                ),
               ),
             ],
           ),
@@ -518,7 +639,8 @@ class _BookSearchSheet extends StatefulWidget {
 }
 
 class _BookSearchSheetState extends State<_BookSearchSheet> {
-  final _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
+
   List<GoogleBooksResult> _results = [];
   bool _loading = false;
   String? _errorMessage;
@@ -605,6 +727,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 12),
+
             Container(
               width: 40,
               height: 4,
@@ -613,6 +736,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: TextField(
@@ -650,7 +774,9 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                 child: Text(
                   _errorMessage!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: cs.error),
+                  style: TextStyle(
+                    color: cs.error,
+                  ),
                 ),
               ),
 
@@ -663,7 +789,9 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                 child: Text(
                   l10n.searchNoResults,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: cs.outline),
+                  style: TextStyle(
+                    color: cs.outline,
+                  ),
                 ),
               ),
 
@@ -699,7 +827,9 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                       r.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     subtitle: Text(
                       '${r.author}${r.pageCount > 0 ? ' • ${l10n.detailPages(r.pageCount)}' : ''}',
@@ -711,6 +841,7 @@ class _BookSearchSheetState extends State<_BookSearchSheet> {
                 },
               ),
             ),
+
             const SizedBox(height: 8),
           ],
         ),
