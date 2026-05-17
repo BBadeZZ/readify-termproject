@@ -3,14 +3,58 @@ import '../data/recommended_books.dart';
 import '../models/book.dart';
 import '../models/book_status.dart';
 import '../services/firestore_service.dart';
+import '../services/google_books_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/book_cover_widget.dart';
 import '../l10n/app_localizations.dart';
 
-class RecommendationsPage extends StatelessWidget {
+class RecommendationsPage extends StatefulWidget {
   const RecommendationsPage({super.key});
+
+  @override
+  State<RecommendationsPage> createState() => _RecommendationsPageState();
+}
+
+class _RecommendationsPageState extends State<RecommendationsPage> {
+  late Future<List<RecommendedBook>> recommendedBooksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    recommendedBooksFuture = loadRecommendedBooksFromApi();
+  }
+
+  Future<List<RecommendedBook>> loadRecommendedBooksFromApi() async {
+    try {
+      final apiBooks = await GoogleBooksService.getRecommendedBooks();
+
+      print('API recommended book count: ${apiBooks.length}');
+
+      if (apiBooks.isNotEmpty) {
+        return apiBooks.take(10).map((book) {
+          return RecommendedBook(
+            title: book.title,
+            author: book.author,
+            genre: book.genre,
+            description: book.description.trim().isNotEmpty
+                ? book.description
+                : 'A recommended book selected from online book data.',
+            pages: book.pageCount,
+            rating: book.rating,
+            coverUrl: book.coverUrl,
+          );
+        }).toList();
+      }
+
+      print('API returned empty list. Using fallback recommendedBooks.');
+      return recommendedBooks.take(10).toList();
+    } catch (e) {
+      print('Recommendation loading error: $e');
+      return recommendedBooks.take(10).toList();
+    }
+  }
 
   String normalize(String value) {
     return value.trim().toLowerCase();
@@ -62,10 +106,15 @@ class RecommendationsPage extends StatelessWidget {
       builder: (context) {
         final cs = Theme.of(context).colorScheme;
         final l10n = AppLocalizations.of(context)!;
+
         return AlertDialog(
           title: Text(
             book.title,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: cs.primary),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: cs.primary,
+            ),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -79,12 +128,27 @@ class RecommendationsPage extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   l10n.recsAuthor(book.author),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: cs.primary),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    color: cs.primary,
+                  ),
                 ),
                 const SizedBox(height: 8),
-                Text(l10n.recsGenre(book.genre), style: const TextStyle(fontSize: 16)),
-                Text(l10n.recsPages(book.pages), style: const TextStyle(fontSize: 16)),
-                Text(l10n.recsRating(book.rating.toString()), style: const TextStyle(fontSize: 16)),
+                Text(
+                  l10n.recsGenre(book.genre),
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  l10n.recsPages(book.pages),
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  book.rating > 0
+                      ? l10n.recsRating(book.rating.toStringAsFixed(1))
+                      : l10n.recsRating('No rating'),
+                  style: const TextStyle(fontSize: 16),
+                ),
                 const SizedBox(height: 12),
                 Text(
                   book.description,
@@ -100,12 +164,20 @@ class RecommendationsPage extends StatelessWidget {
               child: Text(l10n.recsClose),
             ),
             ElevatedButton.icon(
-              onPressed: () => sendBookToAddPage(context, book, favorite: false),
+              onPressed: () => sendBookToAddPage(
+                context,
+                book,
+                favorite: false,
+              ),
               icon: const Icon(Icons.add),
               label: Text(l10n.recsAddBook),
             ),
             ElevatedButton.icon(
-              onPressed: () => sendBookToAddPage(context, book, favorite: true),
+              onPressed: () => sendBookToAddPage(
+                context,
+                book,
+                favorite: true,
+              ),
               icon: const Icon(Icons.favorite),
               label: Text(l10n.recsAddFavorite),
             ),
@@ -119,7 +191,9 @@ class RecommendationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AppDrawer(currentPage: 'Recommendations'),
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.recsTitle)),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.recsTitle),
+      ),
       body: StreamBuilder<List<Book>>(
         stream: firestoreService.getBooks(),
         builder: (context, snapshot) {
@@ -129,86 +203,153 @@ class RecommendationsPage extends StatelessWidget {
 
           List<Book> userBooks = snapshot.data!;
 
-          List<RecommendedBook> visibleRecommendations =
-          recommendedBooks.where((recommendedBook) {
-            return !isAlreadyReadRecommendation(
-              recommendedBook,
-              userBooks,
-            );
-          }).toList();
+          return FutureBuilder<List<RecommendedBook>>(
+            future: recommendedBooksFuture,
+            builder: (context, apiSnapshot) {
+              if (apiSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          final cs = Theme.of(context).colorScheme;
-          final l10n = AppLocalizations.of(context)!;
-
-          if (visibleRecommendations.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  l10n.recsAllRead,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, color: cs.primary, fontWeight: FontWeight.bold),
-                ),
-              ),
-            );
-          }
-
-          return GridView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: visibleRecommendations.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.66,
-            ),
-            itemBuilder: (context, index) {
-              final book = visibleRecommendations[index];
-
-              return InkWell(
-                onTap: () => showBookDetail(context, book),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: cs.surface,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: cs.outlineVariant, width: 2),
-                    boxShadow: [
-                      BoxShadow(blurRadius: 6, color: cs.primary.withValues(alpha: 0.08), offset: const Offset(0, 4)),
-                    ],
+              if (apiSnapshot.hasError) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      'Recommended books could not be loaded.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
-                  child: Column(
-                    children: [
-                      BookCoverWidget(
-                        title: book.title,
-                        coverUrl: book.coverUrl,
-                        width: 90,
-                        height: 125,
+                );
+              }
+
+              final allRecommendations = apiSnapshot.data ?? [];
+
+              if (allRecommendations.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      'Recommended books could not be loaded.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 16,
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        book.title,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: cs.primary),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        book.author,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        '${book.rating} ★',
-                        style: const TextStyle(color: AppColors.starYellow, fontSize: 15),
-                      ),
-                    ],
+                    ),
                   ),
+                );
+              }
+
+              List<RecommendedBook> visibleRecommendations =
+              allRecommendations.where((recommendedBook) {
+                return !isAlreadyReadRecommendation(
+                  recommendedBook,
+                  userBooks,
+                );
+              }).toList();
+
+              final cs = Theme.of(context).colorScheme;
+              final l10n = AppLocalizations.of(context)!;
+
+              if (visibleRecommendations.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      l10n.recsAllRead,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: cs.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return GridView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: visibleRecommendations.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.58,
                 ),
+                itemBuilder: (context, index) {
+                  final book = visibleRecommendations[index];
+
+                  return InkWell(
+                    onTap: () => showBookDetail(context, book),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: cs.surface,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: cs.outlineVariant,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 6,
+                            color: cs.primary.withValues(alpha: 0.08),
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          BookCoverWidget(
+                            title: book.title,
+                            coverUrl: book.coverUrl,
+                            width: 86,
+                            height: 116,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            book.title,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: cs.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            book.author,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            book.rating > 0
+                                ? '${book.rating.toStringAsFixed(1)} ★'
+                                : 'No rating',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: AppColors.starYellow,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );

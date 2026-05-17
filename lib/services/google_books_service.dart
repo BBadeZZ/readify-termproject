@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 
 class GoogleBooksResult {
@@ -8,6 +9,8 @@ class GoogleBooksResult {
   final String coverUrl;
   final String genre;
   final String openLibraryWorkKey;
+  final String description;
+  final double rating;
 
   GoogleBooksResult({
     required this.title,
@@ -16,6 +19,8 @@ class GoogleBooksResult {
     required this.coverUrl,
     required this.genre,
     this.openLibraryWorkKey = '',
+    this.description = '',
+    this.rating = 0.0,
   });
 
   factory GoogleBooksResult.fromGoogleBooks(Map<String, dynamic> json) {
@@ -28,6 +33,8 @@ class GoogleBooksResult {
         pageCount: 0,
         coverUrl: '',
         genre: 'Other',
+        description: '',
+        rating: 0.0,
       );
     }
 
@@ -59,12 +66,19 @@ class GoogleBooksResult {
         ? categoryList.map((e) => e.toString()).toList()
         : <String>[];
 
+    final description = volumeInfo['description']?.toString() ?? '';
+
+    final ratingRaw = volumeInfo['averageRating'];
+    final rating = double.tryParse(ratingRaw?.toString() ?? '') ?? 0.0;
+
     return GoogleBooksResult(
       title: title,
       author: author,
       pageCount: pageCount,
       coverUrl: coverUrl,
       genre: categories.isNotEmpty ? categories.first : 'Other',
+      description: description,
+      rating: rating,
     );
   }
 
@@ -106,6 +120,8 @@ class GoogleBooksResult {
       coverUrl: coverUrl,
       genre: subjects.isNotEmpty ? subjects.first : 'Other',
       openLibraryWorkKey: key,
+      description: 'A recommended book selected from online book data.',
+      rating: 0.0,
     );
   }
 
@@ -116,6 +132,8 @@ class GoogleBooksResult {
     String? coverUrl,
     String? genre,
     String? openLibraryWorkKey,
+    String? description,
+    double? rating,
   }) {
     return GoogleBooksResult(
       title: title ?? this.title,
@@ -124,6 +142,8 @@ class GoogleBooksResult {
       coverUrl: coverUrl ?? this.coverUrl,
       genre: genre ?? this.genre,
       openLibraryWorkKey: openLibraryWorkKey ?? this.openLibraryWorkKey,
+      description: description ?? this.description,
+      rating: rating ?? this.rating,
     );
   }
 }
@@ -188,8 +208,81 @@ class GoogleBooksService {
             ? googleBook.genre
             : matchedOpenBook?.genre ?? 'Other',
         openLibraryWorkKey: matchedOpenBook?.openLibraryWorkKey ?? '',
+        description: googleBook.description.isNotEmpty
+            ? googleBook.description
+            : matchedOpenBook?.description ??
+            'A recommended book selected from online book data.',
+        rating: googleBook.rating,
       );
     }).toList();
+  }
+
+  static Future<List<GoogleBooksResult>> getRecommendedBooks() async {
+    final random = Random();
+
+    final queries = [
+      'popular books',
+      'bestseller books',
+      'classic novels',
+      'fiction books',
+      'fantasy novels',
+      'science fiction books',
+      'romance novels',
+      'mystery books',
+      'self improvement books',
+      'computer science books',
+      'turkish novels',
+      'award winning books',
+      'young adult books',
+      'historical fiction',
+      'psychology books',
+      'business books',
+    ];
+
+    queries.shuffle(random);
+
+    final uniqueBooks = <GoogleBooksResult>[];
+    final seenBooks = <String>{};
+
+    for (final query in queries) {
+      final results = await search(query);
+
+      results.shuffle(random);
+
+      print('Recommendation query: $query -> ${results.length} results');
+
+      for (final book in results) {
+        final key = '${_normalize(book.title)}-${_normalize(book.author)}';
+
+        if (book.title.trim().isEmpty) continue;
+        if (book.author.trim().isEmpty) continue;
+        if (seenBooks.contains(key)) continue;
+
+        seenBooks.add(key);
+
+        uniqueBooks.add(
+          book.copyWith(
+            pageCount: book.pageCount > 0 ? book.pageCount : 0,
+            coverUrl: book.coverUrl,
+            genre: book.genre.trim().isNotEmpty ? book.genre : 'Other',
+            description: book.description.trim().isNotEmpty
+                ? book.description
+                : 'A recommended book selected from online book data.',
+            rating: book.rating,
+          ),
+        );
+
+        if (uniqueBooks.length == 10) {
+          uniqueBooks.shuffle(random);
+          print('Recommended books loaded from API: ${uniqueBooks.length}');
+          return uniqueBooks.take(10).toList();
+        }
+      }
+    }
+
+    uniqueBooks.shuffle(random);
+    print('Recommended books loaded from API: ${uniqueBooks.length}');
+    return uniqueBooks.take(10).toList();
   }
 
   static GoogleBooksResult? _findMatchingBook(
@@ -252,6 +345,8 @@ class GoogleBooksService {
       ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode != 200) {
+        print('Google Books API error: ${response.statusCode}');
+        print(response.body);
         return [];
       }
 
@@ -273,6 +368,7 @@ class GoogleBooksService {
           .where((book) => book.title.trim().isNotEmpty)
           .toList();
     } catch (e) {
+      print('Google Books API exception: $e');
       return [];
     }
   }
@@ -296,6 +392,8 @@ class GoogleBooksService {
       ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode != 200) {
+        print('OpenLibrary API error: ${response.statusCode}');
+        print(response.body);
         return [];
       }
 
@@ -317,6 +415,7 @@ class GoogleBooksService {
           .where((book) => book.title.trim().isNotEmpty)
           .toList();
     } catch (e) {
+      print('OpenLibrary API exception: $e');
       return [];
     }
   }
@@ -343,6 +442,8 @@ class GoogleBooksService {
       ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode != 200) {
+        print('OpenLibrary editions API error: ${response.statusCode}');
+        print(response.body);
         return 0;
       }
 
@@ -379,6 +480,7 @@ class GoogleBooksService {
 
       return pageCounts[pageCounts.length ~/ 2];
     } catch (e) {
+      print('OpenLibrary editions API exception: $e');
       return 0;
     }
   }
