@@ -20,7 +20,6 @@ import 'pages/register_page.dart';
 import 'pages/onboarding_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/social_page.dart';
-import 'pages/borrow_requests_page.dart';
 import 'services/social_service.dart';
 import 'services/auth_service.dart';
 
@@ -41,7 +40,6 @@ void main() async {
 
   runApp(const ReadifyApp());
 
-  // Uygulama açıldıktan sonra arka planda çalışsın.
   _startBackgroundServices();
 }
 
@@ -100,7 +98,6 @@ class ReadifyApp extends StatelessWidget {
             '/onboarding': (context) => const OnboardingPage(),
             '/profile': (context) => const ProfilePage(),
             '/social': (context) => const SocialPage(),
-            '/borrow-requests': (context) => const BorrowRequestsPage(),
           },
         );
       },

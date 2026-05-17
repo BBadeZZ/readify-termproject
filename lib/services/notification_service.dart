@@ -69,7 +69,7 @@ class NotificationService {
           macOS: DarwinNotificationDetails(),
         ),
 
-        // exactAllowWhileIdle hata verdiği için inexact kullanıyoruz.
+
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
 
         uiLocalNotificationDateInterpretation:

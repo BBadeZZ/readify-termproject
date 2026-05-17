@@ -10,6 +10,7 @@ class SocialService {
   Future<void> ensureProfile() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
+
     await _db.collection('userProfiles').doc(user.uid).set({
       'uid': user.uid,
       'displayName': user.displayName ?? '',
@@ -21,6 +22,7 @@ class SocialService {
 
   Future<List<Map<String, dynamic>>> searchUsers(String query) async {
     if (query.trim().isEmpty) return [];
+
     final q = query.trim().toLowerCase();
 
     final nameSnap = await _db
@@ -37,15 +39,19 @@ class SocialService {
         .get();
 
     final results = <String, Map<String, dynamic>>{};
+
     for (final doc in [...nameSnap.docs, ...emailSnap.docs]) {
       if (doc.id != _uid) {
-        results[doc.id] = {'id': doc.id, ...doc.data()};
+        results[doc.id] = {
+          'id': doc.id,
+          ...doc.data(),
+        };
       }
     }
+
     return results.values.toList();
   }
 
-  // Returns null, 'pending_sent', 'pending_received', or 'accepted'
   Future<Map<String, dynamic>?> getFriendStatus(String otherUid) async {
     final friendDoc = await _db
         .collection('users')
@@ -53,7 +59,10 @@ class SocialService {
         .collection('friends')
         .doc(otherUid)
         .get();
-    if (friendDoc.exists) return {'status': 'accepted'};
+
+    if (friendDoc.exists) {
+      return {'status': 'accepted'};
+    }
 
     final outSnap = await _db
         .collection('friendRequests')
@@ -62,8 +71,12 @@ class SocialService {
         .where('status', isEqualTo: 'pending')
         .limit(1)
         .get();
+
     if (outSnap.docs.isNotEmpty) {
-      return {'status': 'pending_sent', 'requestId': outSnap.docs.first.id};
+      return {
+        'status': 'pending_sent',
+        'requestId': outSnap.docs.first.id,
+      };
     }
 
     final inSnap = await _db
@@ -73,8 +86,12 @@ class SocialService {
         .where('status', isEqualTo: 'pending')
         .limit(1)
         .get();
+
     if (inSnap.docs.isNotEmpty) {
-      return {'status': 'pending_received', 'requestId': inSnap.docs.first.id};
+      return {
+        'status': 'pending_received',
+        'requestId': inSnap.docs.first.id,
+      };
     }
 
     return null;
@@ -82,6 +99,7 @@ class SocialService {
 
   Future<void> sendFriendRequest(String toUid, String toName) async {
     final user = FirebaseAuth.instance.currentUser;
+
     await _db.collection('friendRequests').add({
       'from': _uid,
       'fromName': user?.displayName ?? '',
@@ -97,7 +115,10 @@ class SocialService {
     await _db.collection('friendRequests').doc(requestId).delete();
   }
 
-  Future<void> acceptFriendRequest(String requestId, Map<String, dynamic> reqData) async {
+  Future<void> acceptFriendRequest(
+      String requestId,
+      Map<String, dynamic> reqData,
+      ) async {
     final batch = _db.batch();
     final user = FirebaseAuth.instance.currentUser;
     final now = FieldValue.serverTimestamp();
@@ -131,20 +152,22 @@ class SocialService {
   }
 
   Future<void> declineFriendRequest(String requestId) async {
-    await _db
-        .collection('friendRequests')
-        .doc(requestId)
-        .update({'status': 'declined'});
+    await _db.collection('friendRequests').doc(requestId).update({
+      'status': 'declined',
+    });
   }
 
   Future<void> removeFriend(String friendUid) async {
     final batch = _db.batch();
+
     batch.delete(
       _db.collection('users').doc(_uid).collection('friends').doc(friendUid),
     );
+
     batch.delete(
       _db.collection('users').doc(friendUid).collection('friends').doc(_uid),
     );
+
     await batch.commit();
   }
 
@@ -154,7 +177,14 @@ class SocialService {
         .doc(_uid)
         .collection('friends')
         .snapshots()
-        .map((s) => s.docs.map((d) => {'id': d.id, ...d.data()}).toList());
+        .map((s) {
+      return s.docs.map((d) {
+        return {
+          'id': d.id,
+          ...d.data(),
+        };
+      }).toList();
+    });
   }
 
   Stream<List<Map<String, dynamic>>> getIncomingFriendRequests() {
@@ -163,7 +193,14 @@ class SocialService {
         .where('to', isEqualTo: _uid)
         .where('status', isEqualTo: 'pending')
         .snapshots()
-        .map((s) => s.docs.map((d) => {'id': d.id, ...d.data()}).toList());
+        .map((s) {
+      return s.docs.map((d) {
+        return {
+          'id': d.id,
+          ...d.data(),
+        };
+      }).toList();
+    });
   }
 
   Stream<List<Map<String, dynamic>>> getOutgoingFriendRequests() {
@@ -172,7 +209,14 @@ class SocialService {
         .where('from', isEqualTo: _uid)
         .where('status', isEqualTo: 'pending')
         .snapshots()
-        .map((s) => s.docs.map((d) => {'id': d.id, ...d.data()}).toList());
+        .map((s) {
+      return s.docs.map((d) {
+        return {
+          'id': d.id,
+          ...d.data(),
+        };
+      }).toList();
+    });
   }
 
   Stream<List<Book>> getFriendBooks(String friendUid) {
@@ -181,9 +225,11 @@ class SocialService {
         .doc(friendUid)
         .collection('books')
         .snapshots()
-        .map((s) => s.docs
-            .map((d) => Book.fromMap(d.id, d.data()))
-            .toList());
+        .map((s) {
+      return s.docs.map((d) {
+        return Book.fromMap(d.id, d.data());
+      }).toList();
+    });
   }
 
   Future<void> sendBorrowRequest({
@@ -195,6 +241,7 @@ class SocialService {
     String bookCoverUrl = '',
   }) async {
     final user = FirebaseAuth.instance.currentUser;
+
     await _db.collection('borrowRequests').add({
       'fromUid': _uid,
       'fromName': user?.displayName ?? '',
@@ -210,24 +257,21 @@ class SocialService {
   }
 
   Future<void> acceptBorrowRequest(String requestId) async {
-    await _db
-        .collection('borrowRequests')
-        .doc(requestId)
-        .update({'status': 'accepted'});
+    await _db.collection('borrowRequests').doc(requestId).update({
+      'status': 'accepted',
+    });
   }
 
   Future<void> declineBorrowRequest(String requestId) async {
-    await _db
-        .collection('borrowRequests')
-        .doc(requestId)
-        .update({'status': 'declined'});
+    await _db.collection('borrowRequests').doc(requestId).update({
+      'status': 'declined',
+    });
   }
 
   Future<void> markBorrowReturned(String requestId) async {
-    await _db
-        .collection('borrowRequests')
-        .doc(requestId)
-        .update({'status': 'returned'});
+    await _db.collection('borrowRequests').doc(requestId).update({
+      'status': 'returned',
+    });
   }
 
   Stream<List<Map<String, dynamic>>> getIncomingBorrowRequests() {
@@ -236,7 +280,14 @@ class SocialService {
         .where('toUid', isEqualTo: _uid)
         .where('status', whereIn: ['pending', 'accepted'])
         .snapshots()
-        .map((s) => s.docs.map((d) => {'id': d.id, ...d.data()}).toList());
+        .map((s) {
+      return s.docs.map((d) {
+        return {
+          'id': d.id,
+          ...d.data(),
+        };
+      }).toList();
+    });
   }
 
   Stream<List<Map<String, dynamic>>> getOutgoingBorrowRequests() {
@@ -245,7 +296,14 @@ class SocialService {
         .where('fromUid', isEqualTo: _uid)
         .where('status', whereIn: ['pending', 'accepted'])
         .snapshots()
-        .map((s) => s.docs.map((d) => {'id': d.id, ...d.data()}).toList());
+        .map((s) {
+      return s.docs.map((d) {
+        return {
+          'id': d.id,
+          ...d.data(),
+        };
+      }).toList();
+    });
   }
 }
 
