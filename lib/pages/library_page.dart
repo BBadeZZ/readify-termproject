@@ -47,7 +47,8 @@ class _LibraryPageState extends State<LibraryPage> {
     super.didChangeDependencies();
 
     if (!argsLoaded) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      final args =
+      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
       if (args != null && args['filter'] != null) {
         final incoming = args['filter'] as String;
@@ -325,7 +326,10 @@ class _LibraryPageState extends State<LibraryPage> {
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
                       child: Row(
                         children: [
                           Text(
@@ -383,7 +387,8 @@ class _LibraryPageState extends State<LibraryPage> {
                         itemBuilder: (ctx, book) {
                           return _BookCard(
                             book: book,
-                            statusColor: AppColors.forStatus(book.status),
+                            statusColor:
+                            AppColors.forStatus(book.status),
                             onTap: () {
                               Navigator.push(
                                 ctx,
@@ -409,11 +414,14 @@ class _LibraryPageState extends State<LibraryPage> {
                                             .libraryErrFavorite,
                                       ),
                                       duration: const Duration(days: 1),
-                                      backgroundColor:
-                                      Theme.of(ctx).colorScheme.error,
-                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Theme.of(ctx)
+                                          .colorScheme
+                                          .error,
+                                      behavior:
+                                      SnackBarBehavior.floating,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius:
+                                        BorderRadius.circular(12),
                                       ),
                                     ),
                                   );
@@ -424,7 +432,8 @@ class _LibraryPageState extends State<LibraryPage> {
                               final deletedBook = book;
 
                               try {
-                                await firestoreService.deleteBook(deletedBook.id);
+                                await firestoreService
+                                    .deleteBook(deletedBook.id);
                               } catch (e) {
                                 if (ctx.mounted) {
                                   _showAutoCloseSnackBar(
@@ -435,11 +444,14 @@ class _LibraryPageState extends State<LibraryPage> {
                                             .libraryErrDelete,
                                       ),
                                       duration: const Duration(days: 1),
-                                      backgroundColor:
-                                      Theme.of(ctx).colorScheme.error,
-                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor: Theme.of(ctx)
+                                          .colorScheme
+                                          .error,
+                                      behavior:
+                                      SnackBarBehavior.floating,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius:
+                                        BorderRadius.circular(12),
                                       ),
                                     ),
                                   );
@@ -449,21 +461,27 @@ class _LibraryPageState extends State<LibraryPage> {
 
                               if (ctx.mounted) {
                                 final l = AppLocalizations.of(ctx)!;
-                                final messenger = ScaffoldMessenger.of(ctx);
+                                final messenger =
+                                ScaffoldMessenger.of(ctx);
 
                                 messenger.clearSnackBars();
 
-                                ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? controller;
+                                ScaffoldFeatureController<SnackBar,
+                                    SnackBarClosedReason>?
+                                controller;
 
                                 controller = messenger.showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      l.libraryDeleted(deletedBook.title),
+                                      l.libraryDeleted(
+                                        deletedBook.title,
+                                      ),
                                     ),
                                     duration: const Duration(days: 1),
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius:
+                                      BorderRadius.circular(12),
                                     ),
                                     action: SnackBarAction(
                                       label: l.libraryUndo,
@@ -471,26 +489,33 @@ class _LibraryPageState extends State<LibraryPage> {
                                         controller?.close();
 
                                         try {
-                                          await firestoreService.addBook(deletedBook);
+                                          await firestoreService
+                                              .addBook(deletedBook);
                                         } catch (e) {
                                           if (ctx.mounted) {
                                             _showAutoCloseSnackBar(
                                               context: ctx,
                                               snackBar: SnackBar(
                                                 content: Text(
-                                                  AppLocalizations.of(ctx)!
+                                                  AppLocalizations.of(
+                                                    ctx,
+                                                  )!
                                                       .libraryErrRestore,
                                                 ),
-                                                duration: const Duration(days: 1),
+                                                duration: const Duration(
+                                                  days: 1,
+                                                ),
                                                 backgroundColor:
                                                 Theme.of(ctx)
                                                     .colorScheme
                                                     .error,
-                                                behavior:
-                                                SnackBarBehavior.floating,
-                                                shape: RoundedRectangleBorder(
+                                                behavior: SnackBarBehavior
+                                                    .floating,
+                                                shape:
+                                                RoundedRectangleBorder(
                                                   borderRadius:
-                                                  BorderRadius.circular(12),
+                                                  BorderRadius
+                                                      .circular(12),
                                                 ),
                                               ),
                                             );
@@ -501,9 +526,12 @@ class _LibraryPageState extends State<LibraryPage> {
                                   ),
                                 );
 
-                                Future.delayed(const Duration(seconds: 2), () {
-                                  controller?.close();
-                                });
+                                Future.delayed(
+                                  const Duration(seconds: 2),
+                                      () {
+                                    controller?.close();
+                                  },
+                                );
                               }
                             },
                           );
@@ -540,7 +568,10 @@ class _SummaryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -621,13 +652,27 @@ class _BookAnimatedListState extends State<_BookAnimatedList> {
     }
 
     for (int i = 0; i < newBooks.length; i++) {
-      if (!_books.any((b) => b.id == newBooks[i].id)) {
+      final existingIndex = _books.indexWhere((b) => b.id == newBooks[i].id);
+
+      if (existingIndex == -1) {
         _books.insert(i, newBooks[i]);
+
         _listKey.currentState?.insertItem(
           i,
           duration: const Duration(milliseconds: 350),
         );
+      } else {
+        _books[existingIndex] = newBooks[i];
+
+        if (existingIndex != i && i < _books.length) {
+          final moved = _books.removeAt(existingIndex);
+          _books.insert(i, moved);
+        }
       }
+    }
+
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -808,6 +853,9 @@ class _BookCard extends StatelessWidget {
                             ),
                             child: Text(
                               AppColors.localizeStatus(book.status, l10n),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
                               style: TextStyle(
                                 color: statusColor,
                                 fontWeight: FontWeight.w600,
@@ -816,21 +864,26 @@ class _BookCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: cs.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              book.genre,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                color: cs.onSurface.withValues(alpha: 0.7),
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: cs.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                book.genre,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: cs.onSurface.withValues(alpha: 0.7),
+                                ),
                               ),
                             ),
                           ),

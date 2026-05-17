@@ -251,9 +251,6 @@ class GoogleBooksService {
         },
       ).timeout(const Duration(seconds: 15));
 
-      print('Google Books URL: $uri');
-      print('Google Books Status: ${response.statusCode}');
-
       if (response.statusCode != 200) {
         return [];
       }
@@ -276,7 +273,6 @@ class GoogleBooksService {
           .where((book) => book.title.trim().isNotEmpty)
           .toList();
     } catch (e) {
-      print('Google Books Error: $e');
       return [];
     }
   }
@@ -298,9 +294,6 @@ class GoogleBooksService {
           'Accept': 'application/json',
         },
       ).timeout(const Duration(seconds: 15));
-
-      print('OpenLibrary Search URL: $uri');
-      print('OpenLibrary Search Status: ${response.statusCode}');
 
       if (response.statusCode != 200) {
         return [];
@@ -324,7 +317,6 @@ class GoogleBooksService {
           .where((book) => book.title.trim().isNotEmpty)
           .toList();
     } catch (e) {
-      print('OpenLibrary Search Error: $e');
       return [];
     }
   }
@@ -349,9 +341,6 @@ class GoogleBooksService {
           'Accept': 'application/json',
         },
       ).timeout(const Duration(seconds: 15));
-
-      print('OpenLibrary Editions URL: $uri');
-      print('OpenLibrary Editions Status: ${response.statusCode}');
 
       if (response.statusCode != 200) {
         return 0;
@@ -390,7 +379,6 @@ class GoogleBooksService {
 
       return pageCounts[pageCounts.length ~/ 2];
     } catch (e) {
-      print('OpenLibrary Editions Error: $e');
       return 0;
     }
   }
